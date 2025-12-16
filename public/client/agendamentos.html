@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamentos - Cliente</title>
+  <link rel="stylesheet" href="/client/adds/client.css">
+  <script src="/client/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Meus Agendamentos</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Novo Agendamento</h3>
+      
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="novaData" min="">
+      </div>
+
+      <div class="form-group">
+        <label>Horário Disponível</label>
+        <select id="novaHora">
+          <option value="">Selecione uma data primeiro</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="criarAgendamento()">Agendar</button>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Agendamentos Existentes</h3>
+      <div id="listaAgendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="modalEditar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 400px;">
+        <h3>Editar Agendamento</h3>
+        
+        <div class="form-group">
+          <label>Nova Data</label>
+          <input type="date" id="editData">
+        </div>
+
+        <div class="form-group">
+          <label>Novo Horário</label>
+          <select id="editHora"></select>
+        </div>
+
+        <button class="btn" onclick="salvarEdicao()">Salvar</button>
+        <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- Modal para cancelar -->
+    <div id="modalCancelar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px;">
+        <h3>Cancelar Agendamento</h3>
+        <p>Por favor, indique a razão do cancelamento:</p>
+        
+        <div class="form-group">
+          <label>Razão do Cancelamento</label>
+          <textarea id="razaoCancelamento" rows="4" placeholder="Ex: Surgiu um imprevisto no trabalho..."></textarea>
+        </div>
+
+        <button class="btn btn-danger" onclick="confirmarCancelamento()">Confirmar Cancelamento</button>
+        <button class="btn-secondary" onclick="fecharModalCancelar()">Voltar</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'client') {
+      window.location.href = '/login.html';
+    }
+
+    let agendamentoEditando = null;
+    let agendamentoCancelando = null;
+
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('novaData').min = hoje;
+    document.getElementById('novaData').value = hoje;
+
+    document.getElementById('novaData').addEventListener('change', async (e) => {
+      await carregarHorariosDisponiveis(e.target.value, 'novaHora');
+    });
+
+    document.getElementById('editData').addEventListener('change', async (e) => {
+      await carregarHorariosDisponiveis(e.target.value, 'editHora');
+    });
+
+    async function carregarHorariosDisponiveis(data, selectId) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/agendamentos/disponiveis?data=${data}`);
+        const horarios = await res.json();
+
+        const select = document.getElementById(selectId);
+        select.innerHTML = horarios.length > 0 
+          ? horarios.map(h => `<option value="${h}">${h}</option>`).join('')
+          : '<option value="">Sem horários disponíveis</option>';
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function criarAgendamento() {
+      const data = document.getElementById('novaData').value;
+      const hora = document.getElementById('novaHora').value;
+
+      if (!data || !hora) {
+        mostrarAlerta('Selecione data e horário', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:3000/api/agendamentos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paciente: user.nome, data, hora })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Agendamento criado!', 'success');
+          carregarAgendamentos();
+          document.getElementById('novaData').value = hoje;
+          carregarHorariosDisponiveis(hoje, 'novaHora');
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao criar agendamento', 'error');
+      }
+    }
+
+    async function carregarAgendamentos() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/agendamentos/cliente/${user.nome}`);
+        const agendamentos = await res.json();
+
+        const container = document.getElementById('listaAgendamentos');
+
+        if (agendamentos.length === 0) {
+          container.innerHTML = '<p>Sem agendamentos</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${agendamentos.map(a => `
+                <tr>
+                  <td>${a.data}</td>
+                  <td>${a.hora}</td>
+                  <td><span class="badge ${a.estado === 'agendado' ? 'badge-success' : 'badge-warning'}">${a.estado}</span></td>
+                  <td>
+                    ${a.estado === 'agendado' ? `
+                      <button class="btn btn-secondary" onclick="editarAgendamento('${a._id}', '${a.data}', '${a.hora}')">Editar</button>
+                      <button class="btn btn-danger" onclick="abrirModalCancelar('${a._id}')">Cancelar</button>
+                    ` : '<em style="color: #999;">Concluído</em>'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        document.getElementById('listaAgendamentos').innerHTML = '<p>Erro ao carregar</p>';
+      }
+    }
+
+    function editarAgendamento(id, data, hora) {
+      agendamentoEditando = id;
+      document.getElementById('editData').value = data;
+      document.getElementById('editData').min = hoje;
+      carregarHorariosDisponiveis(data, 'editHora').then(() => {
+        document.getElementById('editHora').value = hora;
+      });
+      document.getElementById('modalEditar').style.display = 'block';
+    }
+
+    async function salvarEdicao() {
+      const data = document.getElementById('editData').value;
+      const hora = document.getElementById('editHora').value;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/agendamentos/${agendamentoEditando}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data, hora })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Agendamento atualizado!', 'success');
+          fecharModal();
+          carregarAgendamentos();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao atualizar', 'error');
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('modalEditar').style.display = 'none';
+      agendamentoEditando = null;
+    }
+
+    function abrirModalCancelar(id) {
+      agendamentoCancelando = id;
+      document.getElementById('razaoCancelamento').value = '';
+      document.getElementById('modalCancelar').style.display = 'block';
+    }
+
+    async function confirmarCancelamento() {
+      const razao = document.getElementById('razaoCancelamento').value.trim();
+
+      if (!razao) {
+        alert('Por favor, indique a razão do cancelamento');
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/agendamentos/${agendamentoCancelando}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ razao, canceladoPor: user.nome })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Agendamento cancelado! A psicóloga foi notificada.', 'success');
+          fecharModalCancelar();
+          carregarAgendamentos();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao cancelar', 'error');
+      }
+    }
+
+    function fecharModalCancelar() {
+      document.getElementById('modalCancelar').style.display = 'none';
+      agendamentoCancelando = null;
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarAgendamentos();
+    carregarHorariosDisponiveis(hoje, 'novaHora');
+  </script>
+</body>
+</html>

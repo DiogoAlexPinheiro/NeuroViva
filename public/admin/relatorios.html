@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+  <style>
+    /* Secção Verde Destacada */
+    .green-section {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
+      margin-bottom: 2rem;
+    }
+
+    .green-section h3 {
+      color: white;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .green-section .form-group label {
+      color: white;
+      font-weight: 600;
+    }
+
+    .green-section .form-group input,
+    .green-section .form-group textarea,
+    .green-section .form-group select {
+      border: 2px solid #81C784;
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .green-section .form-group input:focus,
+    .green-section .form-group textarea:focus,
+    .green-section .form-group select:focus {
+      border-color: white;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    .green-section .btn {
+      background-color: white;
+      color: #4CAF50;
+      font-weight: bold;
+      border: 2px solid white;
+    }
+
+    .green-section .btn:hover {
+      background-color: #f1f1f1;
+      transform: translateY(-2px);
+    }
+
+    .green-section input[type="file"] {
+      border-color: white;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .green-section small {
+      color: rgba(255,255,255,0.9);
+    }
+  </style>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Gestão de Relatórios</h2>
+
+    <div id="alert"></div>
+
+    <!-- SECÇÃO VERDE DESTACADA -->
+    <div class="green-section">
+      <h3>✨ Criar Novo Relatório</h3>
+      
+      <form id="formRelatorio" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Paciente</label>
+          <select id="pacienteSelect" required>
+            <option value="">A carregar...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de Relatório</label>
+          <select id="tipoRelatorio" required>
+            <option value="normal">Relatório de Sessão (Normal)</option>
+            <option value="tribunal">Relatório Externo - Tribunal</option>
+            <option value="escola">Relatório Externo - Escola</option>
+            <option value="empresa">Relatório Externo - Empresa</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="entidadeGroup" style="display: none;">
+          <label>Entidade</label>
+          <input type="text" id="entidade" placeholder="Ex: Tribunal de Família do Porto">
+        </div>
+
+        <div class="form-group">
+          <label>Conteúdo do Relatório</label>
+          <textarea id="conteudo" rows="8" placeholder="Descreva o conteúdo do relatório..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>📎 Anexos (Imagens, PDFs, Documentos)</label>
+          <input type="file" id="anexos" multiple accept="image/*,.pdf,.doc,.docx,.txt">
+          <small>Pode selecionar múltiplos ficheiros (máx 50MB cada)</small>
+        </div>
+
+        <button type="button" class="btn" onclick="criarRelatorio()">Criar Relatório</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Relatórios Existentes</h3>
+      
+      <div class="form-group">
+        <label>Filtrar por Paciente</label>
+        <select id="filtroRelatorio" onchange="filtrarRelatorios()">
+          <option value="">Todos os pacientes</option>
+        </select>
+      </div>
+
+      <div id="listaRelatorios">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="modalEditar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto;">
+        <h3>Editar Relatório</h3>
+        
+        <div class="form-group">
+          <label>Entidade (se aplicável)</label>
+          <input type="text" id="editEntidade">
+        </div>
+
+        <div class="form-group">
+          <label>Conteúdo</label>
+          <textarea id="editConteudo" rows="10"></textarea>
+        </div>
+
+        <button class="btn" onclick="salvarEdicao()">Salvar</button>
+        <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    let relatorioEditando = null;
+    let tipoEditando = null;
+
+    document.getElementById('tipoRelatorio').addEventListener('change', (e) => {
+      const entidadeGroup = document.getElementById('entidadeGroup');
+      if (e.target.value !== 'normal') {
+        entidadeGroup.style.display = 'block';
+      } else {
+        entidadeGroup.style.display = 'none';
+      }
+    });
+
+    async function carregarPacientes() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pacientes');
+        const pacientes = await res.json();
+
+        const options = pacientes.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
+        
+        document.getElementById('pacienteSelect').innerHTML = '<option value="">Selecione um paciente</option>' + options;
+        document.getElementById('filtroRelatorio').innerHTML = '<option value="">Todos os pacientes</option>' + options;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function criarRelatorio() {
+      const paciente = document.getElementById('pacienteSelect').value;
+      const tipo = document.getElementById('tipoRelatorio').value;
+      const entidade = document.getElementById('entidade').value;
+      const conteudo = document.getElementById('conteudo').value;
+      const anexosInput = document.getElementById('anexos');
+
+      if (!paciente || !conteudo) {
+        mostrarAlerta('Preencha todos os campos obrigatórios', 'error');
+        return;
+      }
+
+      if (tipo !== 'normal' && !entidade) {
+        mostrarAlerta('Preencha a entidade para relatórios externos', 'error');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('paciente', paciente);
+        formData.append('tipo', tipo);
+        formData.append('entidade', entidade);
+        formData.append('conteudo', conteudo);
+
+        if (anexosInput.files.length > 0) {
+          for (let i = 0; i < anexosInput.files.length; i++) {
+            formData.append('anexos', anexosInput.files[i]);
+          }
+        }
+
+        const res = await fetch('http://localhost:3000/api/admin/relatorios', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Relatório criado com sucesso!', 'success');
+          document.getElementById('pacienteSelect').value = '';
+          document.getElementById('conteudo').value = '';
+          document.getElementById('entidade').value = '';
+          document.getElementById('anexos').value = '';
+          carregarRelatorios();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao criar relatório', 'error');
+      }
+    }
+
+    async function carregarRelatorios() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/relatorios');
+        const data = await res.json();
+
+        const todos = [
+          ...data.normais.map(r => ({ ...r, tipoRelatorio: 'normal' })),
+          ...data.externos.map(r => ({ ...r, tipoRelatorio: r.tipo }))
+        ].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+        exibirRelatorios(todos);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function filtrarRelatorios() {
+      const pacienteFiltro = document.getElementById('filtroRelatorio').value;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/relatorios');
+        const data = await res.json();
+
+        let todos = [
+          ...data.normais.map(r => ({ ...r, tipoRelatorio: 'normal' })),
+          ...data.externos.map(r => ({ ...r, tipoRelatorio: r.tipo }))
+        ];
+
+        if (pacienteFiltro) {
+          todos = todos.filter(r => r.paciente === pacienteFiltro);
+        }
+
+        todos.sort((a, b) => new Date(b.data) - new Date(a.data));
+        exibirRelatorios(todos);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function exibirRelatorios(relatorios) {
+      const container = document.getElementById('listaRelatorios');
+
+      if (relatorios.length === 0) {
+        container.innerHTML = '<p>Sem relatórios</p>';
+        return;
+      }
+
+      container.innerHTML = relatorios.map(r => `
+        <div class="message-box" style="margin-bottom: 1.5rem;">
+          <h4>${r.tipoRelatorio === 'normal' ? '📋 Relatório de Sessão' : '📄 Relatório Externo'}</h4>
+          <p><strong>Paciente:</strong> ${r.paciente}</p>
+          <p><strong>Data:</strong> ${r.data}</p>
+          ${r.entidade ? `<p><strong>Entidade:</strong> ${r.entidade}</p>` : ''}
+          ${r.tipoRelatorio !== 'normal' ? `<p><strong>Tipo:</strong> ${r.tipoRelatorio}</p>` : ''}
+          <p style="white-space: pre-wrap; margin-top: 1rem;">${r.conteudo || r.relatorio}</p>
+          
+          ${r.anexos && r.anexos.length > 0 ? `
+            <div style="margin-top: 1rem;">
+              <strong>Anexos:</strong>
+              <ul>
+                ${r.anexos.map(a => `
+                  <li>
+                    <a href="${a.caminho}" target="_blank" style="color: #f44336;">
+                      📎 ${a.nome} (${(a.tamanho / 1024).toFixed(1)} KB)
+                    </a>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          ` : ''}
+
+          <div class="message-actions">
+            <button class="btn btn-secondary" onclick="editarRelatorio('${r._id}', '${r.tipoRelatorio}', '${r.entidade || ''}', \`${(r.conteudo || r.relatorio).replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">Editar</button>
+            <button class="btn btn-danger" onclick="apagarRelatorio('${r._id}', '${r.tipoRelatorio}')">Apagar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editarRelatorio(id, tipo, entidade, conteudo) {
+      relatorioEditando = id;
+      tipoEditando = tipo;
+      document.getElementById('editEntidade').value = entidade;
+      document.getElementById('editConteudo').value = conteudo;
+      document.getElementById('modalEditar').style.display = 'block';
+    }
+
+    async function salvarEdicao() {
+      const entidade = document.getElementById('editEntidade').value;
+      const conteudo = document.getElementById('editConteudo').value;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/relatorios/${relatorioEditando}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo: tipoEditando, conteudo, entidade })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Relatório atualizado!', 'success');
+          fecharModal();
+          filtrarRelatorios();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao atualizar', 'error');
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('modalEditar').style.display = 'none';
+      relatorioEditando = null;
+      tipoEditando = null;
+    }
+
+    async function apagarRelatorio(id, tipo) {
+      if (!confirm('Tem certeza que deseja apagar este relatório?')) return;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/relatorios/${id}?tipo=${tipo}`, {
+          method: 'DELETE'
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Relatório apagado!', 'success');
+          filtrarRelatorios();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao apagar', 'error');
+      }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarPacientes();
+    carregarRelatorios();
+  </script>
+</body>
+</html>

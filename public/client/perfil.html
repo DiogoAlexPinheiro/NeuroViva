@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil - Cliente</title>
+  <link rel="stylesheet" href="/client/adds/client.css">
+  <script src="/client/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Meu Perfil</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Dados da Conta</h3>
+      
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="nome">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email">
+      </div>
+
+      <div class="form-group">
+        <label>Nova Password (deixe vazio para manter)</label>
+        <input type="password" id="password">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Dados Pessoais</h3>
+      
+      <div class="form-group">
+        <label>Contacto</label>
+        <input type="text" id="contacto">
+      </div>
+
+      <div class="form-group">
+        <label>Morada</label>
+        <input type="text" id="morada">
+      </div>
+
+      <div class="form-group">
+        <label>Idade</label>
+        <input type="number" id="idade">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Contexto Familiar</h3>
+      
+      <div class="form-group">
+        <label>Estado Civil</label>
+        <select id="estadoCivil">
+          <option value="">Selecione</option>
+          <option value="solteiro">Solteiro(a)</option>
+          <option value="casado">Casado(a)</option>
+          <option value="divorciado">Divorciado(a)</option>
+          <option value="viuvo">Viúvo(a)</option>
+          <option value="uniao">União de facto</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Número de Filhos</label>
+        <input type="number" id="filhos" min="0" value="0">
+      </div>
+
+      <div class="form-group">
+        <label>Membros do Agregado Familiar (separados por vírgula)</label>
+        <input type="text" id="membros" placeholder="Ex: Pai, Mãe, Irmão">
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button class="btn" onclick="atualizarPerfil()">Salvar Alterações</button>
+      <button class="btn btn-danger" onclick="apagarConta()" style="margin-left: 1rem;">Apagar Conta</button>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'client') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarPerfil() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`);
+        const data = await res.json();
+
+        document.getElementById('nome').value = data.user.nome;
+        document.getElementById('email').value = data.user.email;
+        document.getElementById('contacto').value = data.paciente.contacto || '';
+        document.getElementById('morada').value = data.paciente.morada || '';
+        document.getElementById('idade').value = data.paciente.idade || '';
+
+        if (data.paciente.contextoFamiliar) {
+          document.getElementById('estadoCivil').value = data.paciente.contextoFamiliar.estadoCivil || '';
+          document.getElementById('filhos').value = data.paciente.contextoFamiliar.filhos || 0;
+          document.getElementById('membros').value = data.paciente.contextoFamiliar.membros ? 
+            data.paciente.contextoFamiliar.membros.join(', ') : '';
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao carregar perfil', 'error');
+      }
+    }
+
+    async function atualizarPerfil() {
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const contacto = document.getElementById('contacto').value;
+      const morada = document.getElementById('morada').value;
+      const idade = document.getElementById('idade').value;
+      
+      const estadoCivil = document.getElementById('estadoCivil').value;
+      const filhos = document.getElementById('filhos').value;
+      const membrosStr = document.getElementById('membros').value;
+      const membros = membrosStr ? membrosStr.split(',').map(m => m.trim()).filter(m => m) : [];
+
+      const contextoFamiliar = {
+        estadoCivil,
+        filhos: parseInt(filhos) || 0,
+        membros
+      };
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, password, contacto, morada, idade, contextoFamiliar })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Perfil atualizado!', 'success');
+          user.nome = nome;
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          // Atualizar nome no header
+          const userNameEl = document.getElementById('userName');
+          if (userNameEl) userNameEl.textContent = `Olá, ${nome}`;
+          
+          document.getElementById('password').value = '';
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao atualizar perfil', 'error');
+      }
+    }
+
+    async function apagarConta() {
+      if (!confirm('Tem certeza que deseja apagar a sua conta? Esta ação é irreversível!')) return;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          alert('Conta apagada com sucesso');
+          localStorage.removeItem('user');
+          window.location.href = '/login.html';
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao apagar conta', 'error');
+      }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarPerfil();
+  </script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Cliente</title>
+  <link rel="stylesheet" href="/client/adds/client.css">
+  <script src="/client/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Bem-vindo ao seu painel</h2>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>📅 Agendamentos</h3>
+        <p>Marque, edite ou cancele as suas consultas</p>
+        <a href="/client/agendamentos.html" class="btn">Ver Agendamentos</a>
+      </div>
+
+      <div class="card">
+        <h3>💬 Mensagens</h3>
+        <p>Comunique com a psicóloga</p>
+        <a href="/client/mensagens.html" class="btn">Ver Mensagens</a>
+      </div>
+
+      <div class="card">
+        <h3>💰 Financeiro</h3>
+        <p>Consulte os seus pagamentos</p>
+        <a href="/client/financeiro.html" class="btn">Ver Financeiro</a>
+      </div>
+
+      <div class="card">
+        <h3>👤 Perfil</h3>
+        <p>Atualize os seus dados pessoais</p>
+        <a href="/client/perfil.html" class="btn">Editar Perfil</a>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Próximos Agendamentos</h3>
+      <div id="proximosAgendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'client') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarProximosAgendamentos() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/agendamentos/cliente/${user.nome}`);
+        const agendamentos = await res.json();
+
+        const container = document.getElementById('proximosAgendamentos');
+        
+        if (agendamentos.length === 0) {
+          container.innerHTML = '<p>Sem agendamentos marcados</p>';
+          return;
+        }
+
+        const proximos = agendamentos
+          .filter(a => a.estado === 'agendado')
+          .slice(0, 3);
+
+        if (proximos.length === 0) {
+          container.innerHTML = '<p>Sem agendamentos futuros</p>';
+          return;
+        }
+
+        container.innerHTML = proximos.map(a => `
+          <div style="padding: 1rem; border-bottom: 1px solid #e0e0e0;">
+            <strong>${a.data}</strong> às <strong>${a.hora}</strong>
+            <span class="badge badge-success" style="margin-left: 1rem;">${a.estado}</span>
+          </div>
+        `).join('');
+      } catch (error) {
+        document.getElementById('proximosAgendamentos').innerHTML = '<p>Erro ao carregar</p>';
+      }
+    }
+
+    carregarProximosAgendamentos();
+  </script>
+</body>
+</html>

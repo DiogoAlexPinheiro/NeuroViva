@@ -1,0 +1,33 @@
+<header>
+  <h1>Painel Administrativo</h1>
+  <div class="user-info">
+    <span id="userName">Admin</span>
+    <button class="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<nav>
+  <a href="/admin/dashboard.html" data-page="dashboard">Dashboard</a>
+  <a href="/admin/pacientes.html" data-page="pacientes">Pacientes</a>
+  <span class="nav-link">
+    <a href="/admin/mensagens.html" data-page="mensagens">Mensagens</a>
+    <span class="notification-badge zero" id="badgeMensagens">0</span>
+  </span>
+  <a href="/admin/relatorios.html" data-page="relatorios">Relatórios</a>
+  <span class="nav-link">
+    <a href="/admin/financeiro.html" data-page="financeiro">Financeiro</a>
+    <span class="notification-badge zero" id="badgePagamentos">0</span>
+  </span>
+</nav>
+
+<script>
+  // Marcar página ativa
+  const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+  document.querySelectorAll('nav a[data-page]').forEach(link => {
+    if (link.dataset.page === currentPage) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+</script>

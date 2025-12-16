@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financeiro - Cliente</title>
+  <link rel="stylesheet" href="/client/adds/client.css">
+  <script src="/client/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Meus Pagamentos</h2>
+
+    <div class="card">
+      <h3>Resumo Financeiro</h3>
+      <div id="resumo">
+        <p><strong>Total Pago:</strong> <span id="totalPago" style="color: #4CAF50;">€0.00</span></p>
+        <p><strong>Total Pendente:</strong> <span id="totalPendente" style="color: #FF9800;">€0.00</span></p>
+        <hr style="margin: 1rem 0;">
+        <p><strong>Total Geral:</strong> <span id="totalGeral" style="font-size: 1.3rem; color: #4CAF50;">€0.00</span></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Histórico de Pagamentos</h3>
+      <div id="listaPagamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'client') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarPagamentos() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/client/financeiro/${user.nome}`);
+        const pagamentos = await res.json();
+
+        const container = document.getElementById('listaPagamentos');
+
+        if (pagamentos.length === 0) {
+          container.innerHTML = '<p>Sem pagamentos registados</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Valor</th>
+                <th>Estado</th>
+                <th>Método</th>
+                <th>Comprovativo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pagamentos.map(p => `
+                <tr>
+                  <td>${p.data}</td>
+                  <td>€${p.valor.toFixed(2)}</td>
+                  <td><span class="badge ${
+                    p.estado === 'pago' ? 'badge-success' : 
+                    p.estado === 'pendente' ? 'badge-warning' : 
+                    'badge-danger'
+                  }">${p.estado}</span></td>
+                  <td>${p.metodo}</td>
+                  <td>
+                    ${p.comprovativo ? 
+                      `<a href="${p.comprovativo.caminho}" target="_blank" style="color: #4CAF50;">
+                        📎 Ver recibo
+                      </a>` 
+                      : '-'
+                    }
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+
+        // Calcular resumo
+        const totalPago = pagamentos.filter(p => p.estado === 'pago').reduce((sum, p) => sum + p.valor, 0);
+        const totalPendente = pagamentos.filter(p => p.estado === 'pendente').reduce((sum, p) => sum + p.valor, 0);
+        const totalGeral = totalPago + totalPendente;
+
+        document.getElementById('totalPago').textContent = `€${totalPago.toFixed(2)}`;
+        document.getElementById('totalPendente').textContent = `€${totalPendente.toFixed(2)}`;
+        document.getElementById('totalGeral').textContent = `€${totalGeral.toFixed(2)}`;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('listaPagamentos').innerHTML = '<p>Erro ao carregar pagamentos</p>';
+      }
+    }
+
+    carregarPagamentos();
+  </script>
+</body>
+</html>

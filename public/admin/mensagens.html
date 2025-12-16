@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensagens - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Gestão de Mensagens</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Filtrar por Cliente</h3>
+      <div class="form-group">
+        <label>Selecionar Cliente</label>
+        <select id="filtroCliente" onchange="filtrarMensagens()">
+          <option value="">Todos os clientes</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Mensagens <span id="clienteAtual"></span></h3>
+      <div id="listaMensagens">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <!-- Modal para responder -->
+    <div id="modalResponder" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px;">
+        <h3>Responder a <span id="responderPara"></span></h3>
+        
+        <div class="form-group">
+          <label>Assunto</label>
+          <input type="text" id="respostaAssunto">
+        </div>
+
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="respostaTexto" rows="5"></textarea>
+        </div>
+
+        <button class="btn" onclick="enviarResposta()">Enviar Resposta</button>
+        <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    let destinatarioAtual = null;
+    let clienteSelecionado = '';
+
+    async function carregarClientes() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pacientes');
+        const pacientes = await res.json();
+
+        const select = document.getElementById('filtroCliente');
+        const options = pacientes.map(p => 
+          `<option value="${p.nome}">${p.nome}</option>`
+        ).join('');
+        select.innerHTML = '<option value="">Todos os clientes</option>' + options;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function filtrarMensagens() {
+      clienteSelecionado = document.getElementById('filtroCliente').value;
+      
+      if (clienteSelecionado) {
+        document.getElementById('clienteAtual').textContent = `- ${clienteSelecionado}`;
+        await carregarMensagensCliente(clienteSelecionado);
+      } else {
+        document.getElementById('clienteAtual').textContent = '';
+        await carregarTodasMensagens();
+      }
+    }
+
+    async function carregarMensagensCliente(nomeCliente) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/mensagens/cliente/${encodeURIComponent(nomeCliente)}`);
+        const mensagens = await res.json();
+
+        exibirMensagens(mensagens);
+
+        // Marcar como lidas
+        for (const msg of mensagens) {
+          if (msg.tipo === 'cliente_para_admin' && !msg.lida) {
+            await fetch(`http://localhost:3000/api/mensagens/${msg._id}/marcar-lida`, { method: 'PUT' });
+          }
+        }
+
+        if (window.carregarNotificacoes) {
+          setTimeout(window.carregarNotificacoes, 500);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function carregarTodasMensagens() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/mensagens');
+        const mensagens = await res.json();
+
+        exibirMensagens(mensagens);
+
+        // Marcar como lidas
+        for (const msg of mensagens) {
+          if (msg.tipo === 'cliente_para_admin' && !msg.lida) {
+            await fetch(`http://localhost:3000/api/mensagens/${msg._id}/marcar-lida`, { method: 'PUT' });
+          }
+        }
+
+        if (window.carregarNotificacoes) {
+          setTimeout(window.carregarNotificacoes, 500);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function exibirMensagens(mensagens) {
+      const container = document.getElementById('listaMensagens');
+
+      if (mensagens.length === 0) {
+        container.innerHTML = '<p>Sem mensagens</p>';
+        return;
+      }
+
+      container.innerHTML = mensagens.map(m => `
+        <div class="message-box ${m.isCancelamento ? 'badge-warning' : ''}">
+          ${m.isCancelamento ? '<strong>⚠️ NOTIFICAÇÃO DE CANCELAMENTO</strong><br>' : ''}
+          <h4>${m.assunto}</h4>
+          <div class="from">De: ${m.remetente} → Para: ${m.destinatario}</div>
+          <div class="date">${new Date(m.criadoEm).toLocaleString('pt-PT')}</div>
+          <p style="white-space: pre-wrap;">${m.texto}</p>
+          ${m.tipo === 'cliente_para_admin' && !m.isCancelamento ? `
+            <div class="message-actions">
+              <button class="btn" onclick="abrirResposta('${m.remetente}', '${m.assunto}')">Responder</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function abrirResposta(destinatario, assuntoOriginal) {
+      destinatarioAtual = destinatario;
+      document.getElementById('responderPara').textContent = destinatario;
+      document.getElementById('respostaAssunto').value = `Re: ${assuntoOriginal}`;
+      document.getElementById('respostaTexto').value = '';
+      document.getElementById('modalResponder').style.display = 'block';
+    }
+
+    async function enviarResposta() {
+      const assunto = document.getElementById('respostaAssunto').value;
+      const texto = document.getElementById('respostaTexto').value;
+
+      if (!texto) {
+        mostrarAlerta('Escreva uma mensagem', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/mensagens/responder', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ destinatario: destinatarioAtual, assunto, texto })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Resposta enviada!', 'success');
+          fecharModal();
+          filtrarMensagens();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao enviar resposta', 'error');
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('modalResponder').style.display = 'none';
+      destinatarioAtual = null;
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarClientes();
+    carregarTodasMensagens();
+  </script>
+</body>
+</html>

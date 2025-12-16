@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pacientes - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Gestão de Pacientes</h2>
+
+    <div class="card">
+      <h3>Lista de Pacientes</h3>
+      <div id="listaPacientes">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarPacientes() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pacientes');
+        const pacientes = await res.json();
+
+        const container = document.getElementById('listaPacientes');
+
+        if (pacientes.length === 0) {
+          container.innerHTML = '<p>Sem pacientes registados</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Contacto</th>
+                <th>Morada</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pacientes.map(p => `
+                <tr>
+                  <td>${p.nome}</td>
+                  <td>${p.email}</td>
+                  <td>${p.contacto || '-'}</td>
+                  <td>${p.morada || '-'}</td>
+                  <td><span class="badge badge-success">${p.estado}</span></td>
+                  <td>
+                    <a href="/admin/paciente-detalhes.html?nome=${encodeURIComponent(p.nome)}" class="btn">Ver Detalhes</a>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        document.getElementById('listaPacientes').innerHTML = '<p>Erro ao carregar pacientes</p>';
+      }
+    }
+
+    carregarPacientes();
+  </script>
+</body>
+</html>

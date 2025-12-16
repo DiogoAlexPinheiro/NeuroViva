@@ -1,0 +1,33 @@
+<header>
+  <h1>Área do Cliente</h1>
+  <div class="user-info">
+    <span id="userName">Olá, Cliente</span>
+    <button class="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<nav>
+  <a href="/client/dashboard.html" data-page="dashboard">Dashboard</a>
+  <span class="nav-link">
+    <a href="/client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+  </span>
+  <span class="nav-link">
+    <a href="/client/mensagens.html" data-page="mensagens">Mensagens</a>
+    <span class="notification-badge zero" id="badgeMensagens">0</span>
+  </span>
+  <span class="nav-link">
+    <a href="/client/financeiro.html" data-page="financeiro">Financeiro</a>
+    <span class="notification-badge zero" id="badgePagamentos">0</span>
+  </span>
+  <a href="/client/perfil.html" data-page="perfil">Perfil</a>
+</nav>
+
+<script>
+  // Marcar página ativa
+  const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+  document.querySelectorAll('nav a[data-page]').forEach(link => {
+    if (link.dataset.page === currentPage) {
+      link.classList.add('active');
+    }
+  });
+</script>

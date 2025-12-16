@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Paciente - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <a href="/admin/pacientes.html" class="btn btn-secondary">← Voltar</a>
+
+    <h2 id="nomePaciente">Paciente</h2>
+
+    <div class="card">
+      <h3>Informações Pessoais</h3>
+      <div id="infoPaciente">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Agendamentos</h3>
+      <div id="agendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const nomePaciente = urlParams.get('nome');
+
+    document.getElementById('nomePaciente').textContent = `Paciente: ${nomePaciente}`;
+
+    async function carregarDetalhes() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${encodeURIComponent(nomePaciente)}`);
+        const data = await res.json();
+
+        // Info pessoal
+        const infoPaciente = document.getElementById('infoPaciente');
+        const ctx = data.paciente.contextoFamiliar || {};
+        
+        infoPaciente.innerHTML = `
+          <p><strong>Email:</strong> ${data.paciente.email}</p>
+          <p><strong>Contacto:</strong> ${data.paciente.contacto || '-'}</p>
+          <p><strong>Morada:</strong> ${data.paciente.morada || '-'}</p>
+          <p><strong>Idade:</strong> ${data.paciente.idade || '-'}</p>
+          <p><strong>Estado:</strong> <span class="badge badge-success">${data.paciente.estado}</span></p>
+          <hr style="margin: 1rem 0;">
+          <h4>Contexto Familiar</h4>
+          <p><strong>Estado Civil:</strong> ${ctx.estadoCivil || '-'}</p>
+          <p><strong>Filhos:</strong> ${ctx.filhos || 0}</p>
+          <p><strong>Membros Agregado:</strong> ${ctx.membros && ctx.membros.length > 0 ? ctx.membros.join(', ') : '-'}</p>
+        `;
+
+        // Agendamentos
+        const agendamentos = document.getElementById('agendamentos');
+        if (data.agendamentos.length === 0) {
+          agendamentos.innerHTML = '<p>Sem agendamentos</p>';
+          return;
+        }
+
+        agendamentos.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.agendamentos.map(a => `
+                <tr>
+                  <td>${a.data}</td>
+                  <td>${a.hora}</td>
+                  <td><span class="badge ${a.estado === 'agendado' ? 'badge-success' : 'badge-warning'}">${a.estado}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    carregarDetalhes();
+  </script>
+</body>
+</html>

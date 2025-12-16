@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financeiro - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Gestão Financeira</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Registar Pagamento</h3>
+      
+      <form id="formPagamento" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Paciente</label>
+          <select id="pacienteSelect" required>
+            <option value="">A carregar...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Valor (€)</label>
+          <input type="number" id="valor" step="0.01" placeholder="50.00" required>
+        </div>
+
+        <div class="form-group">
+          <label>Estado</label>
+          <select id="estado" required>
+            <option value="pago">Pago</option>
+            <option value="pendente">Pendente</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Método de Pagamento</label>
+          <select id="metodo" required>
+            <option value="multibanco">Multibanco</option>
+            <option value="mbway">MB Way</option>
+            <option value="dinheiro">Dinheiro</option>
+            <option value="transferencia">Transferência</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Comprovativo (Recibo/Fatura)</label>
+          <input type="file" id="comprovativo" accept="image/*,.pdf">
+          <small style="color: #666;">Opcional - Anexar recibo ou fatura</small>
+        </div>
+
+        <button type="button" class="btn" onclick="registarPagamento()">Registar Pagamento</button>
+      </form>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Histórico de Pagamentos</h3>
+      <div id="listaPagamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Resumo Financeiro</h3>
+      <div id="resumo">
+        <p><strong>Total Pago:</strong> <span id="totalPago" style="color: #4CAF50;">€0.00</span></p>
+        <p><strong>Total Pendente:</strong> <span id="totalPendente" style="color: #FF9800;">€0.00</span></p>
+        <p><strong>Total Cancelado:</strong> <span id="totalCancelado" style="color: #f44336;">€0.00</span></p>
+        <hr style="margin: 1rem 0;">
+        <p><strong>Total Geral:</strong> <span id="totalGeral" style="font-size: 1.3rem; color: #f44336;">€0.00</span></p>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarPacientes() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pacientes');
+        const pacientes = await res.json();
+
+        const select = document.getElementById('pacienteSelect');
+        select.innerHTML = '<option value="">Selecione um paciente</option>' + 
+          pacientes.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function registarPagamento() {
+      const paciente = document.getElementById('pacienteSelect').value;
+      const valor = document.getElementById('valor').value;
+      const estado = document.getElementById('estado').value;
+      const metodo = document.getElementById('metodo').value;
+      const comprovantivoInput = document.getElementById('comprovativo');
+
+      if (!paciente || !valor) {
+        mostrarAlerta('Preencha todos os campos obrigatórios', 'error');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('paciente', paciente);
+        formData.append('valor', valor);
+        formData.append('estado', estado);
+        formData.append('metodo', metodo);
+
+        if (comprovantivoInput.files.length > 0) {
+          formData.append('comprovativo', comprovantivoInput.files[0]);
+        }
+
+        const res = await fetch('http://localhost:3000/api/admin/pagamentos', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Pagamento registado!', 'success');
+          document.getElementById('pacienteSelect').value = '';
+          document.getElementById('valor').value = '';
+          document.getElementById('comprovativo').value = '';
+          carregarPagamentos();
+          
+          if (window.carregarNotificacoes) {
+            window.carregarNotificacoes();
+          }
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao registar pagamento', 'error');
+      }
+    }
+
+    async function carregarPagamentos() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pagamentos');
+        const pagamentos = await res.json();
+
+        const container = document.getElementById('listaPagamentos');
+
+        if (pagamentos.length === 0) {
+          container.innerHTML = '<p>Sem pagamentos registados</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Valor</th>
+                <th>Estado</th>
+                <th>Método</th>
+                <th>Data</th>
+                <th>Comprovativo</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pagamentos.map(p => `
+                <tr>
+                  <td>${p.paciente}</td>
+                  <td>€${p.valor.toFixed(2)}</td>
+                  <td><span class="badge ${
+                    p.estado === 'pago' ? 'badge-success' : 
+                    p.estado === 'pendente' ? 'badge-warning' : 
+                    'badge-danger'
+                  }">${p.estado}</span></td>
+                  <td>${p.metodo}</td>
+                  <td>${p.data}</td>
+                  <td>
+                    ${p.comprovativo ? 
+                      `<a href="${p.comprovativo.caminho}" target="_blank" style="color: #f44336;">
+                        📎 Ver ficheiro
+                      </a>` 
+                      : '-'
+                    }
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+
+        // Calcular resumo
+        const totalPago = pagamentos.filter(p => p.estado === 'pago').reduce((sum, p) => sum + p.valor, 0);
+        const totalPendente = pagamentos.filter(p => p.estado === 'pendente').reduce((sum, p) => sum + p.valor, 0);
+        const totalCancelado = pagamentos.filter(p => p.estado === 'cancelado').reduce((sum, p) => sum + p.valor, 0);
+        const totalGeral = totalPago + totalPendente;
+
+        document.getElementById('totalPago').textContent = `€${totalPago.toFixed(2)}`;
+        document.getElementById('totalPendente').textContent = `€${totalPendente.toFixed(2)}`;
+        document.getElementById('totalCancelado').textContent = `€${totalCancelado.toFixed(2)}`;
+        document.getElementById('totalGeral').textContent = `€${totalGeral.toFixed(2)}`;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarPacientes();
+    carregarPagamentos();
+  </script>
+</body>
+</html>

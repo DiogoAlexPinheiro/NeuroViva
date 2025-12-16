@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensagens - Cliente</title>
+  <link rel="stylesheet" href="/client/adds/client.css">
+  <script src="/client/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Mensagens</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Nova Mensagem</h3>
+      
+      <div class="form-group">
+        <label>Assunto</label>
+        <input type="text" id="novoAssunto">
+      </div>
+
+      <div class="form-group">
+        <label>Mensagem</label>
+        <textarea id="novoTexto" rows="4"></textarea>
+      </div>
+
+      <button class="btn" onclick="enviarMensagem()">Enviar</button>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Mensagens Recebidas da Psicóloga</h3>
+      <div id="mensagensRecebidas">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Mensagens Enviadas</h3>
+      <div id="mensagensEnviadas">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>📄 Relatórios</h3>
+      <div id="relatorios">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <!-- Modal para editar -->
+    <div id="modalEditar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px;">
+        <h3>Editar Mensagem</h3>
+        
+        <div class="form-group">
+          <label>Assunto</label>
+          <input type="text" id="editAssunto">
+        </div>
+
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="editTexto" rows="4"></textarea>
+        </div>
+
+        <button class="btn" onclick="salvarEdicao()">Salvar</button>
+        <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'client') {
+      window.location.href = '/login.html';
+    }
+
+    let mensagemEditando = null;
+
+    async function enviarMensagem() {
+      const assunto = document.getElementById('novoAssunto').value;
+      const texto = document.getElementById('novoTexto').value;
+
+      if (!assunto || !texto) {
+        mostrarAlerta('Preencha todos os campos', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('http://localhost:3000/api/mensagens', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ remetente: user.nome, assunto, texto })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          mostrarAlerta('Mensagem enviada!', 'success');
+          document.getElementById('novoAssunto').value = '';
+          document.getElementById('novoTexto').value = '';
+          carregarMensagens();
+        } else {
+          mostrarAlerta(result.error, 'error');
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao enviar mensagem', 'error');
+      }
+    }
+
+    async function carregarMensagens() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/cliente/${user.nome}`);
+        const data = await res.json();
+
+        // Marcar mensagens recebidas como lidas
+        for (const msg of data.recebidas) {
+          if (!msg.lida) {
+            await fetch(`http://localhost:3000/api/mensagens/${msg._id}/marcar-lida`, { method: 'PUT' });
+          }
+        }
+
+        // Mensagens recebidas
+        const containerRecebidas = document.getElementById('mensagensRecebidas');
+        if (data.recebidas.length === 0) {
+          containerRecebidas.innerHTML = '<p>Sem mensagens recebidas</p>';
+        } else {
+          containerRecebidas.innerHTML = data.recebidas.map(m => `
+            <div class="message-box received">
+              <h4>${m.assunto}</h4>
+              <div class="date">${new Date(m.criadoEm).toLocaleString('pt-PT')}</div>
+              <p>${m.texto}</p>
+            </div>
+          `).join('');
+        }
+
+        // Mensagens enviadas
+        const containerEnviadas = document.getElementById('mensagensEnviadas');
+        if (data.enviadas.length === 0) {
+          containerEnviadas.innerHTML = '<p>Sem mensagens enviadas</p>';
+        } else {
+          containerEnviadas.innerHTML = data.enviadas.map(m => `
+            <div class="message-box">
+              <h4>${m.assunto}</h4>
+              <div class="date">${new Date(m.criadoEm).toLocaleString('pt-PT')}</div>
+              <p>${m.texto}</p>
+              <div class="message-actions">
+                <button class="btn btn-secondary" onclick="editarMensagem('${m._id}', '${m.assunto}', \`${m.texto}\`)">Editar</button>
+                <button class="btn btn-danger" onclick="apagarMensagem('${m._id}')">Apagar</button>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // Atualizar notificações depois de marcar como lida
+        if (window.carregarNotificacoes) {
+          setTimeout(window.carregarNotificacoes, 500);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function carregarRelatorios() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/relatorios/paciente/${user.nome}`);
+        const data = await res.json();
+
+        const container = document.getElementById('relatorios');
+        const todos = [...data.normais, ...data.externos];
+
+        if (todos.length === 0) {
+          container.innerHTML = '<p>Sem relatórios disponíveis</p>';
+          return;
+        }
+
+        container.innerHTML = todos.map(r => `
+          <div class="message-box">
+            <h4>${r.tipo === 'normal' ? '📋 Relatório de Sessão' : '📄 Relatório Externo'}</h4>
+            <div class="date">${r.data}</div>
+            ${r.entidade ? `<p><strong>Entidade:</strong> ${r.entidade}</p>` : ''}
+            <p>${r.conteudo || r.relatorio}</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function editarMensagem(id, assunto, texto) {
+      mensagemEditando = id;
+      document.getElementById('editAssunto').value = assunto;
+      document.getElementById('editTexto').value = texto;
+      document.getElementById('modalEditar').style.display = 'block';
+    }
+
+    async function salvarEdicao() {
+      const assunto = document.getElementById('editAssunto').value;
+      const texto = document.getElementById('editTexto').value;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/${mensagemEditando}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ assunto, texto })
+        });
+
+        if (res.ok) {
+          mostrarAlerta('Mensagem editada!', 'success');
+          fecharModal();
+          carregarMensagens();
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao editar', 'error');
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('modalEditar').style.display = 'none';
+      mensagemEditando = null;
+    }
+
+    async function apagarMensagem(id) {
+      if (!confirm('Apagar esta mensagem?')) return;
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (res.ok) {
+          mostrarAlerta('Mensagem apagada!', 'success');
+          carregarMensagens();
+        }
+      } catch (error) {
+        mostrarAlerta('Erro ao apagar', 'error');
+      }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.textContent = msg;
+      setTimeout(() => el.textContent = '', 5000);
+    }
+
+    carregarMensagens();
+    carregarRelatorios();
+  </script>
+</body>
+</html>

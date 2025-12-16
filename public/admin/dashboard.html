@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Admin</title>
+  <link rel="stylesheet" href="/admin/adds/admin.css">
+  <script src="/admin/adds/loader.js"></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <h2>Visão Geral</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 id="totalPacientes">0</h3>
+        <p>Total Pacientes</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalAgendamentos">0</h3>
+        <p>Agendamentos Hoje</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalMensagens">0</h3>
+        <p>Mensagens Novas</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalPagamentos">€0</h3>
+        <p>Faturação Total</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>👥 Pacientes</h3>
+        <p>Gerir pacientes e histórico clínico</p>
+        <a href="/admin/pacientes.html" class="btn">Ver Pacientes</a>
+      </div>
+
+      <div class="card">
+        <h3>💬 Mensagens</h3>
+        <p>Responder a mensagens dos pacientes</p>
+        <a href="/admin/mensagens.html" class="btn">Ver Mensagens</a>
+      </div>
+
+      <div class="card">
+        <h3>📄 Relatórios</h3>
+        <p>Criar relatórios e documentos</p>
+        <a href="/admin/relatorios.html" class="btn">Gerir Relatórios</a>
+      </div>
+
+      <div class="card">
+        <h3>💰 Financeiro</h3>
+        <p>Registar pagamentos e consultas</p>
+        <a href="/admin/financeiro.html" class="btn">Ver Financeiro</a>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if (!user || user.role !== 'admin') {
+      window.location.href = '/login.html';
+    }
+
+    async function carregarEstatisticas() {
+      try {
+        const resPacientes = await fetch('http://localhost:3000/api/admin/pacientes');
+        const pacientes = await resPacientes.json();
+        document.getElementById('totalPacientes').textContent = pacientes.length;
+
+        const resNotif = await fetch('http://localhost:3000/api/notificacoes/admin');
+        const notif = await resNotif.json();
+        document.getElementById('totalAgendamentos').textContent = notif.agendamentos;
+        document.getElementById('totalMensagens').textContent = notif.mensagens;
+
+        const resPagamentos = await fetch('http://localhost:3000/api/admin/pagamentos');
+        const pagamentos = await resPagamentos.json();
+        const total = pagamentos.reduce((sum, p) => sum + p.valor, 0);
+        document.getElementById('totalPagamentos').textContent = `€${total.toFixed(2)}`;
+      } catch (error) {
+        console.error('Erro ao carregar estatísticas:', error);
+      }
+    }
+
+    carregarEstatisticas();
+  </script>
+</body>
+</html>
