@@ -1,8 +1,28 @@
+<!-- public/adds/header.html -->
 <header>
-  <h1>Consultório de Psicologia</h1>
+  <h1><span class="brand">NEUROVIVA</span></h1>
 </header>
 
 <nav>
-  <a href="/index.html">Início</a>
-  <a href="/login.html">Login</a>
+  <a href="/index.html" data-page="index">Inicio</a>
+  <a href="/login.html" data-page="login">Login</a>
 </nav>
+
+<script>
+  (function() {
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('nav a');
+    
+    links.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      const pageName = link.getAttribute('data-page');
+      
+      if (currentPath === linkPath || 
+          currentPath.endsWith(linkPath) ||
+          (currentPath === '/' && linkPath === '/index.html') ||
+          currentPath.includes(pageName)) {
+        link.classList.add('active');
+      }
+    });
+  })();
+</script>

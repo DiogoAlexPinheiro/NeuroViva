@@ -3,119 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatórios - Admin</title>
+  <title>Relatorios - Admin</title>
   <link rel="stylesheet" href="/admin/adds/admin.css">
+  <link rel="stylesheet" href="/adds/modal.css">
   <script src="/admin/adds/loader.js"></script>
-  <style>
-    /* Secção Verde Destacada */
-    .green-section {
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
-      margin-bottom: 2rem;
-    }
-
-    .green-section h3 {
-      color: white;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    }
-
-    .green-section .form-group label {
-      color: white;
-      font-weight: 600;
-    }
-
-    .green-section .form-group input,
-    .green-section .form-group textarea,
-    .green-section .form-group select {
-      border: 2px solid #81C784;
-      background-color: rgba(255, 255, 255, 0.95);
-    }
-
-    .green-section .form-group input:focus,
-    .green-section .form-group textarea:focus,
-    .green-section .form-group select:focus {
-      border-color: white;
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-    }
-
-    .green-section .btn {
-      background-color: white;
-      color: #4CAF50;
-      font-weight: bold;
-      border: 2px solid white;
-    }
-
-    .green-section .btn:hover {
-      background-color: #f1f1f1;
-      transform: translateY(-2px);
-    }
-
-    .green-section input[type="file"] {
-      border-color: white;
-      background-color: rgba(255, 255, 255, 0.9);
-    }
-
-    .green-section small {
-      color: rgba(255,255,255,0.9);
-    }
-  </style>
+  <script src="/adds/modal.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
 
   <main>
-    <h2>Gestão de Relatórios</h2>
+    <h2>Gestao de Relatorios</h2>
 
-    <div id="alert"></div>
+    <div id="alert" class="alert-hidden"></div>
 
-    <!-- SECÇÃO VERDE DESTACADA -->
-    <div class="green-section">
-      <h3>✨ Criar Novo Relatório</h3>
+    <div class="card">
+      <h3>Criar Novo Relatorio</h3>
       
       <form id="formRelatorio" enctype="multipart/form-data">
-        <div class="form-group">
-          <label>Paciente</label>
-          <select id="pacienteSelect" required>
-            <option value="">A carregar...</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Titulo do Relatorio</label>
+            <input type="text" id="titulo" placeholder="Ex: Relatorio de Sessao - Avaliacao Inicial" required>
+          </div>
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="dataRelatorio" required>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Tipo de Relatório</label>
-          <select id="tipoRelatorio" required>
-            <option value="normal">Relatório de Sessão (Normal)</option>
-            <option value="tribunal">Relatório Externo - Tribunal</option>
-            <option value="escola">Relatório Externo - Escola</option>
-            <option value="empresa">Relatório Externo - Empresa</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Paciente</label>
+            <select id="pacienteSelect" required>
+              <option value="">A carregar...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Relatorio</label>
+            <select id="tipoRelatorio" required>
+              <option value="normal">Relatorio de Sessao (Normal)</option>
+              <option value="tribunal">Relatorio Externo - Tribunal</option>
+              <option value="escola">Relatorio Externo - Escola</option>
+              <option value="empresa">Relatorio Externo - Empresa</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-group" id="entidadeGroup" style="display: none;">
-          <label>Entidade</label>
-          <input type="text" id="entidade" placeholder="Ex: Tribunal de Família do Porto">
+          <label>Entidade Destinataria</label>
+          <input type="text" id="entidade" placeholder="Ex: Tribunal de Familia do Porto">
+        </div>
+
+        <div class="form-group" id="entidadeEmailGroup" style="display: none;">
+          <label>Email da Entidade (opcional - para arquivo interno)</label>
+          <input type="email" id="entidadeEmail" placeholder="Ex: tribunal.familia.porto@dgaj.pt">
+          <small style="color: var(--color-text-light);">Este email nao sera visivel publicamente, apenas nos detalhes de edicao</small>
         </div>
 
         <div class="form-group">
-          <label>Conteúdo do Relatório</label>
-          <textarea id="conteudo" rows="8" placeholder="Descreva o conteúdo do relatório..." required></textarea>
+          <label>Conteudo / Texto Principal</label>
+          <textarea id="conteudo" rows="8" placeholder="Descreva o conteudo do relatorio..." required></textarea>
         </div>
 
         <div class="form-group">
-          <label>📎 Anexos (Imagens, PDFs, Documentos)</label>
+          <label>Notas Adicionais</label>
+          <textarea id="notas" rows="3" placeholder="Observacoes, recomendacoes ou notas complementares..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Anexos (Imagens, PDFs, Documentos)</label>
           <input type="file" id="anexos" multiple accept="image/*,.pdf,.doc,.docx,.txt">
-          <small>Pode selecionar múltiplos ficheiros (máx 50MB cada)</small>
+          <small style="color: var(--color-text-light);">Pode selecionar ate 5 ficheiros (max 50MB cada)</small>
         </div>
 
-        <button type="button" class="btn" onclick="criarRelatorio()">Criar Relatório</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Assinatura - Nome</label>
+            <input type="text" id="assinaturaNome" placeholder="Ex: Dra. Sofia Silva" required>
+          </div>
+          <div class="form-group">
+            <label>Assinatura - Titulo/Cedula</label>
+            <input type="text" id="assinaturaTitulo" placeholder="Ex: Psicologa Clinica - OPP 12345">
+          </div>
+        </div>
+
+        <button type="button" class="btn" onclick="criarRelatorio()">Criar Relatorio</button>
       </form>
     </div>
 
     <div class="card">
-      <h3>Relatórios Existentes</h3>
+      <h3>Relatorios Existentes</h3>
       
       <div class="form-group">
         <label>Filtrar por Paciente</label>
@@ -129,23 +107,49 @@
       </div>
     </div>
 
-    <!-- Modal para editar -->
-    <div id="modalEditar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-      <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto;">
-        <h3>Editar Relatório</h3>
+    <div id="modalEditar" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Editar Relatorio</h3>
         
         <div class="form-group">
-          <label>Entidade (se aplicável)</label>
+          <label>Titulo</label>
+          <input type="text" id="editTitulo">
+        </div>
+
+        <div class="form-group">
+          <label>Entidade (se aplicavel)</label>
           <input type="text" id="editEntidade">
         </div>
 
-        <div class="form-group">
-          <label>Conteúdo</label>
-          <textarea id="editConteudo" rows="10"></textarea>
+        <div class="form-group" id="editEntidadeEmailGroup">
+          <label>Email da Entidade</label>
+          <input type="email" id="editEntidadeEmail" placeholder="Email para contacto futuro">
         </div>
 
-        <button class="btn" onclick="salvarEdicao()">Salvar</button>
-        <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+        <div class="form-group">
+          <label>Conteudo</label>
+          <textarea id="editConteudo" rows="8"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Notas</label>
+          <textarea id="editNotas" rows="3"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="salvarEdicao()">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalDetalhes" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Detalhes do Relatorio</h3>
+        <div id="detalhesConteudo"></div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+        </div>
       </div>
     </div>
   </main>
@@ -154,60 +158,77 @@
 
   <script>
     const user = JSON.parse(localStorage.getItem('user'));
-    
-    if (!user || user.role !== 'admin') {
-      window.location.href = '/login.html';
-    }
+    if (!user || user.role !== 'admin') { window.location.href = '/login.html'; }
 
     let relatorioEditando = null;
     let tipoEditando = null;
+    let todosRelatorios = [];
+
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('dataRelatorio').value = hoje;
 
     document.getElementById('tipoRelatorio').addEventListener('change', (e) => {
-      const entidadeGroup = document.getElementById('entidadeGroup');
-      if (e.target.value !== 'normal') {
-        entidadeGroup.style.display = 'block';
-      } else {
-        entidadeGroup.style.display = 'none';
-      }
+      const isExterno = e.target.value !== 'normal';
+      document.getElementById('entidadeGroup').style.display = isExterno ? 'block' : 'none';
+      document.getElementById('entidadeEmailGroup').style.display = isExterno ? 'block' : 'none';
     });
 
     async function carregarPacientes() {
       try {
         const res = await fetch('http://localhost:3000/api/admin/pacientes');
         const pacientes = await res.json();
-
-        const options = pacientes.map(p => `<option value="${p.nome}">${p.nome}</option>`).join('');
-        
+        const options = pacientes.filter(p => p.estado === 'ativo')
+          .map(p => '<option value="' + p.nomeCompleto + '">' + p.nomeCompleto + '</option>').join('');
         document.getElementById('pacienteSelect').innerHTML = '<option value="">Selecione um paciente</option>' + options;
         document.getElementById('filtroRelatorio').innerHTML = '<option value="">Todos os pacientes</option>' + options;
-      } catch (error) {
-        console.error(error);
-      }
+
+        const adminRes = await fetch('http://localhost:3000/api/admin/perfil?username=admin');
+        const admin = await adminRes.json();
+        if (admin) document.getElementById('assinaturaNome').value = admin.nome || '';
+      } catch (error) { console.error(error); }
     }
 
     async function criarRelatorio() {
+      const titulo = document.getElementById('titulo').value;
+      const dataRelatorio = document.getElementById('dataRelatorio').value;
       const paciente = document.getElementById('pacienteSelect').value;
       const tipo = document.getElementById('tipoRelatorio').value;
       const entidade = document.getElementById('entidade').value;
+      const entidadeEmail = document.getElementById('entidadeEmail').value;
       const conteudo = document.getElementById('conteudo').value;
+      const notas = document.getElementById('notas').value;
+      const assinaturaNome = document.getElementById('assinaturaNome').value;
+      const assinaturaTitulo = document.getElementById('assinaturaTitulo').value;
       const anexosInput = document.getElementById('anexos');
 
-      if (!paciente || !conteudo) {
-        mostrarAlerta('Preencha todos os campos obrigatórios', 'error');
+      if (!titulo || !paciente || !conteudo || !assinaturaNome) {
+        await customAlert('Preencha todos os campos obrigatorios');
         return;
       }
 
       if (tipo !== 'normal' && !entidade) {
-        mostrarAlerta('Preencha a entidade para relatórios externos', 'error');
+        await customAlert('Preencha a entidade para relatorios externos');
+        return;
+      }
+
+      if (anexosInput.files.length > 5) {
+        await customAlert('Pode selecionar no maximo 5 anexos');
         return;
       }
 
       try {
+        showLoading('A criar relatorio...');
         const formData = new FormData();
+        formData.append('titulo', titulo);
+        formData.append('data', dataRelatorio);
         formData.append('paciente', paciente);
         formData.append('tipo', tipo);
         formData.append('entidade', entidade);
+        formData.append('entidadeEmail', entidadeEmail);
         formData.append('conteudo', conteudo);
+        formData.append('notas', notas);
+        formData.append('assinaturaNome', assinaturaNome);
+        formData.append('assinaturaTitulo', assinaturaTitulo);
 
         if (anexosInput.files.length > 0) {
           for (let i = 0; i < anexosInput.files.length; i++) {
@@ -219,21 +240,25 @@
           method: 'POST',
           body: formData
         });
-
         const result = await res.json();
+        hideLoading();
 
         if (res.ok) {
-          mostrarAlerta('Relatório criado com sucesso!', 'success');
+          await customAlert('Relatorio criado!\n\nCodigo: ' + result.codigo);
+          document.getElementById('titulo').value = '';
           document.getElementById('pacienteSelect').value = '';
           document.getElementById('conteudo').value = '';
+          document.getElementById('notas').value = '';
           document.getElementById('entidade').value = '';
+          document.getElementById('entidadeEmail').value = '';
           document.getElementById('anexos').value = '';
           carregarRelatorios();
         } else {
-          mostrarAlerta(result.error, 'error');
+          await customAlert(result.error);
         }
       } catch (error) {
-        mostrarAlerta('Erro ao criar relatório', 'error');
+        hideLoading();
+        await customAlert('Erro ao criar relatorio');
       }
     }
 
@@ -241,111 +266,172 @@
       try {
         const res = await fetch('http://localhost:3000/api/admin/relatorios');
         const data = await res.json();
-
-        const todos = [
+        todosRelatorios = [
           ...data.normais.map(r => ({ ...r, tipoRelatorio: 'normal' })),
           ...data.externos.map(r => ({ ...r, tipoRelatorio: r.tipo }))
         ].sort((a, b) => new Date(b.data) - new Date(a.data));
-
-        exibirRelatorios(todos);
-      } catch (error) {
-        console.error(error);
-      }
+        exibirRelatorios(todosRelatorios);
+      } catch (error) { console.error(error); }
     }
 
     async function filtrarRelatorios() {
       const pacienteFiltro = document.getElementById('filtroRelatorio').value;
+      let filtrados = [...todosRelatorios];
+      if (pacienteFiltro) filtrados = filtrados.filter(r => r.paciente === pacienteFiltro);
+      exibirRelatorios(filtrados);
+    }
 
-      try {
-        const res = await fetch('http://localhost:3000/api/admin/relatorios');
-        const data = await res.json();
-
-        let todos = [
-          ...data.normais.map(r => ({ ...r, tipoRelatorio: 'normal' })),
-          ...data.externos.map(r => ({ ...r, tipoRelatorio: r.tipo }))
-        ];
-
-        if (pacienteFiltro) {
-          todos = todos.filter(r => r.paciente === pacienteFiltro);
-        }
-
-        todos.sort((a, b) => new Date(b.data) - new Date(a.data));
-        exibirRelatorios(todos);
-      } catch (error) {
-        console.error(error);
-      }
+    function copiarCodigo(codigo, event) {
+      event.stopPropagation();
+      navigator.clipboard.writeText(codigo).then(() => {
+        mostrarAlerta('Codigo copiado!', 'success');
+      });
     }
 
     function exibirRelatorios(relatorios) {
       const container = document.getElementById('listaRelatorios');
-
       if (relatorios.length === 0) {
-        container.innerHTML = '<p>Sem relatórios</p>';
+        container.innerHTML = '<p>Sem relatorios</p>';
         return;
       }
 
       container.innerHTML = relatorios.map(r => `
-        <div class="message-box" style="margin-bottom: 1.5rem;">
-          <h4>${r.tipoRelatorio === 'normal' ? '📋 Relatório de Sessão' : '📄 Relatório Externo'}</h4>
-          <p><strong>Paciente:</strong> ${r.paciente}</p>
-          <p><strong>Data:</strong> ${r.data}</p>
-          ${r.entidade ? `<p><strong>Entidade:</strong> ${r.entidade}</p>` : ''}
-          ${r.tipoRelatorio !== 'normal' ? `<p><strong>Tipo:</strong> ${r.tipoRelatorio}</p>` : ''}
-          <p style="white-space: pre-wrap; margin-top: 1rem;">${r.conteudo || r.relatorio}</p>
+        <div class="message-box">
+          <div class="relatorio-header">
+            <div>
+              <h4>${r.titulo || (r.tipoRelatorio === 'normal' ? 'Relatorio de Sessao' : 'Relatorio Externo')}</h4>
+              <span style="font-size: 0.85rem; color: var(--color-text-light);">${r.tipoRelatorio !== 'normal' ? r.tipoRelatorio.toUpperCase() : 'SESSAO'}</span>
+            </div>
+            <span class="codigo-badge clickable" onclick="verDetalhes('${r._id}', '${r.tipoRelatorio}')" title="Ver detalhes">
+              ${r.codigo}
+              <button onclick="copiarCodigo('${r.codigo}', event)" title="Copiar">Copiar</button>
+            </span>
+          </div>
+
+          <div class="relatorio-meta">
+            <div class="relatorio-meta-item">
+              <label>Data</label>
+              <span>${r.data}</span>
+            </div>
+            <div class="relatorio-meta-item">
+              <label>Paciente</label>
+              <span>${r.paciente}</span>
+            </div>
+            ${r.entidade ? '<div class="relatorio-meta-item"><label>Entidade</label><span>' + r.entidade + '</span></div>' : ''}
+            ${r.psicologo ? '<div class="relatorio-meta-item"><label>Psicologo</label><span>' + r.psicologo + '</span></div>' : ''}
+          </div>
+
+          <div class="relatorio-content">
+            <div class="relatorio-section">
+              <h5>Conteudo</h5>
+              <p style="white-space: pre-wrap;">${(r.conteudo || r.relatorio || '').substring(0, 300)}${(r.conteudo || r.relatorio || '').length > 300 ? '...' : ''}</p>
+            </div>
+          </div>
           
           ${r.anexos && r.anexos.length > 0 ? `
-            <div style="margin-top: 1rem;">
-              <strong>Anexos:</strong>
-              <ul>
-                ${r.anexos.map(a => `
-                  <li>
-                    <a href="${a.caminho}" target="_blank" style="color: #f44336;">
-                      📎 ${a.nome} (${(a.tamanho / 1024).toFixed(1)} KB)
-                    </a>
-                  </li>
-                `).join('')}
-              </ul>
+            <div class="relatorio-section">
+              <h5>Anexos</h5>
+              ${r.anexos.map(a => '<div class="anexo-item"><a href="' + a.caminho + '" target="_blank">' + a.nome + '</a><button class="btn-small btn-danger" onclick="removerAnexo(\'' + r._id + '\', \'' + r.tipoRelatorio + '\', \'' + a.caminho + '\')">Remover</button></div>').join('')}
             </div>
           ` : ''}
 
-          <div class="message-actions">
-            <button class="btn btn-secondary" onclick="editarRelatorio('${r._id}', '${r.tipoRelatorio}', '${r.entidade || ''}', \`${(r.conteudo || r.relatorio).replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)">Editar</button>
-            <button class="btn btn-danger" onclick="apagarRelatorio('${r._id}', '${r.tipoRelatorio}')">Apagar</button>
+          <div class="relatorio-footer">
+            <div class="message-actions">
+              <button class="btn-small" onclick="editarRelatorio('${r._id}', '${r.tipoRelatorio}', \`${(r.titulo || '').replace(/`/g, '')}\`, '${r.entidade || ''}', '${r.entidadeEmail || ''}', \`${(r.conteudo || r.relatorio || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`, \`${(r.notas || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`)">Editar</button>
+              <button class="btn-small btn-danger" onclick="apagarRelatorio('${r._id}', '${r.tipoRelatorio}')">Apagar</button>
+            </div>
+
+            ${r.assinatura ? `
+              <div class="assinatura-section">
+                <div class="assinatura-nome">${r.assinatura.nome}</div>
+                ${r.assinatura.titulo ? '<div class="assinatura-titulo">' + r.assinatura.titulo + '</div>' : ''}
+              </div>
+            ` : '<div></div>'}
           </div>
         </div>
       `).join('');
     }
 
-    function editarRelatorio(id, tipo, entidade, conteudo) {
+    function verDetalhes(id, tipo) {
+      const rel = todosRelatorios.find(r => r._id === id);
+      if (!rel) return;
+      
+      document.getElementById('detalhesConteudo').innerHTML = `
+        <div class="modal-detalhes-grid">
+          <div class="detalhe-item">
+            <label>Codigo</label>
+            <span>${rel.codigo}</span>
+          </div>
+          <div class="detalhe-item">
+            <label>Tipo</label>
+            <span>${rel.tipoRelatorio}</span>
+          </div>
+          <div class="detalhe-item">
+            <label>Paciente</label>
+            <span>${rel.paciente}</span>
+          </div>
+          <div class="detalhe-item">
+            <label>Data</label>
+            <span>${rel.data}</span>
+          </div>
+          ${rel.psicologo ? '<div class="detalhe-item"><label>Psicologo</label><span>' + rel.psicologo + '</span></div>' : ''}
+          ${rel.entidade ? '<div class="detalhe-item"><label>Entidade</label><span>' + rel.entidade + '</span></div>' : ''}
+          <div class="detalhe-item full">
+            <label>Conteudo</label>
+            <p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.conteudo || rel.relatorio || ''}</p>
+          </div>
+          ${rel.notas ? '<div class="detalhe-item full"><label>Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">' + rel.notas + '</p></div>' : ''}
+          ${rel.assinatura ? '<div class="detalhe-item full"><label>Assinatura</label><span>' + rel.assinatura.nome + (rel.assinatura.titulo ? ' - ' + rel.assinatura.titulo : '') + '</span></div>' : ''}
+        </div>
+      `;
+      document.getElementById('modalDetalhes').style.display = 'flex';
+    }
+
+    function fecharModalDetalhes() {
+      document.getElementById('modalDetalhes').style.display = 'none';
+    }
+
+    function editarRelatorio(id, tipo, titulo, entidade, entidadeEmail, conteudo, notas) {
       relatorioEditando = id;
       tipoEditando = tipo;
+      document.getElementById('editTitulo').value = titulo;
       document.getElementById('editEntidade').value = entidade;
-      document.getElementById('editConteudo').value = conteudo;
-      document.getElementById('modalEditar').style.display = 'block';
+      document.getElementById('editEntidadeEmail').value = entidadeEmail || '';
+      document.getElementById('editConteudo').value = conteudo.replace(/\\n/g, '\n');
+      document.getElementById('editNotas').value = notas.replace(/\\n/g, '\n');
+      
+      document.getElementById('editEntidadeEmailGroup').style.display = tipo !== 'normal' ? 'block' : 'none';
+      
+      document.getElementById('modalEditar').style.display = 'flex';
     }
 
     async function salvarEdicao() {
+      const titulo = document.getElementById('editTitulo').value;
       const entidade = document.getElementById('editEntidade').value;
+      const entidadeEmail = document.getElementById('editEntidadeEmail').value;
       const conteudo = document.getElementById('editConteudo').value;
+      const notas = document.getElementById('editNotas').value;
 
       try {
-        const res = await fetch(`http://localhost:3000/api/admin/relatorios/${relatorioEditando}`, {
+        showLoading('A guardar alteracoes...');
+        const res = await fetch('http://localhost:3000/api/admin/relatorios/' + relatorioEditando, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tipo: tipoEditando, conteudo, entidade })
+          body: JSON.stringify({ tipo: tipoEditando, titulo, conteudo, entidade, entidadeEmail, notas })
         });
-
         const result = await res.json();
+        hideLoading();
 
         if (res.ok) {
-          mostrarAlerta('Relatório atualizado!', 'success');
+          await customAlert('Relatorio atualizado!');
           fecharModal();
-          filtrarRelatorios();
+          carregarRelatorios();
         } else {
-          mostrarAlerta(result.error, 'error');
+          await customAlert(result.error);
         }
       } catch (error) {
-        mostrarAlerta('Erro ao atualizar', 'error');
+        hideLoading();
+        await customAlert('Erro ao atualizar');
       }
     }
 
@@ -355,32 +441,59 @@
       tipoEditando = null;
     }
 
-    async function apagarRelatorio(id, tipo) {
-      if (!confirm('Tem certeza que deseja apagar este relatório?')) return;
+    async function removerAnexo(relatorioId, tipo, anexoCaminho) {
+      const confirmacao = await customConfirm('Tem certeza que deseja remover este anexo?');
+      if (!confirmacao) return;
 
       try {
-        const res = await fetch(`http://localhost:3000/api/admin/relatorios/${id}?tipo=${tipo}`, {
-          method: 'DELETE'
+        showLoading('A remover anexo...');
+        const res = await fetch('http://localhost:3000/api/admin/relatorios/' + relatorioId + '/anexo', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo, anexoCaminho })
         });
-
         const result = await res.json();
+        hideLoading();
 
         if (res.ok) {
-          mostrarAlerta('Relatório apagado!', 'success');
-          filtrarRelatorios();
+          await customAlert('Anexo removido!');
+          carregarRelatorios();
         } else {
-          mostrarAlerta(result.error, 'error');
+          await customAlert(result.error);
         }
       } catch (error) {
-        mostrarAlerta('Erro ao apagar', 'error');
+        hideLoading();
+        await customAlert('Erro ao remover anexo');
+      }
+    }
+
+    async function apagarRelatorio(id, tipo) {
+      const confirmacao = await customConfirm('Tem certeza que deseja apagar este relatorio?');
+      if (!confirmacao) return;
+
+      try {
+        showLoading('A apagar relatorio...');
+        const res = await fetch('http://localhost:3000/api/admin/relatorios/' + id + '?tipo=' + tipo, { method: 'DELETE' });
+        const result = await res.json();
+        hideLoading();
+
+        if (res.ok) {
+          await customAlert('Relatorio apagado!');
+          carregarRelatorios();
+        } else {
+          await customAlert(result.error);
+        }
+      } catch (error) {
+        hideLoading();
+        await customAlert('Erro ao apagar');
       }
     }
 
     function mostrarAlerta(msg, tipo) {
       const el = document.getElementById('alert');
-      el.className = `alert alert-${tipo === 'error' ? 'error' : 'success'}`;
+      el.className = tipo === 'error' ? 'alert alert-error' : 'alert alert-success';
       el.textContent = msg;
-      setTimeout(() => el.textContent = '', 5000);
+      setTimeout(() => el.className = 'alert-hidden', 5000);
     }
 
     carregarPacientes();

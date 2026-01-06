@@ -1,0 +1,15 @@
+1 corrigir o painel de visão geral
+2 corrigir os botões q atualmente aparecem mal, apenas como links
+
+o botão de acoes n funciona corretamente
+deixar editar a info nessa pag e maneira de confimar agendamentos (adicionar pag de agendamentos confirmados e não confirmados para isso)
+melhorara design da pag paciente e botão de voltar
+
+meter sistema estilo watsapp para mensagens para o admin
+atualizar a cora azul das mensagens do doutor para o cliente serem azuis
+deixar a doutora editar ou apagar mensagens e meter imagens ou pgns nelas (para os clientes tambem)
+
+fazer a escrita de relatórios ser um pop up e não ter aquela cor verde
+corrigir os vasrios botões na pag
+
+adicionar capacidade de editar info na área financeira ou apagar pelo admin

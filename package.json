@@ -9,17 +9,31 @@
     "dev": "nodemon server.js",
     "init-db": "node init-database-completo.js"
   },
-  "keywords": ["consultorio", "psicologia", "nodejs", "mongodb"],
+  "keywords": [
+    "consultorio",
+    "psicologia",
+    "nodejs",
+    "mongodb"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "mongodb": "^6.3.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
+    "express": "^4.22.1",
+    "mongodb": "^6.3.0",
+    "mongoose": "^9.1.2",
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiogoAlexPinheiro/Consultorio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DiogoAlexPinheiro/Consultorio/issues"
+  },
+  "homepage": "https://github.com/DiogoAlexPinheiro/Consultorio#readme"
 }

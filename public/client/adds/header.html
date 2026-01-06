@@ -1,33 +1,64 @@
 <header>
-  <h1>Área do Cliente</h1>
-  <div class="user-info">
-    <span id="userName">Olá, Cliente</span>
-    <button class="btn-logout" onclick="logout()">Sair</button>
-  </div>
+  <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
 </header>
 
 <nav>
-  <a href="/client/dashboard.html" data-page="dashboard">Dashboard</a>
-  <span class="nav-link">
-    <a href="/client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-  </span>
-  <span class="nav-link">
-    <a href="/client/mensagens.html" data-page="mensagens">Mensagens</a>
-    <span class="notification-badge zero" id="badgeMensagens">0</span>
-  </span>
-  <span class="nav-link">
-    <a href="/client/financeiro.html" data-page="financeiro">Financeiro</a>
-    <span class="notification-badge zero" id="badgePagamentos">0</span>
-  </span>
-  <a href="/client/perfil.html" data-page="perfil">Perfil</a>
+  <div class="user-nav-wrapper">
+    <span id="userName">Olá, Cliente</span>
+    
+    <div class="nav-links-center">
+      <a href="/client/dashboard.html" data-page="dashboard">Dashboard</a>
+      <a href="/client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+      <a href="/client/mensagens.html" data-page="mensagens">Mensagens</a>
+      <a href="/client/financeiro.html" data-page="financeiro">Financeiro</a>
+      <a href="/client/perfil.html" data-page="perfil">Perfil</a>
+    </div>
+
+    <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+  </div>
 </nav>
 
 <script>
-  // Marcar página ativa
-  const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-  document.querySelectorAll('nav a[data-page]').forEach(link => {
-    if (link.dataset.page === currentPage) {
-      link.classList.add('active');
+  // Marcar automaticamente o link ativo baseado na página atual
+  (function() {
+    const currentPath = window.location.pathname;
+    const links = document.querySelectorAll('nav a');
+    
+    links.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      const pageName = link.getAttribute('data-page');
+      
+      // Verificar se o link corresponde à página atual
+      if (currentPath === linkPath || 
+          currentPath.includes(pageName)) {
+        link.classList.add('active');
+      }
+    });
+    
+    // Atualizar nome do utilizador
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.nome) {
+      const userNameEl = document.getElementById('userName');
+      if (userNameEl) {
+        const primeiroNome = userData.primeiroNome || userData.nome.split(' ')[0];
+        const saudacao = getSaudacao();
+        userNameEl.textContent = `${saudacao}, ${primeiroNome}`;
+      }
     }
-  });
+  })();
+
+  function getSaudacao() {
+    const hora = new Date().getHours();
+    if (hora < 12) return 'Bom dia';
+    if (hora < 19) return 'Boa tarde';
+    return 'Boa noite';
+  }
+  
+  // Função de logout
+  function logout() {
+    if (confirm('Tem certeza que deseja sair?')) {
+      localStorage.removeItem('user');
+      window.location.href = '/login.html';
+    }
+  }
 </script>

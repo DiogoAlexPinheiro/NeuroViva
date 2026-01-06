@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Consultório</title>
+  <title>Login - Consultorio de Psicologia</title>
   <link rel="stylesheet" href="/adds/styles.css">
   <script src="/adds/loader.js"></script>
 </head>
@@ -11,74 +11,82 @@
   <div id="header-container"></div>
 
   <main>
-    <div class="form-container">
-      <h2>Login</h2>
+    <div class="form-container" id="loginForm">
+      <h2>Acesso a Conta</h2>
       
-      <div id="alert"></div>
+      <div id="alert" class="alert-hidden"></div>
 
       <div class="form-group">
-        <label>
-          <input type="checkbox" id="isAdmin"> Sou Administrador
+        <label>Utilizador</label>
+        <input type="text" id="username" placeholder="Digite o seu username" required>
+      </div>
+
+      <div class="form-group">
+        <label>Palavra-passe</label>
+        <input type="password" id="password" placeholder="Sua senha" required>
+        
+        <label class="checkbox-label">
+          <input type="checkbox" onclick="togglePassword()"> 
+          Mostrar palavra-passe
         </label>
       </div>
 
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="username" required>
-      </div>
+      <button class="btn btn-full-width" onclick="login()">Entrar</button>
 
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="password" required>
-      </div>
-
-      <button class="btn" onclick="login()">Entrar</button>
-
-      <p style="margin-top: 1.5rem; text-align: center;">
-        Não tem conta? <a href="#" onclick="mostrarRegistro()">Criar conta</a>
+      <p class="text-center spacing-top">
+        Nao tem conta? <a href="#" onclick="mostrarRegistro()" class="link-primary">Criar conta agora</a>
       </p>
     </div>
 
-    <!-- Formulário de Registro -->
     <div class="form-container" id="registroForm" style="display: none;">
-      <h2>Criar Conta</h2>
-      
-      <div id="alertRegistro"></div>
+      <h2>Nova Conta</h2>
+      <div id="alertRegistro" class="alert-hidden"></div>
 
       <div class="form-group">
-        <label>Nome</label>
-        <input type="text" id="regNome" required>
+        <label>Nome Completo</label>
+        <input type="text" id="regNome" placeholder="Nome completo">
       </div>
-
+      
+      <div class="form-group">
+        <label>Primeiro Nome</label>
+        <input type="text" id="regPrimeiroNome" placeholder="Primeiro nome">
+      </div>
+      
+      <div class="form-group">
+        <label>Ultimo Nome</label>
+        <input type="text" id="regUltimoNome" placeholder="Ultimo nome">
+      </div>
+      
       <div class="form-group">
         <label>Username</label>
-        <input type="text" id="regUsername" required>
+        <input type="text" id="regUsername" placeholder="Username pretendido">
       </div>
-
+      
       <div class="form-group">
         <label>Email</label>
-        <input type="email" id="regEmail" required>
+        <input type="email" id="regEmail" placeholder="exemplo@email.com">
       </div>
-
+      
       <div class="form-group">
         <label>Password</label>
-        <input type="password" id="regPassword" required>
+        <input type="password" id="regPassword" placeholder="Crie uma senha">
       </div>
-
+      
       <div class="form-group">
-        <label>Contacto</label>
-        <input type="text" id="regContacto">
+        <label>Genero</label>
+        <select id="regGenero">
+          <option value="">Selecione</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Outro</option>
+          <option value="Prefiro nao dizer">Prefiro nao dizer</option>
+        </select>
       </div>
 
-      <div class="form-group">
-        <label>Morada</label>
-        <input type="text" id="regMorada">
-      </div>
-
-      <button class="btn" onclick="registrar()">Criar Conta</button>
-
-      <p style="margin-top: 1.5rem; text-align: center;">
-        Já tem conta? <a href="#" onclick="mostrarLogin()">Fazer login</a>
+      <button class="btn btn-full-width" onclick="registrar()">Finalizar Registro</button>
+      
+      <p class="text-center spacing-top-small">
+        <a href="#" onclick="mostrarLogin()" class="link-secondary">Ja tenho conta. Voltar</a>
       </p>
     </div>
   </main>
@@ -86,23 +94,33 @@
   <div id="footer-container"></div>
 
   <script>
+    function togglePassword() {
+      const p = document.getElementById('password');
+      p.type = p.type === 'password' ? 'text' : 'password';
+    }
+
     function mostrarRegistro() {
-      document.querySelector('.form-container:first-of-type').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'none';
       document.getElementById('registroForm').style.display = 'block';
     }
 
     function mostrarLogin() {
-      document.querySelector('.form-container:first-of-type').style.display = 'block';
       document.getElementById('registroForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+    }
+
+    function mostrarAlerta(msg, tipo, elementId = 'alert') {
+      const el = document.getElementById(elementId);
+      el.textContent = msg;
+      el.className = tipo === 'error' ? 'alert alert-error' : 'alert alert-success';
     }
 
     async function login() {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      const isAdmin = document.getElementById('isAdmin').checked;
 
       if (!username || !password) {
-        mostrarAlerta('Preencha todos os campos', 'error');
+        mostrarAlerta('Por favor, preencha todos os campos.', 'error');
         return;
       }
 
@@ -110,37 +128,41 @@
         const res = await fetch('http://localhost:3000/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, isAdmin })
+          body: JSON.stringify({ username, password })
         });
 
         const data = await res.json();
 
         if (res.ok) {
+          mostrarAlerta('Login efetuado com sucesso!', 'success');
           localStorage.setItem('user', JSON.stringify(data.user));
           
-          if (isAdmin) {
-            window.location.href = '/admin/dashboard.html';
-          } else {
-            window.location.href = '/client/dashboard.html';
-          }
+          setTimeout(() => {
+            if (data.user.role === 'admin') {
+              window.location.href = '/admin/dashboard.html';
+            } else {
+              window.location.href = '/client/dashboard.html';
+            }
+          }, 800);
         } else {
-          mostrarAlerta(data.error, 'error');
+          mostrarAlerta(data.error || 'Credenciais invalidas', 'error');
         }
       } catch (error) {
-        mostrarAlerta('Erro ao conectar ao servidor', 'error');
+        mostrarAlerta('Erro ao conectar ao servidor. Verifique a sua ligacao.', 'error');
       }
     }
 
     async function registrar() {
       const nome = document.getElementById('regNome').value;
+      const primeiroNome = document.getElementById('regPrimeiroNome').value;
+      const ultimoNome = document.getElementById('regUltimoNome').value;
       const username = document.getElementById('regUsername').value;
       const email = document.getElementById('regEmail').value;
       const password = document.getElementById('regPassword').value;
-      const contacto = document.getElementById('regContacto').value;
-      const morada = document.getElementById('regMorada').value;
+      const genero = document.getElementById('regGenero').value;
 
       if (!nome || !username || !email || !password) {
-        mostrarAlerta('Preencha os campos obrigatórios', 'error', 'alertRegistro');
+        mostrarAlerta('Preencha os campos obrigatorios.', 'error', 'alertRegistro');
         return;
       }
 
@@ -148,26 +170,19 @@
         const res = await fetch('http://localhost:3000/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, username, email, password, contacto, morada })
+          body: JSON.stringify({ nome, primeiroNome, ultimoNome, username, email, password, genero })
         });
 
-        const data = await res.json();
-
         if (res.ok) {
-          mostrarAlerta('Conta criada! Redirecionando...', 'success', 'alertRegistro');
-          setTimeout(() => mostrarLogin(), 2000);
+          mostrarAlerta('Conta criada com sucesso!', 'success', 'alertRegistro');
+          setTimeout(() => mostrarLogin(), 1500);
         } else {
+          const data = await res.json();
           mostrarAlerta(data.error, 'error', 'alertRegistro');
         }
-      } catch (error) {
-        mostrarAlerta('Erro ao conectar ao servidor', 'error', 'alertRegistro');
+      } catch (e) {
+        mostrarAlerta('Erro na ligacao ao servidor.', 'error', 'alertRegistro');
       }
-    }
-
-    function mostrarAlerta(msg, tipo, elementId = 'alert') {
-      const el = document.getElementById(elementId);
-      el.className = tipo === 'error' ? 'error' : 'success';
-      el.textContent = msg;
     }
   </script>
 </body>

@@ -11,53 +11,104 @@
   <div id="header-container"></div>
 
   <main>
-    <h2>Visão Geral</h2>
+    <h2>Visao Geral</h2>
 
     <div class="stats-grid">
       <div class="stat-card">
         <h3 id="totalPacientes">0</h3>
-        <p>Total Pacientes</p>
+        <p>Clientes Ativos</p>
       </div>
 
       <div class="stat-card">
-        <h3 id="totalAgendamentos">0</h3>
-        <p>Agendamentos Hoje</p>
+        <h3 id="sessoesCompletas">0</h3>
+        <p>Sessoes Completas</p>
       </div>
 
       <div class="stat-card">
         <h3 id="totalMensagens">0</h3>
-        <p>Mensagens Novas</p>
+        <p>Mensagens Recentes</p>
       </div>
 
       <div class="stat-card">
-        <h3 id="totalPagamentos">€0</h3>
-        <p>Faturação Total</p>
+        <h3 id="totalPagamentos">0</h3>
+        <p>Pagamentos Pendentes</p>
+      </div>
+    </div>
+
+    <div class="resumo-cards-3">
+      <div class="resumo-card pago">
+        <h4>Total Pago</h4>
+        <div class="valor" id="totalPago">EUR 0.00</div>
+      </div>
+      <div class="resumo-card pendente">
+        <h4>Total Pendente</h4>
+        <div class="valor" id="totalPendente">EUR 0.00</div>
+      </div>
+      <div class="resumo-card total">
+        <h4>Total Geral</h4>
+        <div class="valor" id="totalGeral">EUR 0.00</div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <h3>Horario de Atendimento</h3>
+      <div id="horarioInfo">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Proximos Agendamentos (Proxima Semana)</h3>
+      <div id="proximosAgendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Agendamentos a Atualizar</h3>
+      <p class="card-description">Agendamentos passados ou de hoje que ainda nao foram marcados como completos</p>
+      <div id="agendamentosAtualizar">
+        <p>A carregar...</p>
       </div>
     </div>
 
     <div class="dashboard-grid">
       <div class="card">
-        <h3>👥 Pacientes</h3>
-        <p>Gerir pacientes e histórico clínico</p>
+        <h3>Pacientes</h3>
+        <p>Gerir pacientes e historico clinico</p>
         <a href="/admin/pacientes.html" class="btn">Ver Pacientes</a>
       </div>
 
       <div class="card">
-        <h3>💬 Mensagens</h3>
+        <h3>Agendamentos</h3>
+        <p>Gerir todos os agendamentos</p>
+        <a href="/admin/agendamentos.html" class="btn">Ver Agendamentos</a>
+      </div>
+
+      <div class="card">
+        <h3>Mensagens</h3>
         <p>Responder a mensagens dos pacientes</p>
         <a href="/admin/mensagens.html" class="btn">Ver Mensagens</a>
       </div>
 
       <div class="card">
-        <h3>📄 Relatórios</h3>
-        <p>Criar relatórios e documentos</p>
-        <a href="/admin/relatorios.html" class="btn">Gerir Relatórios</a>
+        <h3>Relatorios</h3>
+        <p>Criar relatorios e documentos</p>
+        <a href="/admin/relatorios.html" class="btn">Gerir Relatorios</a>
       </div>
 
       <div class="card">
-        <h3>💰 Financeiro</h3>
+        <h3>Financeiro</h3>
         <p>Registar pagamentos e consultas</p>
         <a href="/admin/financeiro.html" class="btn">Ver Financeiro</a>
+      </div>
+
+      <div class="card">
+        <h3>Perfil</h3>
+        <p>Gerir o seu perfil e horarios</p>
+        <a href="/admin/perfil.html" class="btn">Editar Perfil</a>
       </div>
     </div>
   </main>
@@ -73,21 +124,121 @@
 
     async function carregarEstatisticas() {
       try {
-        const resPacientes = await fetch('http://localhost:3000/api/admin/pacientes');
-        const pacientes = await resPacientes.json();
-        document.getElementById('totalPacientes').textContent = pacientes.length;
-
-        const resNotif = await fetch('http://localhost:3000/api/notificacoes/admin');
-        const notif = await resNotif.json();
-        document.getElementById('totalAgendamentos').textContent = notif.agendamentos;
-        document.getElementById('totalMensagens').textContent = notif.mensagens;
-
-        const resPagamentos = await fetch('http://localhost:3000/api/admin/pagamentos');
-        const pagamentos = await resPagamentos.json();
-        const total = pagamentos.reduce((sum, p) => sum + p.valor, 0);
-        document.getElementById('totalPagamentos').textContent = `€${total.toFixed(2)}`;
+        const res = await fetch('http://localhost:3000/api/admin/estatisticas');
+        const stats = await res.json();
+        
+        document.getElementById('totalPacientes').textContent = stats.totalPacientes;
+        document.getElementById('sessoesCompletas').textContent = stats.sessoesCompletas;
+        
+        // Carregar totais financeiros
+        await carregarTotaisFinanceiros();
+        
+        // Horario
+        const horarioContainer = document.getElementById('horarioInfo');
+        const diasSemana = {
+          segunda: 'Segunda-feira',
+          terca: 'Terca-feira',
+          quarta: 'Quarta-feira',
+          quinta: 'Quinta-feira',
+          sexta: 'Sexta-feira',
+          sabado: 'Sabado',
+          domingo: 'Domingo'
+        };
+        
+        let horarioHtml = '<div class="horario-grid">';
+        for (const [dia, horario] of Object.entries(stats.horario)) {
+          horarioHtml += `
+            <div class="horario-item">
+              <strong>${diasSemana[dia]}:</strong> 
+              ${horario.length > 0 ? `${horario[0]} - ${horario[1]}` : 'Fechado'}
+            </div>
+          `;
+        }
+        horarioHtml += '</div>';
+        horarioContainer.innerHTML = horarioHtml;
+        
+        // Proximos agendamentos
+        const proximosContainer = document.getElementById('proximosAgendamentos');
+        if (stats.proximosAgendamentos.length === 0) {
+          proximosContainer.innerHTML = '<p>Sem agendamentos proximos</p>';
+        } else {
+          proximosContainer.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stats.proximosAgendamentos.map(a => `
+                  <tr>
+                    <td>${a.paciente}</td>
+                    <td>${a.data}</td>
+                    <td>${a.hora}</td>
+                    <td><span class="badge ${a.estado === 'confirmado' ? 'badge-success' : 'badge-warning'}">${a.estado}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+        
+        // Agendamentos a atualizar
+        const atualizarContainer = document.getElementById('agendamentosAtualizar');
+        if (stats.agendamentosParaAtualizar.length === 0) {
+          atualizarContainer.innerHTML = '<p class="text-success">Todos os agendamentos estao atualizados</p>';
+        } else {
+          atualizarContainer.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Paciente</th>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Estado Atual</th>
+                  <th>Acao</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stats.agendamentosParaAtualizar.map(a => `
+                  <tr>
+                    <td>${a.paciente}</td>
+                    <td>${a.data}</td>
+                    <td>${a.hora}</td>
+                    <td><span class="badge badge-warning">${a.estado}</span></td>
+                    <td><a href="/admin/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+        
+        // Contadores simples
+        document.getElementById('totalMensagens').textContent = '0';
+        document.getElementById('totalPagamentos').textContent = '0';
+        
       } catch (error) {
-        console.error('Erro ao carregar estatísticas:', error);
+        console.error('Erro ao carregar estatisticas:', error);
+      }
+    }
+
+    async function carregarTotaisFinanceiros() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/pagamentos');
+        const pagamentos = await res.json();
+        
+        const totalPago = pagamentos.filter(p => p.estado === 'pago').reduce((sum, p) => sum + p.valor, 0);
+        const totalPendente = pagamentos.filter(p => p.estado === 'pendente').reduce((sum, p) => sum + p.valor, 0);
+        
+        document.getElementById('totalPago').textContent = 'EUR ' + totalPago.toFixed(2);
+        document.getElementById('totalPendente').textContent = 'EUR ' + totalPendente.toFixed(2);
+        document.getElementById('totalGeral').textContent = 'EUR ' + (totalPago + totalPendente).toFixed(2);
+      } catch (error) {
+        console.error('Erro ao carregar totais financeiros:', error);
       }
     }
 

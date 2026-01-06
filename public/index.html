@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consultório de Psicologia</title>
+  <title>Consultorio de Psicologia NeuroViva</title>
   <link rel="stylesheet" href="/adds/styles.css">
   <script src="/adds/loader.js"></script>
 </head>
@@ -13,30 +13,125 @@
   <main>
     <div class="hero-background">
       <div class="hero-content">
-        <h2>Bem-vindo ao nosso Consultório</h2>
-        <p>Oferecemos apoio psicológico profissional e personalizado</p>
+        <h2>Bem-vindo ao nosso Consultorio</h2>
+        <p>Oferecemos apoio psicologico profissional e personalizado para o seu bem-estar.</p>
         <a href="/login.html" class="btn">Agendar Consulta</a>
       </div>
     </div>
 
-    <div class="info-section">
+    <div class="resumo-cards-3">
+      <div class="resumo-card">
+        <h4>Clientes Ativos</h4>
+        <div class="valor" id="totalClientes">0</div>
+      </div>
+      <div class="resumo-card">
+        <h4>Sessões Completas</h4>
+        <div class="valor" id="sessoesRealizadas">0</div>
+      </div>
+      <div class="resumo-card">
+        <h4>Anos de Experiência</h4>
+        <div class="valor">5+</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Horário de Atendimento</h3>
+      <div id="horarioInfo" class="horario-grid">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="cards-grid-3">
       <div class="info-card">
-        <h3>Apoio Profissional</h3>
-        <p>Psicólogos qualificados com vasta experiência</p>
+        <h4>Apoio Profissional</h4>
+        <p>Psicologos qualificados com vasta experiencia em diversas areas clinicas.</p>
       </div>
 
       <div class="info-card">
-        <h3>Ambiente Acolhedor</h3>
-        <p>Espaço seguro e confidencial para o seu bem-estar</p>
+        <h4>Ambiente Acolhedor</h4>
+        <p>Espaco seguro, moderno e totalmente confidencial pensado em si.</p>
       </div>
 
       <div class="info-card">
-        <h3>Horário Flexível</h3>
-        <p>Agendamento online facilitado e horários adaptados</p>
+        <h4>Horario Flexivel</h4>
+        <p>Agendamento facilitado com opcoes de consultas presenciais ou online.</p>
       </div>
+    </div>
+
+    <div class="card">
+      <h3>Áreas de Intervenção</h3>
+      <div class="areas-grid">
+        <div class="area-item">Ansiedade e Stress</div>
+        <div class="area-item">Depressão</div>
+        <div class="area-item">Desenvolvimento Pessoal</div>
+        <div class="area-item">Problemas de Sono</div>
+        <div class="area-item">Gestão Emocional</div>
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h3>Pronto para dar o primeiro passo?</h3>
+      <p>Marque a sua consulta hoje e comece a sua jornada de bem-estar.</p>
+      <a href="/login.html" class="btn">Marcar Consulta</a>
     </div>
   </main>
 
   <div id="footer-container"></div>
+
+  <script>
+    async function carregarEstatisticas() {
+      try {
+        const res = await fetch('http://localhost:3000/api/estatisticas/publico');
+        const stats = await res.json();
+        
+        document.getElementById('totalClientes').textContent = stats.totalClientes || '0';
+        document.getElementById('sessoesRealizadas').textContent = stats.sessoesCompletas || '0';
+      } catch (error) {
+        console.error('Erro ao carregar estatisticas:', error);
+      }
+    }
+
+    async function carregarHorario() {
+      try {
+        const res = await fetch('http://localhost:3000/api/admin/perfil?username=admin');
+        const admin = await res.json();
+        
+        const horarioContainer = document.getElementById('horarioInfo');
+        const diasSemana = {
+          segunda: 'Segunda-feira',
+          terca: 'Terça-feira',
+          quarta: 'Quarta-feira',
+          quinta: 'Quinta-feira',
+          sexta: 'Sexta-feira',
+          sabado: 'Sábado',
+          domingo: 'Domingo'
+        };
+        
+        if (!admin || !admin.horario) {
+          horarioContainer.innerHTML = '<p>Horário não disponível</p>';
+          return;
+        }
+        
+        let horarioHtml = '';
+        for (const [dia, horario] of Object.entries(admin.horario)) {
+          const isAberto = horario && horario.length > 0;
+          horarioHtml += `
+            <div class="horario-item ${isAberto ? '' : 'fechado'}">
+              <span class="dia">${diasSemana[dia]}</span>
+              <span class="horas">${isAberto ? `${horario[0]} - ${horario[1]}` : 'Fechado'}</span>
+            </div>
+          `;
+        }
+        horarioContainer.innerHTML = horarioHtml;
+        
+      } catch (error) {
+        console.error('Erro ao carregar horario:', error);
+        document.getElementById('horarioInfo').innerHTML = '<p>Horário não disponível</p>';
+      }
+    }
+
+    carregarEstatisticas();
+    carregarHorario();
+  </script>
 </body>
 </html>

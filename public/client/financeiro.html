@@ -16,15 +16,15 @@
     <div class="card">
       <h3>Resumo Financeiro</h3>
       <div id="resumo">
-        <p><strong>Total Pago:</strong> <span id="totalPago" style="color: #4CAF50;">€0.00</span></p>
-        <p><strong>Total Pendente:</strong> <span id="totalPendente" style="color: #FF9800;">€0.00</span></p>
+        <p><strong>Total Pago:</strong> <span id="totalPago" style="color: #4CAF50;">EUR 0.00</span></p>
+        <p><strong>Total Pendente:</strong> <span id="totalPendente" style="color: #FF9800;">EUR 0.00</span></p>
         <hr style="margin: 1rem 0;">
-        <p><strong>Total Geral:</strong> <span id="totalGeral" style="font-size: 1.3rem; color: #4CAF50;">€0.00</span></p>
+        <p><strong>Total Geral:</strong> <span id="totalGeral" style="font-size: 1.3rem; color: #4CAF50;">EUR 0.00</span></p>
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Histórico de Pagamentos</h3>
+      <h3>Historico de Pagamentos</h3>
       <div id="listaPagamentos">
         <p>A carregar...</p>
       </div>
@@ -53,49 +53,51 @@
         }
 
         container.innerHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Valor</th>
-                <th>Estado</th>
-                <th>Método</th>
-                <th>Comprovativo</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${pagamentos.map(p => `
-                <tr>
-                  <td>${p.data}</td>
-                  <td>€${p.valor.toFixed(2)}</td>
-                  <td><span class="badge ${
-                    p.estado === 'pago' ? 'badge-success' : 
-                    p.estado === 'pendente' ? 'badge-warning' : 
-                    'badge-danger'
-                  }">${p.estado}</span></td>
-                  <td>${p.metodo}</td>
-                  <td>
-                    ${p.comprovativo ? 
-                      `<a href="${p.comprovativo.caminho}" target="_blank" style="color: #4CAF50;">
-                        📎 Ver recibo
-                      </a>` 
-                      : '-'
-                    }
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
+  <table>
+    <thead>
+      <tr>
+        <th>Codigo</th>
+        <th>Data</th>
+        <th>Valor</th>
+        <th>Estado</th>
+        <th>Metodo</th>
+        <th>Comprovativo</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${pagamentos.map(p => `
+        <tr>
+          <td><code style="font-size: 0.85rem;">${p.codigo}</code></td>
+          <td>${p.data}</td>
+          <td>EUR ${p.valor.toFixed(2)}</td>
+          <td><span class="badge ${
+            p.estado === 'pago' ? 'badge-success' : 
+            p.estado === 'pendente' ? 'badge-warning' : 
+            'badge-danger'
+          }">${p.estado}</span></td>
+          <td>${p.metodo}</td>
+          <td>
+            ${p.comprovativo ? 
+              `<a href="${p.comprovativo.caminho}" target="_blank" class="btn-small btn-solid">
+                Ver Documento
+              </a>` 
+              : '-'
+            }
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
 
         // Calcular resumo
         const totalPago = pagamentos.filter(p => p.estado === 'pago').reduce((sum, p) => sum + p.valor, 0);
         const totalPendente = pagamentos.filter(p => p.estado === 'pendente').reduce((sum, p) => sum + p.valor, 0);
         const totalGeral = totalPago + totalPendente;
 
-        document.getElementById('totalPago').textContent = `€${totalPago.toFixed(2)}`;
-        document.getElementById('totalPendente').textContent = `€${totalPendente.toFixed(2)}`;
-        document.getElementById('totalGeral').textContent = `€${totalGeral.toFixed(2)}`;
+        document.getElementById('totalPago').textContent = `EUR ${totalPago.toFixed(2)}`;
+        document.getElementById('totalPendente').textContent = `EUR ${totalPendente.toFixed(2)}`;
+        document.getElementById('totalGeral').textContent = `EUR ${totalGeral.toFixed(2)}`;
       } catch (error) {
         console.error(error);
         document.getElementById('listaPagamentos').innerHTML = '<p>Erro ao carregar pagamentos</p>';

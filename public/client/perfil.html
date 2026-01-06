@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil - Cliente</title>
   <link rel="stylesheet" href="/client/adds/client.css">
+  <link rel="stylesheet" href="/adds/modal.css">
   <script src="/client/adds/loader.js"></script>
+  <script src="/adds/modal.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
@@ -16,11 +18,33 @@
     <div id="alert"></div>
 
     <div class="card">
+      <h3>Foto de Perfil</h3>
+      
+      <div class="profile-section">
+        <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
+        <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" style="display: none;">
+        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Alterar Foto</button>
+        <small style="color: var(--color-text-light); margin-top: 0.5rem;">A foto antiga será apagada ao carregar uma nova</small>
+      </div>
+    </div>
+
+    <div class="card">
       <h3>Dados da Conta</h3>
       
       <div class="form-group">
-        <label>Nome</label>
+        <label>Nome Completo</label>
         <input type="text" id="nome">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primeiro Nome</label>
+          <input type="text" id="primeiroNome">
+        </div>
+        <div class="form-group">
+          <label>Último Nome</label>
+          <input type="text" id="ultimoNome">
+        </div>
       </div>
 
       <div class="form-group">
@@ -30,58 +54,111 @@
 
       <div class="form-group">
         <label>Nova Password (deixe vazio para manter)</label>
-        <input type="password" id="password">
+        <input type="password" id="password" placeholder="••••••••">
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Dados Pessoais</h3>
+      <h3>Dados de Contacto</h3>
       
       <div class="form-group">
-        <label>Contacto</label>
-        <input type="text" id="contacto">
+        <label>Contacto Telefónico</label>
+        <input type="text" id="contacto" placeholder="912 345 678">
       </div>
 
       <div class="form-group">
         <label>Morada</label>
-        <input type="text" id="morada">
+        <input type="text" id="morada" placeholder="Rua, número, localidade">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Informações Pessoais</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Idade</label>
+          <input type="number" id="idade" min="0">
+        </div>
+
+        <div class="form-group">
+          <label>Género</label>
+          <select id="genero">
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+            <option value="Prefiro nao dizer">Prefiro não dizer</option>
+          </select>
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Idade</label>
-        <input type="number" id="idade">
+        <label>Profissão</label>
+        <input type="text" id="profissao">
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
       <h3>Contexto Familiar</h3>
+      <p class="card-description">Esta informação ajuda a psicóloga a compreender melhor o seu contexto</p>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estado Civil</label>
+          <select id="estadoCivil">
+            <option value="">Selecione</option>
+            <option value="solteiro">Solteiro(a)</option>
+            <option value="casado">Casado(a)</option>
+            <option value="divorciado">Divorciado(a)</option>
+            <option value="viuvo">Viúvo(a)</option>
+            <option value="uniao">União de facto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Número de Filhos</label>
+          <input type="number" id="filhos" min="0" value="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Membros do Agregado Familiar</label>
+        <input type="text" id="membros" placeholder="Ex: Pai - João, Mãe - Maria, Irmã - Ana">
+        <small style="color: var(--color-text-light);">Separe os membros por vírgula</small>
+      </div>
+    </div>
+
+    <!-- Historico Clinico (apenas leitura) -->
+<div class="card" style="margin-top: 2rem; background: #f8f9fa;">
+  <h3>Historico Clinico</h3>
+  <p class="card-description">Informacoes clinicas registadas pela psicologa (apenas leitura)</p>
+  
+  <div id="historicoClinicoInfo">
+    <p>A carregar...</p>
+  </div>
+</div>
+
+    <!-- Informações Apenas de Leitura -->
+    <div class="card" style="margin-top: 2rem; background: #f8f9fa;">
+      <h3>Informações Administrativas</h3>
+      <p class="card-description">Estas informações são geridas pela psicóloga e não podem ser alteradas aqui</p>
       
       <div class="form-group">
-        <label>Estado Civil</label>
-        <select id="estadoCivil">
-          <option value="">Selecione</option>
-          <option value="solteiro">Solteiro(a)</option>
-          <option value="casado">Casado(a)</option>
-          <option value="divorciado">Divorciado(a)</option>
-          <option value="viuvo">Viúvo(a)</option>
-          <option value="uniao">União de facto</option>
-        </select>
+        <label>Número de Identificação (CC/BI)</label>
+        <input type="text" id="numeroIdentificacao" disabled style="background: #e9ecef; cursor: not-allowed;">
       </div>
 
       <div class="form-group">
-        <label>Número de Filhos</label>
-        <input type="number" id="filhos" min="0" value="0">
-      </div>
-
-      <div class="form-group">
-        <label>Membros do Agregado Familiar (separados por vírgula)</label>
-        <input type="text" id="membros" placeholder="Ex: Pai, Mãe, Irmão">
+        <label>Contacto de Emergência</label>
+        <div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">
+          <p id="contatoEmergenciaInfo">-</p>
+        </div>
       </div>
     </div>
 
     <div style="margin-top: 2rem;">
       <button class="btn" onclick="atualizarPerfil()">Salvar Alterações</button>
-      <button class="btn btn-danger" onclick="apagarConta()" style="margin-left: 1rem;">Apagar Conta</button>
     </div>
   </main>
 
@@ -94,40 +171,115 @@
       window.location.href = '/login.html';
     }
 
+    let profileImageFile = null;
+
+    // Preview da imagem
+    document.getElementById('profileImageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        profileImageFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     async function carregarPerfil() {
       try {
         const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`);
         const data = await res.json();
 
-        document.getElementById('nome').value = data.user.nome;
-        document.getElementById('email').value = data.user.email;
+        // Dados editáveis
+        document.getElementById('nome').value = data.user.nome || '';
+        document.getElementById('primeiroNome').value = data.user.primeiroNome || '';
+        document.getElementById('ultimoNome').value = data.user.ultimoNome || '';
+        document.getElementById('email').value = data.user.email || '';
         document.getElementById('contacto').value = data.paciente.contacto || '';
         document.getElementById('morada').value = data.paciente.morada || '';
         document.getElementById('idade').value = data.paciente.idade || '';
+        document.getElementById('genero').value = data.paciente.genero || '';
+        document.getElementById('profissao').value = data.paciente.profissao || '';
 
+        if (data.user.profileImage) {
+          document.getElementById('previewImage').src = data.user.profileImage;
+        }
+
+        // Contexto familiar
         if (data.paciente.contextoFamiliar) {
           document.getElementById('estadoCivil').value = data.paciente.contextoFamiliar.estadoCivil || '';
           document.getElementById('filhos').value = data.paciente.contextoFamiliar.filhos || 0;
           document.getElementById('membros').value = data.paciente.contextoFamiliar.membros ? 
             data.paciente.contextoFamiliar.membros.join(', ') : '';
         }
+
+        // Campos apenas de leitura
+        document.getElementById('numeroIdentificacao').value = data.paciente.numeroIdentificacao || '-';
+        
+        if (data.paciente.contatoEmergencia && data.paciente.contatoEmergencia.nome) {
+          const ce = data.paciente.contatoEmergencia;
+          document.getElementById('contatoEmergenciaInfo').innerHTML = `
+            <strong>${ce.nome}</strong> (${ce.relacao || 'N/A'})<br>
+            📞 ${ce.telefone || 'N/A'}
+          `;
+        } else {
+          document.getElementById('contatoEmergenciaInfo').textContent = 'Não definido';
+        }
+
+        // Historico clinico (apenas leitura)
+if (data.paciente.historicClinico) {
+  const hist = data.paciente.historicClinico;
+  let histHtml = '';
+  
+  if (hist.diagnosticos) {
+    histHtml += `<div class="form-group"><label>Diagnosticos e Condicoes</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.diagnosticos}</div></div>`;
+  }
+  if (hist.medicacao) {
+    histHtml += `<div class="form-group"><label>Medicacao Atual</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.medicacao}</div></div>`;
+  }
+  if (hist.motivoConsulta) {
+    histHtml += `<div class="form-group"><label>Motivo da Consulta Inicial</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.motivoConsulta}</div></div>`;
+  }
+  if (hist.evolucaoClinica) {
+    histHtml += `<div class="form-group"><label>Evolucao e Notas Clinicas</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border); white-space: pre-wrap;">${hist.evolucaoClinica}</div></div>`;
+  }
+  if (hist.alertas) {
+    histHtml += `<div class="form-group"><label>Alertas e Precaucoes</label><div style="padding: 1rem; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800; color: #e65100;">${hist.alertas}</div></div>`;
+  }
+  
+  document.getElementById('historicoClinicoInfo').innerHTML = histHtml || '<p>Sem informacoes clinicas registadas</p>';
+} else {
+  document.getElementById('historicoClinicoInfo').innerHTML = '<p>Sem informacoes clinicas registadas</p>';
+}
+
       } catch (error) {
+        console.error('Erro ao carregar perfil:', error);
         mostrarAlerta('Erro ao carregar perfil', 'error');
       }
     }
 
     async function atualizarPerfil() {
-      const nome = document.getElementById('nome').value;
-      const email = document.getElementById('email').value;
+      const nome = document.getElementById('nome').value.trim();
+      const primeiroNome = document.getElementById('primeiroNome').value.trim();
+      const ultimoNome = document.getElementById('ultimoNome').value.trim();
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
-      const contacto = document.getElementById('contacto').value;
-      const morada = document.getElementById('morada').value;
+      const contacto = document.getElementById('contacto').value.trim();
+      const morada = document.getElementById('morada').value.trim();
       const idade = document.getElementById('idade').value;
+      const genero = document.getElementById('genero').value;
+      const profissao = document.getElementById('profissao').value.trim();
       
       const estadoCivil = document.getElementById('estadoCivil').value;
       const filhos = document.getElementById('filhos').value;
       const membrosStr = document.getElementById('membros').value;
       const membros = membrosStr ? membrosStr.split(',').map(m => m.trim()).filter(m => m) : [];
+
+      if (!nome || !email) {
+        mostrarAlerta('Nome e email são obrigatórios', 'error');
+        return;
+      }
 
       const contextoFamiliar = {
         estadoCivil,
@@ -136,47 +288,53 @@
       };
 
       try {
+        showLoading('A guardar alterações...');
+        
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('primeiroNome', primeiroNome);
+        formData.append('ultimoNome', ultimoNome);
+        formData.append('email', email);
+        if (password) formData.append('password', password);
+        formData.append('contacto', contacto);
+        formData.append('morada', morada);
+        formData.append('idade', idade);
+        formData.append('genero', genero);
+        formData.append('profissao', profissao);
+        formData.append('contextoFamiliar', JSON.stringify(contextoFamiliar));
+        
+        if (profileImageFile) {
+          formData.append('profileImage', profileImageFile);
+        }
+
         const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, email, password, contacto, morada, idade, contextoFamiliar })
+          body: formData
         });
 
         const result = await res.json();
+        hideLoading();
 
         if (res.ok) {
-          mostrarAlerta('Perfil atualizado!', 'success');
+          mostrarAlerta('Perfil atualizado com sucesso!', 'success');
+          
+          // Atualizar localStorage
           user.nome = nome;
+          user.primeiroNome = primeiroNome;
+          user.genero = genero;
           localStorage.setItem('user', JSON.stringify(user));
           
-          // Atualizar nome no header
-          const userNameEl = document.getElementById('userName');
-          if (userNameEl) userNameEl.textContent = `Olá, ${nome}`;
-          
           document.getElementById('password').value = '';
+          profileImageFile = null;
+          
+          setTimeout(() => location.reload(), 1500);
         } else {
-          mostrarAlerta(result.error, 'error');
+          mostrarAlerta(result.error || 'Erro ao atualizar', 'error');
         }
       } catch (error) {
+        hideLoading();
+        console.error('Erro:', error);
         mostrarAlerta('Erro ao atualizar perfil', 'error');
-      }
-    }
-
-    async function apagarConta() {
-      if (!confirm('Tem certeza que deseja apagar a sua conta? Esta ação é irreversível!')) return;
-
-      try {
-        const res = await fetch(`http://localhost:3000/api/client/perfil/${user.id}`, {
-          method: 'DELETE'
-        });
-
-        if (res.ok) {
-          alert('Conta apagada com sucesso');
-          localStorage.removeItem('user');
-          window.location.href = '/login.html';
-        }
-      } catch (error) {
-        mostrarAlerta('Erro ao apagar conta', 'error');
       }
     }
 
