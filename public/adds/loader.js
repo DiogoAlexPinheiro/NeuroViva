@@ -10,6 +10,6 @@ async function loadComponent(elementId, file) {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadComponent('header-container', '/adds/header.html');
-  await loadComponent('footer-container', '/adds/footer.html');
+  await loadComponent('header-container', '../public/adds/header.html');
+  await loadComponent('footer-container', '../public/adds/footer.html');
 });

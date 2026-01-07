@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Cliente | NeuroViva</title>
-  <link rel="stylesheet" href="/client/adds/client.css">
-  <script src="/client/adds/loader.js"></script>
+  <link rel="stylesheet" href="../client/adds/client.css">
+  <script src="../client/adds/loader.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
@@ -55,25 +55,25 @@
       <div class="card">
         <h3>Agendamentos</h3>
         <p>Marque ou edite as suas consultas</p>
-        <a href="/client/agendamentos.html" class="btn" style="margin-top: 1rem;">Ver Agendamentos</a>
+        <a href="../client/agendamentos.html" class="btn" style="margin-top: 1rem;">Ver Agendamentos</a>
       </div>
 
       <div class="card">
         <h3>Mensagens</h3>
         <p>Fale com a sua psicóloga</p>
-        <a href="/client/mensagens.html" class="btn" style="margin-top: 1rem;">Ver Mensagens</a>
+        <a href="../client/mensagens.html" class="btn" style="margin-top: 1rem;">Ver Mensagens</a>
       </div>
 
       <div class="card">
         <h3>Financeiro</h3>
         <p>Estado dos seus pagamentos</p>
-        <a href="/client/financeiro.html" class="btn" style="margin-top: 1rem;">Ver Financeiro</a>
+        <a href="../client/financeiro.html" class="btn" style="margin-top: 1rem;">Ver Financeiro</a>
       </div>
 
       <div class="card">
         <h3>Perfil</h3>
         <p>Mantenha os seus dados atualizados</p>
-        <a href="/client/perfil.html" class="btn" style="margin-top: 1rem;">Editar Perfil</a>
+        <a href="../client/perfil.html" class="btn" style="margin-top: 1rem;">Editar Perfil</a>
       </div>
     </div>
   </main>
@@ -84,7 +84,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'client') {
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
 
     async function carregarEstatisticas() {

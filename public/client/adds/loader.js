@@ -35,8 +35,8 @@ async function carregarNotificacoes() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadComponent('header-container', '/client/adds/header.html');
-  await loadComponent('footer-container', '/client/adds/footer.html');
+  await loadComponent('header-container', '../client/adds/header.html');
+  await loadComponent('footer-container', '../client/adds/footer.html');
   
   // Aguardar um pouco para garantir que os elementos foram carregados
   setTimeout(() => {
@@ -53,5 +53,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '/login.html';
+  window.location.href = '../login.html';
 }

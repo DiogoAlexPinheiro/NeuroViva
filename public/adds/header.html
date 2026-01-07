@@ -4,8 +4,8 @@
 </header>
 
 <nav>
-  <a href="/index.html" data-page="index">Inicio</a>
-  <a href="/login.html" data-page="login">Login</a>
+  <a href="../public/index.html" data-page="index">Inicio</a>
+  <a href="../public/login.html" data-page="login">Login</a>
 </nav>
 
 <script>
@@ -19,7 +19,7 @@
       
       if (currentPath === linkPath || 
           currentPath.endsWith(linkPath) ||
-          (currentPath === '/' && linkPath === '/index.html') ||
+          (currentPath === '/' && linkPath === '../index.html') ||
           currentPath.includes(pageName)) {
         link.classList.add('active');
       }

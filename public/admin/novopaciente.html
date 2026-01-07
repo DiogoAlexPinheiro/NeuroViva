@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Novo Paciente - Admin</title>
-  <link rel="stylesheet" href="/admin/adds/admin.css">
-  <script src="/admin/adds/loader.js"></script>
+  <link rel="stylesheet" href="../admin/adds/admin.css">
+  <script src="../admin/adds/loader.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
 
   <main>
     <div style="text-align: center; margin-bottom: 1.5rem;">
-      <a href="/admin/pacientes.html" class="btn-secondary">← Voltar para Pacientes</a>
+      <a href="../admin/pacientes.html" class="btn-secondary">← Voltar para Pacientes</a>
     </div>
 
     <h2 style="text-align: center;">Criar Novo Paciente</h2>
@@ -102,7 +102,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'admin') {
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
 
     async function criarPaciente() {
@@ -149,7 +149,7 @@
         if (res.ok) {
           mostrarAlerta('Paciente criado com sucesso!', 'success');
           setTimeout(() => {
-            window.location.href = '/admin/pacientes.html';
+            window.location.href = '../admin/pacientes.html';
           }, 1500);
         } else {
           mostrarAlerta(result.error, 'error');

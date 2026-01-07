@@ -35,8 +35,8 @@ async function carregarNotificacoes() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadComponent('header-container', '/admin/adds/header.html');
-  await loadComponent('footer-container', '/admin/adds/footer.html');
+  await loadComponent('header-container', '../admin/adds/header.html');
+  await loadComponent('footer-container', '../admin/adds/footer.html');
   
   setTimeout(() => {
     const user = JSON.parse(localStorage.getItem('user'));

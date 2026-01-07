@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil - Cliente</title>
-  <link rel="stylesheet" href="/client/adds/client.css">
-  <link rel="stylesheet" href="/adds/modal.css">
-  <script src="/client/adds/loader.js"></script>
-  <script src="/adds/modal.js"></script>
+  <link rel="stylesheet" href="../client/adds/client.css">
+  <link rel="stylesheet" href="../adds/modal.css">
+  <script src="../client/adds/loader.js"></script>
+  <script src="../adds/modal.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
@@ -168,7 +168,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'client') {
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
 
     let profileImageFile = null;

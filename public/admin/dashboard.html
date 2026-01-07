@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Admin</title>
-  <link rel="stylesheet" href="/admin/adds/admin.css">
-  <script src="/admin/adds/loader.js"></script>
+  <link rel="stylesheet" href="../admin/adds/admin.css">
+  <script src="../admin/adds/loader.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
@@ -78,37 +78,37 @@
       <div class="card">
         <h3>Pacientes</h3>
         <p>Gerir pacientes e historico clinico</p>
-        <a href="/admin/pacientes.html" class="btn">Ver Pacientes</a>
+        <a href="../admin/pacientes.html" class="btn">Ver Pacientes</a>
       </div>
 
       <div class="card">
         <h3>Agendamentos</h3>
         <p>Gerir todos os agendamentos</p>
-        <a href="/admin/agendamentos.html" class="btn">Ver Agendamentos</a>
+        <a href="../admin/agendamentos.html" class="btn">Ver Agendamentos</a>
       </div>
 
       <div class="card">
         <h3>Mensagens</h3>
         <p>Responder a mensagens dos pacientes</p>
-        <a href="/admin/mensagens.html" class="btn">Ver Mensagens</a>
+        <a href="../admin/mensagens.html" class="btn">Ver Mensagens</a>
       </div>
 
       <div class="card">
         <h3>Relatorios</h3>
         <p>Criar relatorios e documentos</p>
-        <a href="/admin/relatorios.html" class="btn">Gerir Relatorios</a>
+        <a href="../admin/relatorios.html" class="btn">Gerir Relatorios</a>
       </div>
 
       <div class="card">
         <h3>Financeiro</h3>
         <p>Registar pagamentos e consultas</p>
-        <a href="/admin/financeiro.html" class="btn">Ver Financeiro</a>
+        <a href="../admin/financeiro.html" class="btn">Ver Financeiro</a>
       </div>
 
       <div class="card">
         <h3>Perfil</h3>
         <p>Gerir o seu perfil e horarios</p>
-        <a href="/admin/perfil.html" class="btn">Editar Perfil</a>
+        <a href="../admin/perfil.html" class="btn">Editar Perfil</a>
       </div>
     </div>
   </main>
@@ -119,7 +119,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'admin') {
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
 
     async function carregarEstatisticas() {
@@ -209,7 +209,7 @@
                     <td>${a.data}</td>
                     <td>${a.hora}</td>
                     <td><span class="badge badge-warning">${a.estado}</span></td>
-                    <td><a href="/admin/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
+                    <td><a href="../admin/adds/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
                   </tr>
                 `).join('')}
               </tbody>

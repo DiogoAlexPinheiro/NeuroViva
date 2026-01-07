@@ -7,13 +7,13 @@
     <span id="userName">Admin</span>
     
     <div class="nav-links-center">
-      <a href="/admin/dashboard.html" data-page="dashboard">Dashboard</a>
-      <a href="/admin/pacientes.html" data-page="pacientes">Pacientes</a>
-      <a href="/admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-      <a href="/admin/mensagens.html" data-page="mensagens">Mensagens</a>
-      <a href="/admin/relatorios.html" data-page="relatorios">Relatórios</a>
-      <a href="/admin/financeiro.html" data-page="financeiro">Financeiro</a>
-      <a href="/admin/perfil.html" data-page="perfil">Perfil</a>
+      <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+      <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+      <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+      <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+      <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+      <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+      <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
     </div>
 
     <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
@@ -54,7 +54,7 @@
   function logout() {
     if (confirm('Tem certeza que deseja sair?')) {
       localStorage.removeItem('user');
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
   }
 </script>

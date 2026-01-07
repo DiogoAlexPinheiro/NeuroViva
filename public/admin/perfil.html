@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil - Admin</title>
-  <link rel="stylesheet" href="/admin/adds/admin.css">
-  <script src="/admin/adds/loader.js"></script>
+  <link rel="stylesheet" href="../admin/adds/admin.css">
+  <script src="../admin/adds/loader.js"></script>
 </head>
 <body>
   <div id="header-container"></div>
@@ -19,7 +19,7 @@
       <h3>Foto de Perfil</h3>
       
       <div class="profile-section">
-        <img id="previewImage" src="/assets/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
+        <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
         <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" class="btn-small btn-outline" style="display: none;">
         <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Escolher Foto</button>
       </div>
@@ -178,7 +178,7 @@
     const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'admin') {
-      window.location.href = '/login.html';
+      window.location.href = '../login.html';
     }
 
     let diasLivres = [];
