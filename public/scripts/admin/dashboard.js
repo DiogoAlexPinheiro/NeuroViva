@@ -147,7 +147,7 @@ const user = JSON.parse(localStorage.getItem('user'));
                     <td>${a.data}</td>
                     <td>${a.hora}</td>
                     <td><span class="badge badge-warning">${a.estado}</span></td>
-                    <td><a href="../admin/adds/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
+                    <td><a href="../admin/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
                   </tr>
                 `).join('')}
               </tbody>

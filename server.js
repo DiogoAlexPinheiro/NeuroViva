@@ -7,6 +7,8 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import puppeteer from 'puppeteer';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1543,6 +1545,223 @@ app.get('/api/notificacoes/admin', async (req, res) => {
   } catch (error) {
     console.error('Erro ao obter notificacoes:', error);
     res.status(500).json({ error: 'Erro ao obter notificacoes' });
+  }
+});
+
+function gerarHTMLPagamento(dados) {
+  return `
+    <!DOCTYPE html>
+    <html lang="pt">
+    <head>
+      <meta charset="UTF-8">
+      <title>Pagamento ${dados.codigo} - ${dados.paciente}</title>
+      <style>
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+          padding: 40px;
+          color: #1f2933;
+          font-size: 14px;
+        }
+
+        h1 {
+          color: #2563eb;
+          border-bottom: 3px solid #2563eb;
+          padding-bottom: 10px;
+          margin-bottom: 30px;
+        }
+
+        .row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        }
+
+        .label {
+          font-weight: bold;
+          color: #374151;
+        }
+
+        .valor {
+          margin-top: 30px;
+          padding: 15px;
+          background: #f1f5f9;
+          border-left: 5px solid #16a34a;
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        footer {
+          margin-top: 50px;
+          text-align: center;
+          font-size: 12px;
+          color: #6b7280;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 10px;
+        }
+      </style>
+    </head>
+    <body>
+
+      <h1>Comprovativo de Pagamento</h1>
+
+      <div class="row"><span class="label">Código:</span><span>${dados.codigo}</span></div>
+      <div class="row"><span class="label">Paciente:</span><span>${dados.paciente}</span></div>
+      <div class="row"><span class="label">Data:</span><span>${dados.data}</span></div>
+      <div class="row"><span class="label">Método:</span><span>${dados.metodo}</span></div>
+      <div class="row"><span class="label">Estado:</span><span>${dados.estado}</span></div>
+
+      ${dados.descricao ? `
+        <div class="row"><span class="label">Descrição:</span><span>${dados.descricao}</span></div>
+      ` : ''}
+
+      <div class="valor">
+        Valor: € ${Number(dados.valor).toFixed(2)}
+      </div>
+
+      <footer>
+        © ${new Date().getFullYear()} NeuroViva · Documento gerado automaticamente
+      </footer>
+
+    </body>
+    </html>
+  `;
+}
+
+function gerarHTMLRelatorio(dados) {
+  return `
+    <!DOCTYPE html>
+    <html lang="pt">
+    <head>
+      <meta charset="UTF-8">
+      <title>Relatório ${dados.codigo} - ${dados.paciente}</title>
+      <style>
+        body {
+          font-family: Arial, Helvetica, sans-serif;
+          padding: 40px;
+          color: #1f2933;
+          font-size: 14px;
+          line-height: 1.6;
+        }
+
+        h1 {
+          color: #2563eb;
+          border-bottom: 3px solid #2563eb;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+
+        h2 {
+          margin-top: 30px;
+          color: #1e3a8a;
+        }
+
+        .row {
+          margin-bottom: 8px;
+        }
+
+        .label {
+          font-weight: bold;
+          color: #374151;
+        }
+
+        .box {
+          margin-top: 15px;
+          padding: 15px;
+          background: #f8fafc;
+          border-left: 4px solid #2563eb;
+          white-space: pre-wrap;
+        }
+
+        footer {
+          margin-top: 50px;
+          text-align: right;
+          font-size: 12px;
+          color: #6b7280;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 10px;
+        }
+      </style>
+    </head>
+    <body>
+
+      <h1>Relatório Clínico</h1>
+
+      <div class="row"><span class="label">Código:</span> ${dados.codigo}</div>
+      <div class="row"><span class="label">Data:</span> ${dados.data}</div>
+      <div class="row"><span class="label">Paciente:</span> ${dados.paciente}</div>
+      <div class="row"><span class="label">Psicóloga:</span> ${dados.psicologo || '—'}</div>
+
+      ${dados.entidade ? `
+        <div class="row"><span class="label">Entidade:</span> ${dados.entidade}</div>
+      ` : ''}
+
+      ${dados.titulo ? `<h2>${dados.titulo}</h2>` : ''}
+
+      <div class="box">${dados.conteudo || ''}</div>
+
+      ${dados.notas ? `
+        <h2>Notas</h2>
+        <div class="box">${dados.notas}</div>
+      ` : ''}
+
+      ${dados.assinatura ? `
+        <footer>
+          <strong>${dados.assinatura.nome}</strong><br>
+          ${dados.assinatura.titulo || ''}
+        </footer>
+      ` : `
+        <footer>
+          Documento clínico emitido por NeuroViva
+        </footer>
+      `}
+
+    </body>
+    </html>
+  `;
+}
+
+app.post('/api/pdf/detalhes', async (req, res) => {
+  const { tipo, dados } = req.body;
+
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      executablePath: puppeteer.executablePath(),
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
+    const page = await browser.newPage();
+
+    let html = '';
+
+    if (tipo === 'pagamento') {
+      html = gerarHTMLPagamento(dados);
+    } else if (tipo === 'relatorio') {
+      html = gerarHTMLRelatorio(dados);
+    } else {
+      throw new Error('Tipo de PDF inválido');
+    }
+
+    await page.setContent(html, { waitUntil: 'load' });
+
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true
+    });
+
+    await browser.close();
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="detalhes.pdf"',
+      'Content-Length': pdf.length
+    });
+
+    res.end(pdf);
+
+  } catch (err) {
+    console.error('Erro ao gerar PDF:', err);
+    res.status(500).json({ error: 'Erro ao gerar PDF' });
   }
 });
 

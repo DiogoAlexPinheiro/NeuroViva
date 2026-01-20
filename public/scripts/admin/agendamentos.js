@@ -197,6 +197,8 @@ window.customAlert = customAlert;
 window.showLoading = showLoading;
 window.hideLoading = hideLoading;
 
+let detalhesAtuaisPDF = null;
+
 const user = JSON.parse(localStorage.getItem('user'));
     if (!user || user.role !== 'admin') { window.location.href = '../login.html'; }
 
@@ -384,6 +386,11 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
 
         const rel = data.relatorio;
+        detalhesAtuaisPDF = {
+          tipo: 'relatorio',
+          dados: rel
+        };
+
         document.getElementById('modalDetalhesTitulo').textContent = 'Detalhes do Relatorio';
         document.getElementById('detalhesConteudo').innerHTML = `
           <div class="modal-detalhes-grid">
@@ -409,6 +416,11 @@ const user = JSON.parse(localStorage.getItem('user'));
         showLoading('A carregar...');
         const res = await fetch('http://localhost:3000/api/pagamentos/codigo/' + codigo);
         const pag = await res.json();
+        detalhesAtuaisPDF = {
+          tipo: 'pagamento',
+          dados: pag
+        };
+
         hideLoading();
 
         if (!res.ok) {
@@ -604,3 +616,52 @@ const user = JSON.parse(localStorage.getItem('user'));
     carregarPacientes();
     carregarAgendamentos();
     carregarHorariosDisponiveis();
+
+async function gerarPDFDetalhes() {
+  if (!detalhesAtuaisPDF) {
+    await customAlert('Não há dados para gerar o PDF.');
+    return;
+  }
+
+  try {
+    showLoading('A gerar PDF...');
+
+    const res = await fetch('http://localhost:3000/api/pdf/detalhes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(detalhesAtuaisPDF)
+    });
+
+    if (!res.ok) {
+      hideLoading();
+      await customAlert('Erro ao gerar PDF');
+      return;
+    }
+
+    const blob = await res.blob();
+    hideLoading();
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    let nomeFicheiro = 'documento.pdf';
+
+    if (detalhesAtuaisPDF.tipo === 'pagamento') {
+      nomeFicheiro = `Pagamento_${detalhesAtuaisPDF.dados.codigo}.pdf`;
+    }
+
+    if (detalhesAtuaisPDF.tipo === 'relatorio') {
+      nomeFicheiro = `Relatorio_${detalhesAtuaisPDF.dados.codigo}.pdf`;
+    }
+
+    a.href = url;
+    a.download = nomeFicheiro;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (e) {
+    hideLoading();
+    await customAlert('Erro ao gerar PDF');
+  }
+}

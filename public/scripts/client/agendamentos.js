@@ -1,12 +1,4 @@
-async function loadComponent(elementId, file) {
-  try {
-    const response = await fetch(file);
-    const html = await response.text();
-    document.getElementById(elementId).innerHTML = html;
-  } catch (error) {
-    console.error(`Erro ao carregar ${file}:`, error);
-  }
-}
+let detalhesAtuaisPDF = null;
 
 async function carregarNotificacoes() {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -34,9 +26,6 @@ async function carregarNotificacoes() {
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadComponent('header-container', '../client/adds/header.html');
-  await loadComponent('footer-container', '../client/adds/footer.html');
-  
   // Aguardar um pouco para garantir que os elementos foram carregados
   setTimeout(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -383,6 +372,10 @@ async function verDetalhesRelatorio(codigo) {
     }
 
     const rel = data.relatorio;
+    detalhesAtuaisPDF = {
+      tipo: 'relatorio',
+      dados: rel
+    };
     document.getElementById('detalhesConteudo').innerHTML = `
       <div class="modal-detalhes-grid">
         <div class="detalhe-item"><label>Codigo</label><span>${rel.codigo}</span></div>
@@ -419,6 +412,10 @@ async function verDetalhesPagamento(codigo) {
     showLoading('A carregar...');
     const res = await fetch(`http://localhost:3000/api/pagamentos/codigo/${codigo}`);
     const pag = await res.json();
+    detalhesAtuaisPDF = {
+      tipo: 'pagamento',
+      dados: pag
+    };
     hideLoading();
 
     if (!res.ok) {
@@ -546,3 +543,52 @@ function fecharModalCancelar() {
 carregarHorarioAtendimento();
 carregarAgendamentos();
 carregarHorariosDisponiveis(hoje, 'novaHora');
+
+async function gerarPDFDetalhes() {
+  if (!detalhesAtuaisPDF) {
+    await customAlert('Não há dados para gerar o PDF.');
+    return;
+  }
+
+  try {
+    showLoading('A gerar PDF...');
+
+    const res = await fetch('http://localhost:3000/api/pdf/detalhes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(detalhesAtuaisPDF)
+    });
+
+    if (!res.ok) {
+      hideLoading();
+      await customAlert('Erro ao gerar PDF');
+      return;
+    }
+
+    const blob = await res.blob();
+    hideLoading();
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+
+    let nomeFicheiro = 'documento.pdf';
+
+    if (detalhesAtuaisPDF.tipo === 'pagamento') {
+      nomeFicheiro = `Pagamento_${detalhesAtuaisPDF.dados.codigo}.pdf`;
+    }
+
+    if (detalhesAtuaisPDF.tipo === 'relatorio') {
+      nomeFicheiro = `Relatorio_${detalhesAtuaisPDF.dados.codigo}.pdf`;
+    }
+
+    a.download = nomeFicheiro;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (e) {
+    hideLoading();
+    await customAlert('Erro ao gerar PDF');
+  }
+}
