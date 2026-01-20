@@ -21,38 +21,59 @@
   --transition-normal: 0.3s ease;
 }
 
-h2 { color: var(--color-text); margin-bottom: 1.5rem; font-size: 2rem; font-weight: 800; }
-h3 { color: var(--color-text); margin-bottom: 1rem; font-size: 1.4rem; font-weight: 700; }
-
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html { 
-    scrollbar-gutter: stable; 
-}
-
-html, body { 
-    height: 100%; 
+html, body {
+  height: 100%;
 }
 
 body {
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--color-bg-site);
   color: var(--color-text);
+  padding-top: 140px;
   line-height: 1.6;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#header-container + main { 
-    flex: 1 0 auto; 
+main {
+  max-width: 1300px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+h2 {
+  color: var(--color-text);
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+h3 {
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: var(--color-bg-card);
+}
+
+#header-container + main {
+  flex: 1 0 auto;
 }
 
 header {
@@ -62,23 +83,26 @@ header {
   box-shadow: var(--shadow-small);
   display: flex;
   align-items: center;
+  top: 0;
+  z-index: 1000;
+  background: var(--color-bg-card);
 }
 
-header h1 { 
-    font-size: 1.4rem; 
-    font-weight: 800; 
-    color: var(--color-text); 
-    letter-spacing: 0.5px; 
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: 0.5px;
 }
 
-header h1 .brand { 
-    color: var(--color-primary); 
-    font-weight: 800; 
+header h1 .brand {
+  color: var(--color-primary);
+  font-weight: 800;
 }
 
-header h1 .area { 
-    font-weight: 400; 
-    color: var(--color-text-light); 
+header h1 .area {
+  font-weight: 400;
+  color: var(--color-text-light);
 }
 
 nav {
@@ -89,7 +113,7 @@ nav {
   align-items: center;
   box-shadow: var(--shadow-small);
   position: sticky;
-  top: 0;
+  top: 85px;
   z-index: 1000;
   border-bottom: 1px solid var(--color-primary);
 }
@@ -103,17 +127,17 @@ nav {
   padding: 0 1rem;
 }
 
-#userName { 
-    font-weight: 700; 
-    color: var(--color-primary); 
-    min-width: 150px; 
-    font-size: 0.95rem; 
+#userName {
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 150px;
+  font-size: 0.95rem;
 }
 
-.nav-links-center { 
-    display: flex; 
-    align-items: center; 
-    gap: 0; 
+.nav-links-center {
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 nav a {
@@ -127,15 +151,15 @@ nav a {
   border-radius: 0;
 }
 
-nav a:hover { 
-    color: var(--color-primary); 
-    background-color: rgba(90, 95, 158, 0.05); 
+nav a:hover {
+  color: var(--color-primary);
+  background-color: rgba(76, 175, 80, 0.05);
 }
 
-nav a.active { 
-    color: var(--color-text); 
-    font-weight: 700; 
-    background-color: rgba(0, 0, 0, 0.04); 
+nav a.active {
+  color: var(--color-text);
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .btn-outline {

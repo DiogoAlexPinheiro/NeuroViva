@@ -44,6 +44,7 @@ body {
   background-color: var(--color-bg-site);
   color: var(--color-text);
   line-height: 1.6;
+  padding-top: 140px;
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
@@ -83,6 +84,15 @@ header {
   align-items: center;
   position: sticky;
   top: 0;
+  z-index: 1001;
+  background: var(--color-bg-card);
+}
+
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   z-index: 1000;
   background: var(--color-bg-card);
 }
@@ -112,7 +122,7 @@ nav {
   align-items: center;
   box-shadow: var(--shadow-small);
   position: sticky;
-  top: 0;
+  top: calc(1.5rem * 2 + 1.4rem);
   z-index: 1000;
   border-bottom: 1px solid var(--color-primary);
 }
@@ -153,6 +163,12 @@ nav a {
 nav a:hover {
   color: var(--color-primary);
   background-color: rgba(76, 175, 80, 0.05);
+}
+
+nav a.active {
+  color: var(--color-text);
+  font-weight: 700;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 nav a.active {

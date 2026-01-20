@@ -7,82 +7,31 @@
   <link rel="stylesheet" href="../../styles/admin/pacientes.css">
   <script src="../admin/adds/loader.js"></script>
   <script src="../adds/modal.js"></script>
-  <style>
-    .estado-info {
-      padding: 1rem;
-      border-radius: var(--radius-medium);
-      margin-bottom: 1.5rem;
-      border-left: 4px solid;
-    }
-    .estado-info.ativo {
-      background: #e8f5e9;
-      border-left-color: #4CAF50;
-      color: #2e7d32;
-    }
-    .estado-info.inativo {
-      background: #fff3e0;
-      border-left-color: #ff9800;
-      color: #e65100;
-    }
-    .historico-editor {
-      min-height: 300px;
-      font-family: 'Nunito', sans-serif;
-    }
-    .financeiro-resumo {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .financeiro-resumo .resumo-item {
-      text-align: center;
-      padding: 1rem;
-      background: var(--color-bg-site);
-      border-radius: var(--radius-small);
-    }
-    .financeiro-resumo .resumo-item.pago { border-left: 4px solid #4CAF50; }
-    .financeiro-resumo .resumo-item.pendente { border-left: 4px solid #FF9800; }
-    .financeiro-resumo .resumo-item.total { border-left: 4px solid var(--color-primary); }
-    .financeiro-resumo .resumo-item h4 {
-      font-size: 0.75rem;
-      color: var(--color-text-light);
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-    }
-    .financeiro-resumo .resumo-item .valor {
-      font-size: 1.4rem;
-      font-weight: 800;
-    }
-    .financeiro-resumo .resumo-item.pago .valor { color: #4CAF50; }
-    .financeiro-resumo .resumo-item.pendente .valor { color: #FF9800; }
-    .financeiro-resumo .resumo-item.total .valor { color: var(--color-primary); }
-    @media (max-width: 600px) {
-      .financeiro-resumo { grid-template-columns: 1fr; }
-    }
-  </style>
 </head>
 <body>
-  <header>
-    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
-  </header>
+  <div class="top-bar">
+    <header>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+    </header>
 
-  <nav>
-    <div class="user-nav-wrapper">
-      <span id="userName">Admin</span>
-      
-      <div class="nav-links-center">
-        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+    <nav>
+      <div class="user-nav-wrapper">
+        <span id="userName">Admin</span>
+        
+        <div class="nav-links-center">
+          <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+        </div>
+
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
       </div>
-
-      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
   <main>
     <a href="../admin/pacientes.html" class="btn-secondary" style="margin-bottom: 1.5rem;">← Voltar para Pacientes</a>

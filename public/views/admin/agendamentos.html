@@ -7,27 +7,29 @@
   <link rel="stylesheet" href="../../styles/admin/agendamentos.css">
 </head>
 <body>
-  <header>
-    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
-  </header>
+  <div class="top-bar">
+    <header>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+    </header>
 
-  <nav>
-    <div class="user-nav-wrapper">
-      <span id="userName">Admin</span>
-      
-      <div class="nav-links-center">
-        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+    <nav>
+      <div class="user-nav-wrapper">
+        <span id="userName">Admin</span>
+        
+        <div class="nav-links-center">
+          <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+        </div>
+
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
       </div>
-
-      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
   <main>
     <h2>Gestao de Agendamentos</h2>
