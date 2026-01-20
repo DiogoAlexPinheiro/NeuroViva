@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatorios - Admin</title>
+  <link rel="stylesheet" href="../../styles/admin/relatorios.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Admin</span>
+      
+      <div class="nav-links-center">
+        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Gestao de Relatorios</h2>
+
+    <div id="alert" class="alert-hidden"></div>
+
+    <div class="card">
+      <h3>Criar Novo Relatorio</h3>
+      
+      <form id="formRelatorio" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Titulo do Relatorio</label>
+            <input type="text" id="titulo" placeholder="Ex: Relatorio de Sessao - Avaliacao Inicial" required>
+          </div>
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="dataRelatorio" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Paciente</label>
+            <select id="pacienteSelect" required>
+              <option value="">A carregar...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Relatorio</label>
+            <select id="tipoRelatorio" required>
+              <option value="normal">Relatorio de Sessao (Normal)</option>
+              <option value="tribunal">Relatorio Externo - Tribunal</option>
+              <option value="escola">Relatorio Externo - Escola</option>
+              <option value="empresa">Relatorio Externo - Empresa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="entidadeGroup" style="display: none;">
+          <label>Entidade Destinataria</label>
+          <input type="text" id="entidade" placeholder="Ex: Tribunal de Familia do Porto">
+        </div>
+
+        <div class="form-group" id="entidadeEmailGroup" style="display: none;">
+          <label>Email da Entidade (opcional - para arquivo interno)</label>
+          <input type="email" id="entidadeEmail" placeholder="Ex: tribunal.familia.porto@dgaj.pt">
+          <small style="color: var(--color-text-light);">Este email nao sera visivel publicamente, apenas nos detalhes de edicao</small>
+        </div>
+
+        <div class="form-group">
+          <label>Conteudo / Texto Principal</label>
+          <textarea id="conteudo" rows="8" placeholder="Descreva o conteudo do relatorio..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Notas Adicionais</label>
+          <textarea id="notas" rows="3" placeholder="Observacoes, recomendacoes ou notas complementares..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Anexos (Imagens, PDFs, Documentos)</label>
+          <input type="file" id="anexos" multiple accept="image/*,.pdf,.doc,.docx,.txt">
+          <small style="color: var(--color-text-light);">Pode selecionar ate 5 ficheiros (max 50MB cada)</small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Assinatura - Nome</label>
+            <input type="text" id="assinaturaNome" placeholder="Ex: Dra. Sofia Silva" required>
+          </div>
+          <div class="form-group">
+            <label>Assinatura - Titulo/Cedula</label>
+            <input type="text" id="assinaturaTitulo" placeholder="Ex: Psicologa Clinica - OPP 12345">
+          </div>
+        </div>
+
+        <button type="button" class="btn" onclick="criarRelatorio()">Criar Relatorio</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Relatorios Existentes</h3>
+      
+      <div class="form-group">
+        <label>Filtrar por Paciente</label>
+        <select id="filtroRelatorio" onchange="filtrarRelatorios()">
+          <option value="">Todos os pacientes</option>
+        </select>
+      </div>
+
+      <div id="listaRelatorios">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div id="modalEditar" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Editar Relatorio</h3>
+        
+        <div class="form-group">
+          <label>Titulo</label>
+          <input type="text" id="editTitulo">
+        </div>
+
+        <div class="form-group">
+          <label>Entidade (se aplicavel)</label>
+          <input type="text" id="editEntidade">
+        </div>
+
+        <div class="form-group" id="editEntidadeEmailGroup">
+          <label>Email da Entidade</label>
+          <input type="email" id="editEntidadeEmail" placeholder="Email para contacto futuro">
+        </div>
+
+        <div class="form-group">
+          <label>Conteudo</label>
+          <textarea id="editConteudo" rows="8"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Notas</label>
+          <textarea id="editNotas" rows="3"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="salvarEdicao()">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalDetalhes" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Detalhes do Relatorio</h3>
+        <div id="detalhesConteudo"></div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+  </footer>
+
+  <script src="../../scripts/admin/relatorios.js"></script>
+</body>
+</html>

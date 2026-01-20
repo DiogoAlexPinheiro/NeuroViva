@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financeiro - Cliente</title>
+  <link rel="stylesheet" href="../../styles/client/financeiro.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Olá, Cliente</span>
+      
+      <div class="nav-links-center">
+        <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Meus Pagamentos</h2>
+
+    <div class="card">
+      <h3>Resumo Financeiro</h3>
+      <div id="resumo">
+        <p><strong>Total Pago:</strong> <span id="totalPago" style="color: #4CAF50;">EUR 0.00</span></p>
+        <p><strong>Total Pendente:</strong> <span id="totalPendente" style="color: #FF9800;">EUR 0.00</span></p>
+        <hr style="margin: 1rem 0;">
+        <p><strong>Total Geral:</strong> <span id="totalGeral" style="font-size: 1.3rem; color: #4CAF50;">EUR 0.00</span></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Historico de Pagamentos</h3>
+      <div id="listaPagamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../../scripts/client/financeiro.js"></script>
+</body>
+</html>

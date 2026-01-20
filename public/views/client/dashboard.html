@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Cliente | NeuroViva</title>
+  <link rel="stylesheet" href="../../styles/client/dashboard.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Olá, Cliente</span>
+      
+      <div class="nav-links-center">
+        <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Bem-vindo ao seu painel</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 id="totalAgendamentos">0</h3>
+        <p>Total Agendamentos</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="sessoesCompletas">0</h3>
+        <p>Sessões Completas</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="proximaSessao">-</h3>
+        <p>Próxima Sessão</p>
+      </div>
+    </div>
+
+    <!-- Resumo Financeiro -->
+    <div class="resumo-cards-2">
+      <div class="resumo-card pago">
+        <h4>Total Pago</h4>
+        <div class="valor" id="totalPago">EUR 0.00</div>
+      </div>
+      <div class="resumo-card pendente">
+        <h4>Pagamentos Pendentes</h4>
+        <div class="valor" id="totalPendente">EUR 0.00</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Próximos Agendamentos (Próxima Semana)</h3>
+      <div id="proximosAgendamentos">
+        <p style="text-align: center; color: var(--color-text-light);">
+          <span style="display: inline-block; margin: 2rem 0;">A carregar...</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>Agendamentos</h3>
+        <p>Marque ou edite as suas consultas</p>
+        <a href="../client/agendamentos.html" class="btn" style="margin-top: 1rem;">Ver Agendamentos</a>
+      </div>
+
+      <div class="card">
+        <h3>Mensagens</h3>
+        <p>Fale com a sua psicóloga</p>
+        <a href="../client/mensagens.html" class="btn" style="margin-top: 1rem;">Ver Mensagens</a>
+      </div>
+
+      <div class="card">
+        <h3>Financeiro</h3>
+        <p>Estado dos seus pagamentos</p>
+        <a href="../client/financeiro.html" class="btn" style="margin-top: 1rem;">Ver Financeiro</a>
+      </div>
+
+      <div class="card">
+        <h3>Perfil</h3>
+        <p>Mantenha os seus dados atualizados</p>
+        <a href="../client/perfil.html" class="btn" style="margin-top: 1rem;">Editar Perfil</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../../scripts/client/dashboard.js"></script>
+</body>
+</html>

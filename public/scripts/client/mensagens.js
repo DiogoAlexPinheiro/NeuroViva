@@ -1,0 +1,288 @@
+// public/client/adds/loader.js
+async function loadComponent(elementId, file) {
+  try {
+    const response = await fetch(file);
+    const html = await response.text();
+    document.getElementById(elementId).innerHTML = html;
+  } catch (error) {
+    console.error(`Erro ao carregar ${file}:`, error);
+  }
+}
+
+async function carregarNotificacoes() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) return;
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/notificacoes/cliente/${user.nome}`);
+    const notif = await res.json();
+
+    const badgeMensagens = document.getElementById('badgeMensagens');
+    const badgePagamentos = document.getElementById('badgePagamentos');
+
+    if (badgeMensagens) {
+      badgeMensagens.textContent = notif.mensagens;
+      badgeMensagens.className = notif.mensagens > 0 ? 'notification-badge' : 'notification-badge zero';
+    }
+
+    if (badgePagamentos) {
+      badgePagamentos.textContent = notif.pagamentos;
+      badgePagamentos.className = notif.pagamentos > 0 ? 'notification-badge' : 'notification-badge zero';
+    }
+  } catch (error) {
+    console.error('Erro ao carregar notificações:', error);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadComponent('header-container', '../client/adds/header.html');
+  await loadComponent('footer-container', '../client/adds/footer.html');
+  
+  // Aguardar um pouco para garantir que os elementos foram carregados
+  setTimeout(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      const userNameEl = document.getElementById('userName');
+      if (userNameEl) userNameEl.textContent = `Olá, ${user.nome}`;
+    }
+    
+    carregarNotificacoes();
+    setInterval(carregarNotificacoes, 30000);
+  }, 100);
+});
+
+function logout() {
+  localStorage.removeItem('user');
+  window.location.href = '../../login.html';
+}
+
+const user = JSON.parse(localStorage.getItem('user'));
+    let mensagemEditandoId = null;
+    let dadosMensagens = { enviadas: [], recebidas: [] };
+    let paginaAtual = 1;
+    const mensagensPorPagina = 20;
+
+    // Mudar estilo do input file quando ficheiro adicionado
+    document.getElementById('imagemInput').addEventListener('change', function(e) {
+      if (e.target.files.length > 0) {
+        e.target.classList.remove('btn-outline');
+        e.target.classList.add('btn-solid', 'has-file');
+      } else {
+        e.target.classList.add('btn-outline');
+        e.target.classList.remove('btn-solid', 'has-file');
+      }
+    });
+
+    async function carregarMensagens() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/cliente/${user.nome}`);
+        dadosMensagens = await res.json();
+        paginaAtual = 1;
+        renderizarMensagens();
+      } catch (e) { 
+        console.error('Erro:', e);
+        mostrarAlerta('Erro ao carregar mensagens', 'error');
+      }
+    }
+
+    function renderizarMensagens() {
+      const container = document.getElementById('contentorMensagens');
+      container.innerHTML = '';
+
+      const todas = [...dadosMensagens.enviadas, ...dadosMensagens.recebidas]
+        .sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+      
+      const totalPaginas = Math.ceil(todas.length / mensagensPorPagina);
+      const inicio = (paginaAtual - 1) * mensagensPorPagina;
+      const fim = inicio + mensagensPorPagina;
+      const mensagensPagina = todas.slice(inicio, fim);
+      
+      container.innerHTML = `
+        <div class="card">
+          <h3>Histórico de Mensagens</h3>
+          <div>${gerarHtmlLista(mensagensPagina)}</div>
+          ${totalPaginas > 1 ? gerarPaginacao(totalPaginas) : ''}
+        </div>
+      `;
+    }
+
+    function gerarPaginacao(totalPaginas) {
+      let html = '<div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #eee;">';
+      
+      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>← Anterior</button>`;
+      
+      html += `<span style="font-weight:600; color:var(--color-primary);">Página ${paginaAtual} de ${totalPaginas}</span>`;
+      
+      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>Seguinte →</button>`;
+      
+      html += '</div>';
+      return html;
+    }
+
+    function mudarPagina(novaPagina) {
+      paginaAtual = novaPagina;
+      renderizarMensagens();
+      window.scrollTo({ top: document.getElementById('contentorMensagens').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function gerarHtmlLista(lista) {
+      if (!lista || lista.length === 0) return '<p>Sem mensagens.</p>';
+      
+      return lista.map(m => {
+        const recebida = m.destinatario === user.nome;
+        const label = recebida ? 'PSICÓLOGA' : 'EU';
+        const classeOrigem = recebida ? 'from-admin' : 'from-client';
+        const corLabel = recebida ? '#5A5F9E' : '#4CAF50';
+        const unreadClass = (recebida && !m.lida) ? 'unread' : '';
+
+        return `
+          <div class="message-box ${classeOrigem} ${unreadClass}" onclick="${recebida && !m.lida ? `marcarComoLida('${m._id}')` : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4>${m.assunto}</h4>
+              <span style="font-size:0.75rem; font-weight:700; color:${corLabel};">${label}</span>
+            </div>
+            <small>${new Date(m.criadoEm).toLocaleString('pt-PT')}</small>
+            ${m.isCancelamento ? '<p style="color: #c62828; font-weight: 600;">⚠️ Notificação de Cancelamento</p>' : ''}
+            <p style="white-space: pre-wrap;">${m.texto}</p>
+            ${m.imagem ? `<img src="${m.imagem}" alt="Imagem da mensagem" style="max-width: 100%; border-radius: 12px; margin-top: 1rem; cursor: pointer;" onclick="window.open('${m.imagem}', '_blank')">` : ''}
+            ${!recebida && !m.isCancelamento ? `
+              <div style="margin-top:15px; display:flex; gap:10px;">
+                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); abrirEditar('${m._id}', '${m.assunto.replace(/'/g, "\\'")}', \`${m.texto.replace(/`/g, '\\`')}\`)">Editar</button>
+                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); apagarMensagem('${m._id}')">Apagar</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function marcarComoLida(id) {
+      try {
+        await fetch(`http://localhost:3000/api/mensagens/${id}/marcar-lida`, {
+          method: 'PUT'
+        });
+        
+        const mensagem = dadosMensagens.recebidas.find(m => m._id === id);
+        if (mensagem) {
+          mensagem.lida = true;
+        }
+        
+        renderizarMensagens();
+      } catch (e) {
+        console.error('Erro ao marcar como lida:', e);
+      }
+    }
+
+    async function enviarMensagem() {
+      const assunto = document.getElementById('novoAssunto').value.trim();
+      const texto = document.getElementById('novoTexto').value.trim();
+      const imagemInput = document.getElementById('imagemInput');
+      
+      if(!assunto || !texto) {
+        mostrarAlerta('Preencha assunto e mensagem', 'error');
+        return;
+      }
+      
+      try {
+        const formData = new FormData();
+        formData.append('remetente', user.nome);
+        formData.append('assunto', assunto);
+        formData.append('texto', texto);
+        
+        if (imagemInput.files.length > 0) {
+          formData.append('imagem', imagemInput.files[0]);
+        }
+        
+        const res = await fetch('http://localhost:3000/api/mensagens', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if(res.ok) {
+          mostrarAlerta('Mensagem enviada!', 'success');
+          document.getElementById('novoAssunto').value = '';
+          document.getElementById('novoTexto').value = '';
+          imagemInput.value = '';
+          imagemInput.classList.add('btn-outline');
+          imagemInput.classList.remove('btn-solid', 'has-file');
+          carregarMensagens();
+        } else {
+          const data = await res.json();
+          mostrarAlerta(data.error || 'Erro ao enviar', 'error');
+        }
+      } catch (e) { 
+        console.error(e);
+        mostrarAlerta('Erro ao enviar', 'error');
+      }
+    }
+
+    function abrirEditar(id, assunto, texto) {
+      mensagemEditandoId = id;
+      document.getElementById('editAssunto').value = assunto;
+      document.getElementById('editTexto').value = texto;
+      document.getElementById('modalEditar').style.display = 'flex';
+    }
+
+    function fecharModal() { 
+      document.getElementById('modalEditar').style.display = 'none'; 
+      mensagemEditandoId = null;
+    }
+
+    async function salvarEdicao() {
+      const assunto = document.getElementById('editAssunto').value.trim();
+      const texto = document.getElementById('editTexto').value.trim();
+      
+      if (!assunto || !texto) {
+        mostrarAlerta('Assunto e mensagem são obrigatórios', 'error');
+        return;
+      }
+      
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/${mensagemEditandoId}`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ assunto, texto })
+        });
+        
+        if (res.ok) {
+          mostrarAlerta('Mensagem editada!', 'success');
+          fecharModal();
+          carregarMensagens();
+        } else {
+          mostrarAlerta('Erro ao editar', 'error');
+        }
+      } catch (e) { 
+        console.error(e);
+        mostrarAlerta('Erro ao editar', 'error');
+      }
+    }
+
+    async function apagarMensagem(id) {
+      if(!confirm('Deseja apagar esta mensagem?')) return;
+      
+      try {
+        const res = await fetch(`http://localhost:3000/api/mensagens/${id}`, { 
+          method: 'DELETE' 
+        });
+        
+        if (res.ok) {
+          mostrarAlerta('Mensagem apagada!', 'success');
+          carregarMensagens();
+        } else {
+          mostrarAlerta('Erro ao apagar', 'error');
+        }
+      } catch (e) {
+        console.error(e);
+        mostrarAlerta('Erro ao apagar', 'error');
+      }
+    }
+
+    function mostrarAlerta(msg, tipo) {
+      const el = document.getElementById('alert');
+      el.style.display = 'block';
+      el.className = `alert alert-${tipo}`;
+      el.textContent = msg;
+      setTimeout(() => el.style.display = 'none', 5000);
+    }
+
+    window.onload = carregarMensagens;

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mensagens - Admin</title>
+  <link rel="stylesheet" href="../../styles/admin/mensagens.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Admin</span>
+      
+      <div class="nav-links-center">
+        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Centro de Mensagens</h2>
+
+    <div class="mensagens-container">
+      <!-- Sidebar de Clientes -->
+      <div class="clientes-sidebar">
+        <div class="clientes-header">
+          <div class="clientes-header-title">
+            <span>Conversas</span>
+          </div>
+
+          <div class="sidebar-actions">
+            <button class="btn-compact" type="button" onclick="ativarMensagemGeral()" title="Enviar mensagem para todos os clientes">
+              <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+              </svg>
+              Geral
+            </button>
+          </div>
+        </div>
+
+        <div class="clientes-search">
+          <input type="text" id="searchClientes" placeholder="Procurar cliente" onkeyup="filtrarClientes()">
+        </div>
+
+        <div class="clientes-lista" id="clientesLista">
+          <p class="loading-state">A carregar</p>
+        </div>
+      </div>
+
+      <!-- Área de Chat -->
+      <div class="chat-area" id="chatArea">
+        <div class="empty-state">
+          <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          <h3>Selecione um cliente</h3>
+          <p>Escolha uma conversa para enviar mensagens</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+  </footer>
+
+  <script src="../../scripts/admin/mensagens.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamentos - Cliente</title>
+  <link rel="stylesheet" href="../../styles/client/agendamentos.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Olá, Cliente</span>
+      
+      <div class="nav-links-center">
+        <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Meus Agendamentos</h2>
+
+    <div id="alert" class="alert-hidden"></div>
+
+    <!-- NOVO: Cartão de Horário de Atendimento -->
+    <div class="card">
+      <h3>Horário de Atendimento</h3>
+      <p id="nomePsicologo" style="margin-bottom: 1rem; font-weight: 600; color: var(--color-primary);"></p>
+      <div id="horarioInfo">
+        <p>A carregar...</p>
+      </div>
+      <div id="diasLivresInfo" style="margin-top: 1rem;"></div>
+    </div>
+
+    <div class="card">
+      <h3>Novo Agendamento</h3>
+      
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="novaData" min="">
+      </div>
+
+      <div class="form-group">
+        <label>Horário Disponível</label>
+        <select id="novaHora">
+          <option value="">Selecione uma data primeiro</option>
+        </select>
+      </div>
+
+      <button class="btn" onclick="criarAgendamento()">Agendar</button>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Agendamentos Existentes</h3>
+      <div id="listaAgendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <!-- Modal Editar -->
+    <div id="modalEditar" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Editar Agendamento</h3>
+        
+        <div class="form-group">
+          <label>Nova Data</label>
+          <input type="date" id="editData">
+        </div>
+
+        <div class="form-group">
+          <label>Novo Horário</label>
+          <select id="editHora"></select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn" onclick="salvarEdicao()">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Cancelar -->
+    <div id="modalCancelar" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Cancelar Agendamento</h3>
+        <p>Por favor, indique a razão do cancelamento:</p>
+        
+        <div class="form-group">
+          <label>Razão do Cancelamento</label>
+          <textarea id="razaoCancelamento" rows="4" placeholder="Ex: Surgiu um imprevisto no trabalho..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-danger" onclick="confirmarCancelamento()">Confirmar Cancelamento</button>
+          <button class="btn-secondary" onclick="fecharModalCancelar()">Voltar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Detalhes -->
+    <div id="modalDetalhes" class="modal-overlay">
+      <div class="modal-content" style="max-width: 800px;">
+        <h3>Detalhes do Agendamento</h3n>
+        <div id="detalhesConteudo"></div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+      <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../../scripts/client/agendamentos.js"></script>
+</body>
+</html>

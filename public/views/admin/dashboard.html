@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Admin</title>
+  <link rel="stylesheet" href="../../styles/admin/dashboard.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Admin</span>
+      
+      <div class="nav-links-center">
+        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Visao Geral</h2>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 id="totalPacientes">0</h3>
+        <p>Clientes Ativos</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="sessoesCompletas">0</h3>
+        <p>Sessoes Completas</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalMensagens">0</h3>
+        <p>Mensagens Recentes</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalPagamentos">0</h3>
+        <p>Pagamentos Pendentes</p>
+      </div>
+    </div>
+
+    <div class="resumo-cards-3">
+      <div class="resumo-card pago">
+        <h4>Total Pago</h4>
+        <div class="valor" id="totalPago">EUR 0.00</div>
+      </div>
+      <div class="resumo-card pendente">
+        <h4>Total Pendente</h4>
+        <div class="valor" id="totalPendente">EUR 0.00</div>
+      </div>
+      <div class="resumo-card total">
+        <h4>Total Geral</h4>
+        <div class="valor" id="totalGeral">EUR 0.00</div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+      <h3>Horario de Atendimento</h3>
+      <div id="horarioInfo">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Proximos Agendamentos (Proxima Semana)</h3>
+      <div id="proximosAgendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Agendamentos a Atualizar</h3>
+      <p class="card-description">Agendamentos passados ou de hoje que ainda nao foram marcados como completos</p>
+      <div id="agendamentosAtualizar">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>Pacientes</h3>
+        <p>Gerir pacientes e historico clinico</p>
+        <a href="../admin/pacientes.html" class="btn">Ver Pacientes</a>
+      </div>
+
+      <div class="card">
+        <h3>Agendamentos</h3>
+        <p>Gerir todos os agendamentos</p>
+        <a href="../admin/agendamentos.html" class="btn">Ver Agendamentos</a>
+      </div>
+
+      <div class="card">
+        <h3>Mensagens</h3>
+        <p>Responder a mensagens dos pacientes</p>
+        <a href="../admin/mensagens.html" class="btn">Ver Mensagens</a>
+      </div>
+
+      <div class="card">
+        <h3>Relatorios</h3>
+        <p>Criar relatorios e documentos</p>
+        <a href="../admin/relatorios.html" class="btn">Gerir Relatorios</a>
+      </div>
+
+      <div class="card">
+        <h3>Financeiro</h3>
+        <p>Registar pagamentos e consultas</p>
+        <a href="../admin/financeiro.html" class="btn">Ver Financeiro</a>
+      </div>
+
+      <div class="card">
+        <h3>Perfil</h3>
+        <p>Gerir o seu perfil e horarios</p>
+        <a href="../admin/perfil.html" class="btn">Editar Perfil</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+  </footer>
+
+  <script src="../../scripts/admin/dashboard.js"></script>
+</body>
+</html>

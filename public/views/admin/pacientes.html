@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pacientes - Admin</title>
+  <link rel="stylesheet" href="../../styles/admin/pacientes.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Admin</span>
+      
+      <div class="nav-links-center">
+        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Gestao de Pacientes</h2>
+
+    <div class="card">
+      <h3>Lista de Pacientes</h3>
+      <div class="table-responsive" id="listaPacientes">
+        <p class="pacientes-message">A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-centered-content">
+        <h3>Adicionar Novo Paciente</h3>
+        <p class="card-description">Criar um novo perfil de paciente</p>
+        <a href="../admin/novopaciente.html" class="btn">Criar Novo Paciente</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+  </footer>
+
+  <script src="../../scripts/admin/pacientes.js"></script>
+</body>
+</html>

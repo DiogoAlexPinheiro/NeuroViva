@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Mensagens - Cliente</title>
+  <link rel="stylesheet" href="../../styles/client/mensagens.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Olá, Cliente</span>
+      
+      <div class="nav-links-center">
+        <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Centro de Mensagens</h2>
+    <div id="alert" style="display:none; padding:1rem; border-radius:12px; margin-bottom:1rem;"></div>
+
+    <div class="card">
+      <h3>Nova Mensagem</h3>
+      <form id="formMensagem" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Assunto</label>
+          <input type="text" id="novoAssunto" placeholder="Sobre o que quer falar?" required>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="novoTexto" rows="4" placeholder="Escreva a sua mensagem aqui..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Imagem (opcional)</label>
+          <input type="file" id="imagemInput" accept="image/png,image/jpeg,image/jpg" class="btn-small btn-outline">
+          <small>Apenas PNG e JPG - Max 1 imagem</small>
+        </div>
+        <button type="button" class="btn-solid" onclick="enviarMensagem()">Enviar Mensagem</button>
+      </form>
+    </div>
+
+    <div id="contentorMensagens"></div>
+
+    <div id="modalEditar" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Editar Mensagem</h3>
+        <div class="form-group">
+          <label>Assunto</label>
+          <input type="text" id="editAssunto" required>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="editTexto" rows="4" required></textarea>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 1rem;">
+          <button class="btn-solid" onclick="salvarEdicao()">Guardar</button>
+          <button class="btn-outline" onclick="fecharModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../../scripts/client/mensagens.js">
+  </script>
+</body>
+</html>

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Paciente - Admin</title>
+  <link rel="stylesheet" href="../../styles/admin/pacientes.css">
+  <script src="../admin/adds/loader.js"></script>
+  <script src="../adds/modal.js"></script>
+  <style>
+    .estado-info {
+      padding: 1rem;
+      border-radius: var(--radius-medium);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid;
+    }
+    .estado-info.ativo {
+      background: #e8f5e9;
+      border-left-color: #4CAF50;
+      color: #2e7d32;
+    }
+    .estado-info.inativo {
+      background: #fff3e0;
+      border-left-color: #ff9800;
+      color: #e65100;
+    }
+    .historico-editor {
+      min-height: 300px;
+      font-family: 'Nunito', sans-serif;
+    }
+    .financeiro-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .financeiro-resumo .resumo-item {
+      text-align: center;
+      padding: 1rem;
+      background: var(--color-bg-site);
+      border-radius: var(--radius-small);
+    }
+    .financeiro-resumo .resumo-item.pago { border-left: 4px solid #4CAF50; }
+    .financeiro-resumo .resumo-item.pendente { border-left: 4px solid #FF9800; }
+    .financeiro-resumo .resumo-item.total { border-left: 4px solid var(--color-primary); }
+    .financeiro-resumo .resumo-item h4 {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+    .financeiro-resumo .resumo-item .valor {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+    .financeiro-resumo .resumo-item.pago .valor { color: #4CAF50; }
+    .financeiro-resumo .resumo-item.pendente .valor { color: #FF9800; }
+    .financeiro-resumo .resumo-item.total .valor { color: var(--color-primary); }
+    @media (max-width: 600px) {
+      .financeiro-resumo { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Admin</span>
+      
+      <div class="nav-links-center">
+        <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
+        <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
+        <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <a href="../admin/pacientes.html" class="btn-secondary" style="margin-bottom: 1.5rem;">← Voltar para Pacientes</a>
+
+    <h2 id="nomePaciente">Paciente</h2>
+
+    <div id="alert" class="alert-hidden"></div>
+
+    <div class="card">
+      <h3>Foto de Perfil</h3>
+      <div class="profile-section">
+        <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
+        <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" style="display: none;">
+        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Alterar Foto</button>
+        <small style="color: var(--color-text-light); margin-top: 0.5rem;">A foto antiga será apagada automaticamente</small>
+      </div>
+    </div>
+
+    <!-- NOVO: Histórico Clínico -->
+    <div class="card">
+      <h3>📋 Histórico Clínico</h3>
+      <p class="card-description">Informações clínicas relevantes sobre o paciente (apenas visível para a psicóloga)</p>
+      
+      <div class="form-group">
+        <label>Diagnósticos e Condições</label>
+        <textarea id="diagnosticos" rows="3" placeholder="Ex: Perturbação de Ansiedade Generalizada (TAG), Episódio Depressivo Moderado..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Medicação Atual</label>
+        <textarea id="medicacao" rows="2" placeholder="Ex: Sertralina 50mg (1x dia), Alprazolam 0.25mg (SOS)..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Histórico de Tratamentos Anteriores</label>
+        <textarea id="tratamentosAnteriores" rows="3" placeholder="Ex: Acompanhamento psicológico em 2020-2021 (6 meses), Internamento em 2019..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Motivo da Consulta Inicial</label>
+        <textarea id="motivoConsulta" rows="3" placeholder="Ex: Queixas de ansiedade intensa no trabalho, dificuldades de sono..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Evolução e Notas Clínicas</label>
+        <textarea id="evolucaoClinica" rows="6" class="historico-editor" placeholder="Notas sobre a evolução do paciente ao longo das sessões..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Alertas e Precauções</label>
+        <textarea id="alertas" rows="2" placeholder="Ex: Ideação suicida prévia (2019), Alergia a benzodiazepinas..." style="border-color: #ff9800;"></textarea>
+      </div>
+
+      <button class="btn" onclick="salvarHistoricoClinico()">Guardar Histórico Clínico</button>
+    </div>
+
+    <div class="card">
+      <h3>Informações Pessoais</h3>
+      
+      <div class="form-group">
+        <label>Nome Completo *</label>
+        <input type="text" id="nomeCompleto" required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primeiro Nome</label>
+          <input type="text" id="primeiroNome">
+        </div>
+        <div class="form-group">
+          <label>Último Nome</label>
+          <input type="text" id="ultimoNome">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+          <label>Contacto</label>
+          <input type="text" id="contacto">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Morada</label>
+        <input type="text" id="morada">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Idade</label>
+          <input type="number" id="idade" min="0">
+        </div>
+        <div class="form-group">
+          <label>Género</label>
+          <select id="genero">
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+            <option value="Prefiro nao dizer">Prefiro não dizer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Profissão</label>
+          <input type="text" id="profissao">
+        </div>
+        <div class="form-group">
+          <label>Número de Identificação</label>
+          <input type="text" id="numeroIdentificacao">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Observações Médicas Gerais</label>
+        <textarea id="observacoesMedicas" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Contacto de Emergência</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="contatoEmergenciaNome" placeholder="Nome do contacto">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="text" id="contatoEmergenciaTelefone" placeholder="912 345 678">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Relação</label>
+        <input type="text" id="contatoEmergenciaRelacao" placeholder="Ex: Mãe, Pai, Cônjuge...">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Estado do Perfil</h3>
+      
+      <div id="estadoInfoBox" class="estado-info ativo">
+        <strong>Estado Atual:</strong> Ativo
+      </div>
+
+      <div class="form-group">
+        <label>Alterar Estado</label>
+        <select id="estado" onchange="atualizarInfoEstado()">
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Contexto Familiar</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estado Civil</label>
+          <select id="estadoCivil">
+            <option value="">Selecione</option>
+            <option value="solteiro">Solteiro(a)</option>
+            <option value="casado">Casado(a)</option>
+            <option value="divorciado">Divorciado(a)</option>
+            <option value="viuvo">Viúvo(a)</option>
+            <option value="uniao">União de facto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de Filhos</label>
+          <input type="number" id="filhos" min="0" value="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Membros do Agregado Familiar</label>
+        <input type="text" id="membros" placeholder="Ex: Pai - João, Mãe - Maria">
+      </div>
+    </div>
+
+    <div class="action-buttons-centered">
+      <button class="btn" onclick="salvarAlteracoes()">Salvar Alterações</button>
+      <button class="btn-danger" onclick="confirmarApagar()">Apagar Paciente Permanentemente</button>
+    </div>
+
+    <!-- NOVO: Informação Financeira -->
+    <div class="card" style="margin-top: 2rem;">
+      <h3>💰 Informação Financeira</h3>
+      
+      <div class="financeiro-resumo">
+        <div class="resumo-item pago">
+          <h4>Total Pago</h4>
+          <div class="valor" id="finTotalPago">EUR 0.00</div>
+        </div>
+        <div class="resumo-item pendente">
+          <h4>Total Pendente</h4>
+          <div class="valor" id="finTotalPendente">EUR 0.00</div>
+        </div>
+        <div class="resumo-item total">
+          <h4>Total Geral</h4>
+          <div class="valor" id="finTotalGeral">EUR 0.00</div>
+        </div>
+      </div>
+
+      <div id="listaPagamentosPaciente">
+        <p>A carregar...</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>📅 Agendamentos do Paciente</h3>
+      <div id="agendamentos">
+        <p>A carregar...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+  </footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'admin') { window.location.href = '/login.html'; }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const nomePaciente = urlParams.get('nome');
+    let pacienteId = null;
+    let profileImageFile = null;
+
+    document.getElementById('nomePaciente').textContent = `Paciente: ${nomePaciente}`;
+
+    document.getElementById('profileImageInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        profileImageFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function atualizarInfoEstado() {
+      const estado = document.getElementById('estado').value;
+      const infoBox = document.getElementById('estadoInfoBox');
+      
+      if (estado === 'ativo') {
+        infoBox.className = 'estado-info ativo';
+        infoBox.innerHTML = '<strong>Estado Atual:</strong> Ativo - Cliente aparece no topo das listas';
+      } else {
+        infoBox.className = 'estado-info inativo';
+        infoBox.innerHTML = '<strong>Estado Atual:</strong> Inativo - Cliente no fundo das listas mas dados mantidos';
+      }
+    }
+
+    async function carregarDetalhes() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${encodeURIComponent(nomePaciente)}`);
+        const data = await res.json();
+
+        if (!data.paciente) {
+          await customAlert('Paciente não encontrado.');
+          window.location.href = '/admin/pacientes.html';
+          return;
+        }
+
+        pacienteId = data.paciente._id;
+        const p = data.paciente;
+        const ctx = p.contextoFamiliar || {};
+        const hist = p.historicClinico || {};
+        const ce = p.contatoEmergencia || {};
+        
+        // Dados pessoais
+        document.getElementById('nomeCompleto').value = p.nomeCompleto || '';
+        document.getElementById('primeiroNome').value = p.primeiroNome || '';
+        document.getElementById('ultimoNome').value = p.ultimoNome || '';
+        document.getElementById('email').value = p.email || '';
+        document.getElementById('contacto').value = p.contacto || '';
+        document.getElementById('morada').value = p.morada || '';
+        document.getElementById('idade').value = p.idade || '';
+        document.getElementById('genero').value = p.genero || '';
+        document.getElementById('profissao').value = p.profissao || '';
+        document.getElementById('numeroIdentificacao').value = p.numeroIdentificacao || '';
+        document.getElementById('observacoesMedicas').value = p.observacoesMedicas || '';
+        document.getElementById('estado').value = p.estado || 'ativo';
+        
+        // Contacto de emergência
+        document.getElementById('contatoEmergenciaNome').value = ce.nome || '';
+        document.getElementById('contatoEmergenciaTelefone').value = ce.telefone || '';
+        document.getElementById('contatoEmergenciaRelacao').value = ce.relacao || '';
+        
+        // Histórico clínico
+        document.getElementById('diagnosticos').value = hist.diagnosticos || '';
+        document.getElementById('medicacao').value = hist.medicacao || '';
+        document.getElementById('tratamentosAnteriores').value = hist.tratamentosAnteriores || '';
+        document.getElementById('motivoConsulta').value = hist.motivoConsulta || '';
+        document.getElementById('evolucaoClinica').value = hist.evolucaoClinica || '';
+        document.getElementById('alertas').value = hist.alertas || '';
+        
+        atualizarInfoEstado();
+        
+        if (p.profileImage) {
+          document.getElementById('previewImage').src = p.profileImage;
+        }
+        
+        // Contexto familiar
+        document.getElementById('estadoCivil').value = ctx.estadoCivil || '';
+        document.getElementById('filhos').value = ctx.filhos || 0;
+        document.getElementById('membros').value = ctx.membros ? ctx.membros.join(', ') : '';
+
+        // Agendamentos
+        const agendamentos = document.getElementById('agendamentos');
+        if (!data.agendamentos || data.agendamentos.length === 0) {
+          agendamentos.innerHTML = '<p>Sem agendamentos registados</p>';
+        } else {
+          agendamentos.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Hora</th>
+                  <th>Estado</th>
+                  <th>Relatório</th>
+                  <th>Pagamento</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.agendamentos.map(a => `
+                  <tr>
+                    <td>${a.data}</td>
+                    <td>${a.hora}</td>
+                    <td><span class="badge ${
+                      a.estado === 'confirmado' ? 'badge-success' : 
+                      a.estado === 'pendente' ? 'badge-warning' :
+                      a.estado === 'completo' ? 'badge-success' :
+                      'badge-danger'
+                    }">${a.estado}</span></td>
+                    <td>${a.codigoRelatorio || '-'}</td>
+                    <td>${a.codigoPagamento || '-'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        // Carregar informação financeira
+        await carregarFinanceiro();
+        
+      } catch (error) {
+        console.error('Erro ao carregar detalhes:', error);
+        await customAlert('Erro ao carregar detalhes do paciente.');
+      }
+    }
+
+    async function carregarFinanceiro() {
+      try {
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${encodeURIComponent(nomePaciente)}/financeiro`);
+        const data = await res.json();
+
+        document.getElementById('finTotalPago').textContent = `EUR ${data.resumo.totalPago.toFixed(2)}`;
+        document.getElementById('finTotalPendente').textContent = `EUR ${data.resumo.totalPendente.toFixed(2)}`;
+        document.getElementById('finTotalGeral').textContent = `EUR ${data.resumo.total.toFixed(2)}`;
+
+        const container = document.getElementById('listaPagamentosPaciente');
+        if (data.pagamentos.length === 0) {
+          container.innerHTML = '<p>Sem pagamentos registados</p>';
+        } else {
+          container.innerHTML = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Data</th>
+                  <th>Valor</th>
+                  <th>Estado</th>
+                  <th>Método</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.pagamentos.map(p => `
+                  <tr>
+                    <td><code>${p.codigo}</code></td>
+                    <td>${p.data}</td>
+                    <td>EUR ${p.valor.toFixed(2)}</td>
+                    <td><span class="badge ${p.estado === 'pago' ? 'badge-success' : p.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${p.estado}</span></td>
+                    <td>${p.metodo}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      } catch (error) {
+        console.error('Erro ao carregar financeiro:', error);
+      }
+    }
+
+    async function salvarHistoricoClinico() {
+      const historicClinico = {
+        diagnosticos: document.getElementById('diagnosticos').value.trim(),
+        medicacao: document.getElementById('medicacao').value.trim(),
+        tratamentosAnteriores: document.getElementById('tratamentosAnteriores').value.trim(),
+        motivoConsulta: document.getElementById('motivoConsulta').value.trim(),
+        evolucaoClinica: document.getElementById('evolucaoClinica').value.trim(),
+        alertas: document.getElementById('alertas').value.trim(),
+        ultimaAtualizacao: new Date().toISOString()
+      };
+
+      try {
+        showLoading('A guardar histórico clínico...');
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${pacienteId}/historico`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ historicClinico })
+        });
+        hideLoading();
+
+        if (res.ok) {
+          await customAlert('Histórico clínico guardado com sucesso!');
+        } else {
+          await customAlert('Erro ao guardar histórico clínico.');
+        }
+      } catch (error) {
+        hideLoading();
+        await customAlert('Erro ao guardar histórico clínico.');
+      }
+    }
+
+    async function salvarAlteracoes() {
+      const nomeCompleto = document.getElementById('nomeCompleto').value.trim();
+      const email = document.getElementById('email').value.trim();
+      
+      if (!nomeCompleto || !email) {
+        await customAlert('Nome completo e email são obrigatórios.');
+        return;
+      }
+
+      const contatoEmergencia = {
+        nome: document.getElementById('contatoEmergenciaNome').value.trim(),
+        telefone: document.getElementById('contatoEmergenciaTelefone').value.trim(),
+        relacao: document.getElementById('contatoEmergenciaRelacao').value.trim()
+      };
+
+      const membrosStr = document.getElementById('membros').value;
+      const membros = membrosStr ? membrosStr.split(',').map(m => m.trim()).filter(m => m) : [];
+
+      const contextoFamiliar = {
+        estadoCivil: document.getElementById('estadoCivil').value,
+        filhos: parseInt(document.getElementById('filhos').value) || 0,
+        membros
+      };
+
+      try {
+        showLoading('A guardar alterações...');
+        
+        const formData = new FormData();
+        formData.append('nomeCompleto', nomeCompleto);
+        formData.append('primeiroNome', document.getElementById('primeiroNome').value.trim());
+        formData.append('ultimoNome', document.getElementById('ultimoNome').value.trim());
+        formData.append('email', email);
+        formData.append('contacto', document.getElementById('contacto').value.trim());
+        formData.append('morada', document.getElementById('morada').value.trim());
+        formData.append('idade', document.getElementById('idade').value);
+        formData.append('genero', document.getElementById('genero').value);
+        formData.append('profissao', document.getElementById('profissao').value.trim());
+        formData.append('numeroIdentificacao', document.getElementById('numeroIdentificacao').value.trim());
+        formData.append('observacoesMedicas', document.getElementById('observacoesMedicas').value.trim());
+        formData.append('estado', document.getElementById('estado').value);
+        formData.append('contextoFamiliar', JSON.stringify(contextoFamiliar));
+        formData.append('contatoEmergencia', JSON.stringify(contatoEmergencia));
+
+        if (profileImageFile) {
+          formData.append('profileImage', profileImageFile);
+        }
+
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${pacienteId}`, {
+          method: 'PUT',
+          body: formData
+        });
+
+        hideLoading();
+
+        if (res.ok) {
+          await customAlert('Perfil atualizado com sucesso!');
+          window.location.reload();
+        } else {
+          const result = await res.json();
+          await customAlert(result.error || 'Erro ao atualizar perfil.');
+        }
+      } catch (error) {
+        hideLoading();
+        await customAlert('Erro ao atualizar perfil.');
+      }
+    }
+
+    async function confirmarApagar() {
+      const confirmacao = await customConfirm(
+        `⚠️ ATENÇÃO: AÇÃO DESTRUTIVA ⚠️\n\nTem certeza que deseja APAGAR PERMANENTEMENTE o paciente ${nomePaciente}?\n\nEsta ação é IRREVERSÍVEL!`
+      );
+
+      if (!confirmacao) return;
+
+      try {
+        showLoading('A apagar paciente...');
+        const res = await fetch(`http://localhost:3000/api/admin/pacientes/${pacienteId}`, { method: 'DELETE' });
+        hideLoading();
+
+        if (res.ok) {
+          await customAlert('Paciente apagado permanentemente!');
+          window.location.href = '/admin/pacientes.html';
+        } else {
+          await customAlert('Erro ao apagar paciente.');
+        }
+      } catch (error) {
+        hideLoading();
+        await customAlert('Erro ao apagar paciente.');
+      }
+    }
+
+    carregarDetalhes();
+    
+    // Carregar HTML dos modais quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', function() {
+      // Criar container para os modais se não existir
+      if (!document.getElementById('customModalOverlay')) {
+        const modalHTML = `
+          <div id="customModalOverlay" class="custom-modal-overlay">
+            <div class="custom-modal-content">
+              <div class="custom-modal-header">
+                <h3 id="customModalTitle">Confirmação</h3>
+              </div>
+              <div class="custom-modal-body">
+                <p id="customModalMessage"></p>
+              </div>
+              <div class="custom-modal-footer">
+                <button id="customModalCancel" class="btn-secondary">Cancelar</button>
+                <button id="customModalConfirm" class="btn">Confirmar</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="customAlertOverlay" class="custom-modal-overlay">
+            <div class="custom-modal-content custom-modal-alert">
+              <div class="custom-modal-body">
+                <p id="customAlertMessage"></p>
+              </div>
+              <div class="custom-modal-footer">
+                <button id="customAlertOk" class="btn">OK</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="loadingOverlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">A processar...</p>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+    });
+
+    // ============================================
+    // FUNÇÃO CUSTOM CONFIRM
+    // ============================================
+    function customConfirm(message, title = 'Confirmação') {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById('customModalOverlay');
+        const messageEl = document.getElementById('customModalMessage');
+        const titleEl = document.getElementById('customModalTitle');
+        const confirmBtn = document.getElementById('customModalConfirm');
+        const cancelBtn = document.getElementById('customModalCancel');
+
+        if (!overlay || !messageEl || !confirmBtn || !cancelBtn) {
+          // Fallback para confirm nativo se modal não existir
+          resolve(confirm(message));
+          return;
+        }
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        overlay.style.display = 'flex';
+
+        const handleConfirm = () => {
+          overlay.style.display = 'none';
+          cleanup();
+          resolve(true);
+        };
+
+        const handleCancel = () => {
+          overlay.style.display = 'none';
+          cleanup();
+          resolve(false);
+        };
+
+        const cleanup = () => {
+          confirmBtn.removeEventListener('click', handleConfirm);
+          cancelBtn.removeEventListener('click', handleCancel);
+        };
+
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+      });
+    }
+
+    // ============================================
+    // FUNÇÃO CUSTOM ALERT
+    // ============================================
+    function customAlert(message) {
+      return new Promise((resolve) => {
+        const overlay = document.getElementById('customAlertOverlay');
+        const messageEl = document.getElementById('customAlertMessage');
+        const okBtn = document.getElementById('customAlertOk');
+
+        if (!overlay || !messageEl || !okBtn) {
+          // Fallback para alert nativo se modal não existir
+          alert(message);
+          resolve();
+          return;
+        }
+
+        // Suportar quebras de linha
+        messageEl.innerHTML = message.replace(/\n/g, '<br>');
+        overlay.style.display = 'flex';
+
+        const handleOk = () => {
+          overlay.style.display = 'none';
+          okBtn.removeEventListener('click', handleOk);
+          resolve();
+        };
+
+        okBtn.addEventListener('click', handleOk);
+      });
+    }
+
+    // ============================================
+    // FUNÇÕES DE LOADING
+    // ============================================
+    function showLoading(message = 'A processar...') {
+      const overlay = document.getElementById('loadingOverlay');
+      const messageEl = document.getElementById('loadingMessage');
+      
+      if (overlay && messageEl) {
+        messageEl.textContent = message;
+        overlay.style.display = 'flex';
+      }
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loadingOverlay');
+      
+      if (overlay) {
+        overlay.style.display = 'none';
+      }
+    }
+
+    // Tornar funções globais
+    window.customConfirm = customConfirm;
+    window.customAlert = customAlert;
+    window.showLoading = showLoading;
+    window.hideLoading = hideLoading;
+
+    // public/admin/adds/loader.js
+    async function loadComponent(elementId, file) {
+      try {
+        const response = await fetch(file);
+        const html = await response.text();
+        document.getElementById(elementId).innerHTML = html;
+      } catch (error) {
+        console.error(`Erro ao carregar ${file}:`, error);
+      }
+    }
+
+    async function carregarNotificacoes() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user) return;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/notificacoes/admin');
+        const notif = await res.json();
+
+        const badgeMensagens = document.getElementById('badgeMensagens');
+        const badgePagamentos = document.getElementById('badgePagamentos');
+
+        if (badgeMensagens) {
+          badgeMensagens.textContent = notif.mensagens;
+          badgeMensagens.className = notif.mensagens > 0 ? 'notification-badge' : 'notification-badge zero';
+        }
+
+        if (badgePagamentos) {
+          badgePagamentos.textContent = notif.pagamentos;
+          badgePagamentos.className = notif.pagamentos > 0 ? 'notification-badge' : 'notification-badge zero';
+        }
+      } catch (error) {
+        console.error('Erro ao carregar notificações:', error);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadComponent('header-container', '../admin/adds/header.html');
+      await loadComponent('footer-container', '../admin/adds/footer.html');
+      
+      setTimeout(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+          const userNameEl = document.getElementById('userName');
+          if (userNameEl) userNameEl.textContent = user.nome;
+        }
+        
+        carregarNotificacoes();
+        setInterval(carregarNotificacoes, 30000);
+      }, 100);
+    });
+
+    function logout() {
+      localStorage.removeItem('user');
+      window.location.href = '/login.html';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil - Cliente</title>
+  <link rel="stylesheet" href="../../styles/client/perfil.css">
+</head>
+<body>
+  <header>
+    <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+  </header>
+
+  <nav>
+    <div class="user-nav-wrapper">
+      <span id="userName">Olá, Cliente</span>
+      
+      <div class="nav-links-center">
+        <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
+        <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
+        <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
+        <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
+        <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+      </div>
+
+      <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+    </div>
+  </nav>
+
+  <main>
+    <h2>Meu Perfil</h2>
+
+    <div id="alert"></div>
+
+    <div class="card">
+      <h3>Foto de Perfil</h3>
+      
+      <div class="profile-section">
+        <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
+        <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" style="display: none;">
+        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Alterar Foto</button>
+        <small style="color: var(--color-text-light); margin-top: 0.5rem;">A foto antiga será apagada ao carregar uma nova</small>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Dados da Conta</h3>
+      
+      <div class="form-group">
+        <label>Nome Completo</label>
+        <input type="text" id="nome">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primeiro Nome</label>
+          <input type="text" id="primeiroNome">
+        </div>
+        <div class="form-group">
+          <label>Último Nome</label>
+          <input type="text" id="ultimoNome">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="email">
+      </div>
+
+      <div class="form-group">
+        <label>Nova Password (deixe vazio para manter)</label>
+        <input type="password" id="password" placeholder="••••••••">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Dados de Contacto</h3>
+      
+      <div class="form-group">
+        <label>Contacto Telefónico</label>
+        <input type="text" id="contacto" placeholder="912 345 678">
+      </div>
+
+      <div class="form-group">
+        <label>Morada</label>
+        <input type="text" id="morada" placeholder="Rua, número, localidade">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Informações Pessoais</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Idade</label>
+          <input type="number" id="idade" min="0">
+        </div>
+
+        <div class="form-group">
+          <label>Género</label>
+          <select id="genero">
+            <option value="">Selecione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Outro">Outro</option>
+            <option value="Prefiro nao dizer">Prefiro não dizer</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Profissão</label>
+        <input type="text" id="profissao">
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h3>Contexto Familiar</h3>
+      <p class="card-description">Esta informação ajuda a psicóloga a compreender melhor o seu contexto</p>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Estado Civil</label>
+          <select id="estadoCivil">
+            <option value="">Selecione</option>
+            <option value="solteiro">Solteiro(a)</option>
+            <option value="casado">Casado(a)</option>
+            <option value="divorciado">Divorciado(a)</option>
+            <option value="viuvo">Viúvo(a)</option>
+            <option value="uniao">União de facto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Número de Filhos</label>
+          <input type="number" id="filhos" min="0" value="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Membros do Agregado Familiar</label>
+        <input type="text" id="membros" placeholder="Ex: Pai - João, Mãe - Maria, Irmã - Ana">
+        <small style="color: var(--color-text-light);">Separe os membros por vírgula</small>
+      </div>
+    </div>
+
+    <!-- Historico Clinico (apenas leitura) -->
+<div class="card" style="margin-top: 2rem; background: #f8f9fa;">
+  <h3>Historico Clinico</h3>
+  <p class="card-description">Informacoes clinicas registadas pela psicologa (apenas leitura)</p>
+  
+  <div id="historicoClinicoInfo">
+    <p>A carregar...</p>
+  </div>
+</div>
+
+    <!-- Informações Apenas de Leitura -->
+    <div class="card" style="margin-top: 2rem; background: #f8f9fa;">
+      <h3>Informações Administrativas</h3>
+      <p class="card-description">Estas informações são geridas pela psicóloga e não podem ser alteradas aqui</p>
+      
+      <div class="form-group">
+        <label>Número de Identificação (CC/BI)</label>
+        <input type="text" id="numeroIdentificacao" disabled style="background: #e9ecef; cursor: not-allowed;">
+      </div>
+
+      <div class="form-group">
+        <label>Contacto de Emergência</label>
+        <div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">
+          <p id="contatoEmergenciaInfo">-</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button class="btn" onclick="atualizarPerfil()">Salvar Alterações</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="../../scripts/client/perfil.js"></script>
+</body>
+</html>
