@@ -1,3 +1,5 @@
+let detalhesAtuaisPDF = null;
+
 const user = JSON.parse(localStorage.getItem('user'));
     if (!user || user.role !== 'admin') { window.location.href = '../login.html'; }
 
@@ -103,9 +105,9 @@ const user = JSON.parse(localStorage.getItem('user'));
       container.innerHTML = pagamentos.map(p => `
         <div class="item-card estado-${p.estado}">
           <div class="item-codigo">
-            <span class="codigo-badge clickable" onclick="verDetalhes('${p._id}')" title="Ver detalhes">
+            <span class="codigo-badge codigo-badge-pdf" onclick="verDetalhes('${p._id}')" title="Ver detalhes">
               ${p.codigo}
-              <button onclick="copiarCodigo('${p.codigo}', event)" title="Copiar">Copiar</button>
+              <button class="btn-outline btn-pdf" onclick="gerarPDFPagamento('${p._id}', event)">Gerar PDF</button>
             </span>
           </div>
           
@@ -144,6 +146,11 @@ const user = JSON.parse(localStorage.getItem('user'));
 
     function verDetalhes(id) {
       const pag = todosPagamentos.find(p => p._id === id);
+      detalhesAtuaisPDF = {
+        tipo: 'pagamento',
+        dados: pag
+      };
+
       if (!pag) return;
       
       document.getElementById('detalhesConteudo').innerHTML = `
@@ -453,6 +460,65 @@ window.addEventListener('DOMContentLoaded', async () => {
     setInterval(carregarNotificacoes, 30000);
   }, 100);
 });
+
+async function gerarPDFDetalhes() {
+  if (!detalhesAtuaisPDF) {
+    await customAlert('Não há dados para gerar o PDF.');
+    return;
+  }
+
+  try {
+    showLoading('A gerar PDF...');
+
+    const res = await fetch('http://localhost:3000/api/pdf/detalhes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(detalhesAtuaisPDF)
+    });
+
+    if (!res.ok) {
+      hideLoading();
+      await customAlert('Erro ao gerar PDF');
+      return;
+    }
+
+    const blob = await res.blob();
+    hideLoading();
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    let nomeFicheiro = `Pagamento_${detalhesAtuaisPDF.dados.codigo}.pdf`;
+
+    a.href = url;
+    a.download = nomeFicheiro;
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+  } catch (e) {
+    hideLoading();
+    await customAlert('Erro ao gerar PDF');
+  }
+}
+
+function gerarPDFPagamento(id, event) {
+  event.stopPropagation();
+
+  const pag = todosPagamentos.find(p => p._id === id);
+  if (!pag) {
+    customAlert('Pagamento não encontrado');
+    return;
+  }
+
+  detalhesAtuaisPDF = {
+    tipo: 'pagamento',
+    dados: pag
+  };
+
+  gerarPDFDetalhes();
+}
+
 
 function logout() {
   localStorage.removeItem('user');

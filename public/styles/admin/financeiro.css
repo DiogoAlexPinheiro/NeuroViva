@@ -867,6 +867,34 @@ h3 { color: var(--color-text); margin-bottom: 1rem; font-size: 1.4rem; font-weig
 .codigo-badge.empty { background: var(--color-text-light); cursor: default; }
 .codigo-badge.empty:hover { transform: none; }
 
+.codigo-badge-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+}
+
+.codigo-badge-pdf .btn-pdf {
+  all: unset;
+  cursor: pointer;
+
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.codigo-badge-pdf .btn-pdf:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 /* FOOTER */
 footer {
   flex-shrink: 0;
