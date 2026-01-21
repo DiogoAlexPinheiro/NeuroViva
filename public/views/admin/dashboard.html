@@ -5,12 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Admin</title>
   <link rel="stylesheet" href="../../styles/admin/dashboard.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
 
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Admin</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" daat-i18n="area_admin">- Área Admin</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
     </header>
 
     <nav>
@@ -19,55 +30,55 @@
         
         <div class="nav-links-center">
           <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+          <a href="../admin/pacientes.html" data-page="pacientes" data-i18n="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos" data-i18n="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens" data-i18n="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios" data-i18n="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro" data-i18n="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil" data-i18n="perfil">Perfil</a>
         </div>
 
-        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;" data-i18n="sair">Sair</button>
       </div>
     </nav>
   </div>
   
   <main>
-    <h2>Visao Geral</h2>
+    <h2 data-i18n="visao_geral">Visão Geral</h2>
 
     <div class="stats-grid">
       <div class="stat-card">
         <h3 id="totalPacientes">0</h3>
-        <p>Clientes Ativos</p>
+        <p data-i18n="clientes_ativos">Clientes Ativos</p>
       </div>
 
       <div class="stat-card">
         <h3 id="sessoesCompletas">0</h3>
-        <p>Sessoes Completas</p>
+        <p data-i18n="sessoes_completas">Sessoes Completas</p>
       </div>
 
       <div class="stat-card">
         <h3 id="totalMensagens">0</h3>
-        <p>Mensagens Recentes</p>
+        <p data-i18n="mensagens_recentes">Mensagens Recentes</p>
       </div>
 
       <div class="stat-card">
         <h3 id="totalPagamentos">0</h3>
-        <p>Pagamentos Pendentes</p>
+        <p data-i18n="pagamentos_pendentes">Pagamentos Pendentes</p>
       </div>
     </div>
 
     <div class="resumo-cards-3">
       <div class="resumo-card pago">
-        <h4>Total Pago</h4>
+        <h4 data-i18n="total_pago">Total Pago</h4>
         <div class="valor" id="totalPago">EUR 0.00</div>
       </div>
       <div class="resumo-card pendente">
-        <h4>Total Pendente</h4>
+        <h4 data-i18n="total_pendente">Total Pendente</h4>
         <div class="valor" id="totalPendente">EUR 0.00</div>
       </div>
       <div class="resumo-card total">
-        <h4>Total Geral</h4>
+        <h4 data-i18n="total_geral">Total Geral</h4>
         <div class="valor" id="totalGeral">EUR 0.00</div>
       </div>
     </div>
@@ -75,68 +86,68 @@
     <br>
 
     <div class="card">
-      <h3>Horario de Atendimento</h3>
+      <h3 data-i18n="horario_atendimento">Horario de Atendimento</h3>
       <div id="horarioInfo">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div class="card">
-      <h3>Proximos Agendamentos (Proxima Semana)</h3>
+      <h3 data-i18n="proximos_agendamentos">Proximos Agendamentos (Proxima Semana)</h3>
       <div id="proximosAgendamentos">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div class="card">
-      <h3>Agendamentos a Atualizar</h3>
-      <p class="card-description">Agendamentos passados ou de hoje que ainda nao foram marcados como completos</p>
+      <h3 data-i18n="agendamentos_atualizar">Agendamentos a Atualizar</h3>
+      <p class="card-description" data-i18n="agendamentos_nao_completos">Agendamentos passados ou de hoje que ainda nao foram marcados como completos</p>
       <div id="agendamentosAtualizar">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div class="dashboard-grid">
       <div class="card">
-        <h3>Pacientes</h3>
-        <p>Gerir pacientes e historico clinico</p>
+        <h3 data-i18n="pacientes">Pacientes</h3>
+        <p data-i18n="gerir_pacientes">Gerir pacientes e historico clinico</p>
         <a href="../admin/pacientes.html" class="btn">Ver Pacientes</a>
       </div>
 
       <div class="card">
-        <h3>Agendamentos</h3>
-        <p>Gerir todos os agendamentos</p>
+        <h3 data-i18n="agendamentos">Agendamentos</h3>
+        <p data-i18n="gerir_agendamentos">Gerir todos os agendamentos</p>
         <a href="../admin/agendamentos.html" class="btn">Ver Agendamentos</a>
       </div>
 
       <div class="card">
-        <h3>Mensagens</h3>
-        <p>Responder a mensagens dos pacientes</p>
-        <a href="../admin/mensagens.html" class="btn">Ver Mensagens</a>
+        <h3 data-i18n="mensagens">Mensagens</h3>
+        <p data-i18n="responder_mensagens">Responder a mensagens dos pacientes</p>
+        <a href="../admin/mensagens.html" class="btn" data-i18n="ver_mensagens">Ver Mensagens</a>
       </div>
 
       <div class="card">
-        <h3>Relatorios</h3>
-        <p>Criar relatorios e documentos</p>
-        <a href="../admin/relatorios.html" class="btn">Gerir Relatorios</a>
+        <h3 data-i18n="relatorios">Relatorios</h3>
+        <p data-i18n="criar_relatorios">Criar relatorios e documentos</p>
+        <a href="../admin/relatorios.html" class="btn" data-i18n="gerir_relatorios">Gerir Relatorios</a>
       </div>
 
       <div class="card">
-        <h3>Financeiro</h3>
-        <p>Registar pagamentos e consultas</p>
-        <a href="../admin/financeiro.html" class="btn">Ver Financeiro</a>
+        <h3 data-i18n="financeiro">Financeiro</h3>
+        <p data-i18n="registar_pagamentos">Registar pagamentos e consultas</p>
+        <a href="../admin/financeiro.html" class="btn" data-i18n="ver_financeiro">Ver Financeiro</a>
       </div>
 
       <div class="card">
-        <h3>Perfil</h3>
-        <p>Gerir o seu perfil e horarios</p>
-        <a href="../admin/perfil.html" class="btn">Editar Perfil</a>
+        <h3 data-i18n="perfil">Perfil</h3>
+        <p data-i18n="gerir_perfil">Gerir o seu perfil e horarios</p>
+        <a href="../admin/perfil.html" class="btn" data-i18n="editar_perfil">Editar Perfil</a>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/dashboard.js"></script>

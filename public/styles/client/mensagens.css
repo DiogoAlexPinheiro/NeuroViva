@@ -83,9 +83,35 @@ header {
   display: flex;
   align-items: center;
   position: sticky;
+  justify-content: space-between;
   top: 0;
   z-index: 1001;
   background: var(--color-bg-card);
+}
+
+.lang-switch {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-switch button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.lang-switch img {
+  width: 26px;
+  height: 18px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lang-switch button:hover img {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .top-bar {

@@ -20,8 +20,8 @@ const user = JSON.parse(localStorage.getItem('user'));
         const pacientes = await res.json();
         const options = pacientes.filter(p => p.estado === 'ativo')
           .map(p => '<option value="' + p.nomeCompleto + '">' + p.nomeCompleto + '</option>').join('');
-        document.getElementById('pacienteSelect').innerHTML = '<option value="">Selecione um paciente</option>' + options;
-        document.getElementById('filtroRelatorio').innerHTML = '<option value="">Todos os pacientes</option>' + options;
+        document.getElementById('pacienteSelect').innerHTML = '<option value="" data-i18n="selecionar_paciente">Selecione um paciente</option>' + options;
+        document.getElementById('filtroRelatorio').innerHTML = '<option value="" data-i18n="todos_pacientes">Todos os pacientes</option>' + options;
 
         const adminRes = await fetch('http://localhost:3000/api/admin/perfil?username=admin');
         const admin = await adminRes.json();
@@ -43,22 +43,22 @@ const user = JSON.parse(localStorage.getItem('user'));
       const anexosInput = document.getElementById('anexos');
 
       if (!titulo || !paciente || !conteudo || !assinaturaNome) {
-        await customAlert('Preencha todos os campos obrigatorios');
+        await customAlert(i18next.t('preencher_campos'));
         return;
       }
 
       if (tipo !== 'normal' && !entidade) {
-        await customAlert('Preencha a entidade para relatorios externos');
+        await customAlert(i18next.t('preencher_entidade'));
         return;
       }
 
       if (anexosInput.files.length > 5) {
-        await customAlert('Pode selecionar no maximo 5 anexos');
+        await customAlert(i18next.t('selecionar_ficheiros'));
         return;
       }
 
       try {
-        showLoading('A criar relatorio...');
+        showLoading(i18next.t('a_criar_relatorio'));
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('data', dataRelatorio);
@@ -99,7 +99,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao criar relatorio');
+        await customAlert(i18next.t('erro_criar_relatorio'));
       }
     }
 
@@ -132,7 +132,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     function exibirRelatorios(relatorios) {
       const container = document.getElementById('listaRelatorios');
       if (relatorios.length === 0) {
-        container.innerHTML = '<p>Sem relatorios</p>';
+        container.innerHTML = `<p>${i18next.t('sem_relatorios')}</p>`;
         return;
       }
 
@@ -145,41 +145,41 @@ const user = JSON.parse(localStorage.getItem('user'));
             </div>
             <span class="codigo-badge clickable" onclick="verDetalhes('${r._id}', '${r.tipoRelatorio}')" title="Ver detalhes">
               ${r.codigo}
-              <button onclick="copiarCodigo('${r.codigo}', event)" title="Copiar">Copiar</button>
+              <button onclick="copiarCodigo('${r.codigo}', event)" data-i18n="copiar" title="Copiar">Copiar</button>
             </span>
           </div>
 
           <div class="relatorio-meta">
             <div class="relatorio-meta-item">
-              <label>Data</label>
+              <label data-i18n="data">Data</label>
               <span>${r.data}</span>
             </div>
             <div class="relatorio-meta-item">
-              <label>Paciente</label>
+              <label data-i18n="paciente">Paciente</label>
               <span>${r.paciente}</span>
             </div>
-            ${r.entidade ? '<div class="relatorio-meta-item"><label>Entidade</label><span>' + r.entidade + '</span></div>' : ''}
-            ${r.psicologo ? '<div class="relatorio-meta-item"><label>Psicologo</label><span>' + r.psicologo + '</span></div>' : ''}
+            ${r.entidade ? '<div class="relatorio-meta-item"><label data-i18n="entidade">Entidade</label><span>' + r.entidade + '</span></div>' : ''}
+            ${r.psicologo ? '<div class="relatorio-meta-item"><label data-i18n="psicologo">Psicologo</label><span>' + r.psicologo + '</span></div>' : ''}
           </div>
 
           <div class="relatorio-content">
             <div class="relatorio-section">
-              <h5>Conteudo</h5>
+              <h5 data-i18n="conteudo">Conteudo</h5>
               <p style="white-space: pre-wrap;">${(r.conteudo || r.relatorio || '').substring(0, 300)}${(r.conteudo || r.relatorio || '').length > 300 ? '...' : ''}</p>
             </div>
           </div>
           
           ${r.anexos && r.anexos.length > 0 ? `
             <div class="relatorio-section">
-              <h5>Anexos</h5>
+              <h5 data-i18n="anexos">Anexos</h5>
               ${r.anexos.map(a => '<div class="anexo-item"><a href="' + a.caminho + '" target="_blank">' + a.nome + '</a><button class="btn-small btn-danger" onclick="removerAnexo(\'' + r._id + '\', \'' + r.tipoRelatorio + '\', \'' + a.caminho + '\')">Remover</button></div>').join('')}
             </div>
           ` : ''}
 
           <div class="relatorio-footer">
             <div class="message-actions">
-              <button class="btn-small" onclick="editarRelatorio('${r._id}', '${r.tipoRelatorio}', \`${(r.titulo || '').replace(/`/g, '')}\`, '${r.entidade || ''}', '${r.entidadeEmail || ''}', \`${(r.conteudo || r.relatorio || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`, \`${(r.notas || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`)">Editar</button>
-              <button class="btn-small btn-danger" onclick="apagarRelatorio('${r._id}', '${r.tipoRelatorio}')">Apagar</button>
+              <button class="btn-small" onclick="editarRelatorio('${r._id}', '${r.tipoRelatorio}', \`${(r.titulo || '').replace(/`/g, '')}\`, '${r.entidade || ''}', '${r.entidadeEmail || ''}', \`${(r.conteudo || r.relatorio || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`, \`${(r.notas || '').replace(/`/g, '').replace(/\n/g, '\\n')}\`)" data-i18n="editar">Editar</button>
+              <button class="btn-small btn-danger" onclick="apagarRelatorio('${r._id}', '${r.tipoRelatorio}')" data-i18n="apagar">Apagar</button>
             </div>
 
             ${r.assinatura ? `
@@ -200,29 +200,29 @@ const user = JSON.parse(localStorage.getItem('user'));
       document.getElementById('detalhesConteudo').innerHTML = `
         <div class="modal-detalhes-grid">
           <div class="detalhe-item">
-            <label>Codigo</label>
+            <label data-i18n="codigo">Codigo</label>
             <span>${rel.codigo}</span>
           </div>
           <div class="detalhe-item">
-            <label>Tipo</label>
+            <label data-i18n="tipo">Tipo</label>
             <span>${rel.tipoRelatorio}</span>
           </div>
           <div class="detalhe-item">
-            <label>Paciente</label>
+            <label data-i18n="paciente">Paciente</label>
             <span>${rel.paciente}</span>
           </div>
           <div class="detalhe-item">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <span>${rel.data}</span>
           </div>
-          ${rel.psicologo ? '<div class="detalhe-item"><label>Psicologo</label><span>' + rel.psicologo + '</span></div>' : ''}
-          ${rel.entidade ? '<div class="detalhe-item"><label>Entidade</label><span>' + rel.entidade + '</span></div>' : ''}
+          ${rel.psicologo ? '<div class="detalhe-item"><label data-i18n="psicologo">Psicologo</label><span>' + rel.psicologo + '</span></div>' : ''}
+          ${rel.entidade ? '<div class="detalhe-item"><label data-i18n="entidade">Entidade</label><span>' + rel.entidade + '</span></div>' : ''}
           <div class="detalhe-item full">
-            <label>Conteudo</label>
+            <label data-i18n="conteudo">Conteudo</label>
             <p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.conteudo || rel.relatorio || ''}</p>
           </div>
-          ${rel.notas ? '<div class="detalhe-item full"><label>Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">' + rel.notas + '</p></div>' : ''}
-          ${rel.assinatura ? '<div class="detalhe-item full"><label>Assinatura</label><span>' + rel.assinatura.nome + (rel.assinatura.titulo ? ' - ' + rel.assinatura.titulo : '') + '</span></div>' : ''}
+          ${rel.notas ? '<div class="detalhe-item full"><label data-i18n="notas">Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">' + rel.notas + '</p></div>' : ''}
+          ${rel.assinatura ? '<div class="detalhe-item full"><label data-i18n="assinatura">Assinatura</label><span>' + rel.assinatura.nome + (rel.assinatura.titulo ? ' - ' + rel.assinatura.titulo : '') + '</span></div>' : ''}
         </div>
       `;
       document.getElementById('modalDetalhes').style.display = 'flex';
@@ -283,7 +283,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     }
 
     async function removerAnexo(relatorioId, tipo, anexoCaminho) {
-      const confirmacao = await customConfirm('Tem certeza que deseja remover este anexo?');
+      const confirmacao = await customConfirm(i18next.t('confirmar_remover_anexo'));
       if (!confirmacao) return;
 
       try {
@@ -297,19 +297,19 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Anexo removido!');
+          await customAlert(i18next.t('anexo_removido'));
           carregarRelatorios();
         } else {
           await customAlert(result.error);
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao remover anexo');
+        await customAlert(i18next.t('erro_remover_anexo'));
       }
     }
 
     async function apagarRelatorio(id, tipo) {
-      const confirmacao = await customConfirm('Tem certeza que deseja apagar este relatorio?');
+      const confirmacao = await customConfirm(i18next.t('confirmar_remover_relatorio'));
       if (!confirmacao) return;
 
       try {
@@ -319,14 +319,14 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Relatorio apagado!');
+          await customAlert(i18next.t('apagar_relatorio'));
           carregarRelatorios();
         } else {
           await customAlert(result.error);
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao apagar');
+        await customAlert(i18next.t('erro_apagar'));
       }
     }
 
@@ -349,14 +349,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 id="customModalTitle">Confirmação</h3>
+            <h3 id="customModalTitle" data-i18n="confirmacao">Confirmação</h3>
           </div>
           <div class="custom-modal-body">
             <p id="customModalMessage"></p>
           </div>
           <div class="custom-modal-footer">
-            <button id="customModalCancel" class="btn-secondary">Cancelar</button>
-            <button id="customModalConfirm" class="btn">Confirmar</button>
+            <button id="customModalCancel" class="btn-secondary" data-i18n="cancelar">Cancelar</button>
+            <button id="customModalConfirm" class="btn" data-i18n="confirmar">Confirmar</button>
           </div>
         </div>
       </div>
@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p id="loadingMessage">A processar...</p>
+        <p id="loadingMessage" data-i18n="a_processar">A processar...</p>
       </div>
     `;
     

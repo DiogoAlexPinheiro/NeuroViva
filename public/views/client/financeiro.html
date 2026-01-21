@@ -5,11 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Financeiro - Cliente</title>
   <link rel="stylesheet" href="../../styles/client/financeiro.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
   <div class="top-bar">
     <header>
       <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
     </header>
 
     <nav>
@@ -18,13 +29,13 @@
         
         <div class="nav-links-center">
           <a href="../client/dashboard.html" data-page="dashboard">Dashboard</a>
-          <a href="../client/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-          <a href="../client/mensagens.html" data-page="mensagens">Mensagens</a>
-          <a href="../client/financeiro.html" data-page="financeiro">Financeiro</a>
-          <a href="../client/perfil.html" data-page="perfil">Perfil</a>
+          <a href="../client/agendamentos.html" data-page="agendamentos" data-i18n="agendamentos">Agendamentos</a>
+          <a href="../client/mensagens.html" data-page="mensagens" data-i18n="mensagens">Mensagens</a>
+          <a href="../client/financeiro.html" data-page="financeiro" data-i18n="financeiro">Financeiro</a>
+          <a href="../client/perfil.html" data-page="perfil" data-i18n="perfil">Perfil</a>
         </div>
 
-        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;" data-i18n="sair">Sair</button>
       </div>
     </nav>
   </div>

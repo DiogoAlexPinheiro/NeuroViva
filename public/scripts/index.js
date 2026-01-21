@@ -17,16 +17,19 @@ async function carregarHorario() {
         
     const horarioContainer = document.getElementById('horarioInfo');
     const diasSemana = {
-        segunda: 'Segunda-feira',
-        terca: 'Terça-feira',
-        quarta: 'Quarta-feira',
-        quinta: 'Quinta-feira',
-        sexta: 'Sexta-feira',
-        sabado: 'Sábado',
-        domingo: 'Domingo'
+        segunda: 'dia_segunda',
+        terca: 'dia_terca',
+        quarta: 'dia_quarta',
+        quinta: 'dia_quinta',
+        sexta: 'dia_sexta',
+        sabado: 'dia_sabado',
+        domingo: 'dia_domingo'
     };
         
     if (!admin || !admin.horario) {
+        horarioContainer.innerHTML = '<p data-i18n="fechado">Fechado</p>';
+        await i18nReady;
+        traduzirPagina(horarioContainer);
         horarioContainer.innerHTML = '<p>Horário não disponível</p>';
         return;
     }
@@ -36,12 +39,15 @@ async function carregarHorario() {
         const isAberto = horario && horario.length > 0;
         horarioHtml += `
             <div class="horario-item ${isAberto ? '' : 'fechado'}">
-              <span class="dia">${diasSemana[dia]}</span>
+              <span class="dia" data-i18n="${diasSemana[dia]}">${diasSemana[dia]}</span>
               <span class="horas">${isAberto ? `${horario[0]} - ${horario[1]}` : 'Fechado'}</span>
             </div>
             `;
         }
         horarioContainer.innerHTML = horarioHtml;
+
+        await i18nReady;
+        traduzirPagina(horarioContainer);
         
     } catch (error) {
         console.error('Erro ao carregar horario:', error);

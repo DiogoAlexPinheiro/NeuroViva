@@ -5,11 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendamentos - Admin</title>
   <link rel="stylesheet" href="../../styles/admin/agendamentos.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Admin</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_admin">- Área Admin</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
     </header>
 
     <nav>
@@ -18,156 +29,163 @@
         
         <div class="nav-links-center">
           <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+          <a href="../admin/pacientes.html" data-page="pacientes" data-i18n="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos" data-i18n="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens" data-i18n="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios" data-i18n="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro" data-i18n="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil" data-i18n="perfil">Perfil</a>
         </div>
 
-        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;" data-i18n="sair">Sair</button>
       </div>
     </nav>
   </div>
 
   <main>
-    <h2>Gestao de Agendamentos</h2>
+    <h2 data-i18n="agendamentos_titulo">Gestao de Agendamentos</h2>
 
     <div id="alert" class="alert-hidden"></div>
 
     <div class="card">
-      <h3>Novo Agendamento</h3>
+      <h3 data-i18n="novo_agendamento">Novo Agendamento</h3>
       
       <form id="formAgendamento">
         <div class="form-row-3">
           <div class="form-group">
-            <label>Paciente</label>
+            <label data-i18n="paciente">Paciente</label>
             <select id="pacienteSelect" required>
-              <option value="">A carregar...</option>
+              <option value="" data-i18n="a_carregar">A carregar...</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <input type="date" id="dataAgendamento" required>
           </div>
           <div class="form-group">
-            <label>Hora</label>
+            <label data-i18n="hora">Hora</label>
             <select id="horaSelect" required>
-              <option value="">Selecione uma data primeiro</option>
+              <option value="" data-i18n="select_date">Selecione uma data primeiro</option>
             </select>
           </div>
         </div>
 
-        <button type="button" class="btn" onclick="criarAgendamento()">Criar Agendamento</button>
+        <button type="button" class="btn" onclick="criarAgendamento()" data-i18n="criar_agendamento">Criar Agendamento</button>
       </form>
     </div>
 
     <div class="card">
-      <h3>Lista de Agendamentos</h3>
+      <h3 data-i18n="lista_agendamentos">Lista de Agendamentos</h3>
       
       <div class="filtros-wrapper">
         <div class="form-group">
-          <label>Filtrar por Paciente</label>
+          <label data-i18n="filtrar_paciente">Filtrar por Paciente</label>
           <select id="filtroPaciente" onchange="filtrarAgendamentos()">
-            <option value="">Todos os pacientes</option>
+            <option value="" data-i18n="todos_pacientes">Todos os pacientes</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Filtrar por Estado</label>
+          <label data-i18n="filtrar_estado">Filtrar por Estado</label>
           <select id="filtroEstado" onchange="filtrarAgendamentos()">
-            <option value="">Todos os estados</option>
-            <option value="pendente">Pendente</option>
-            <option value="confirmado">Confirmado</option>
-            <option value="completo">Completo</option>
-            <option value="cancelado">Cancelado</option>
+            <option value="" data-i18n="todos_estados">Todos os estados</option>
+            <option value="pendente" data-i18n="pendente">Pendente</option>
+            <option value="confirmado" data-i18n="confirmado">Confirmado</option>
+            <option value="completo" data-i18n="completo">Completo</option>
+            <option value="cancelado" data-i18n="cancelado">Cancelado</option>
           </select>
         </div>
       </div>
 
       <div id="listaAgendamentos" class="items-lista">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div id="modalEditar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Editar Agendamento</h3>
+        <h3 data-i18n="editar_agendamento">Editar Agendamento</h3>
         
         <div class="form-row">
           <div class="form-group">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <input type="date" id="editData">
           </div>
           <div class="form-group">
-            <label>Hora</label>
+            <label data-i18n="hora">Hora</label>
             <select id="editHora"></select>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Estado</label>
+          <label data-i18n="estado">Estado</label>
           <select id="editEstado">
-            <option value="pendente">Pendente</option>
-            <option value="confirmado">Confirmado</option>
-            <option value="completo">Completo</option>
-            <option value="cancelado">Cancelado</option>
+            <option value="pendente" data-i18n="pendente">Pendente</option>
+            <option value="confirmado" data-i18n="confirmado">Confirmado</option>
+            <option value="completo" data-i18n="completo">Completo</option>
+            <option value="cancelado" data-i18n="cancelado">Cancelado</option>
           </select>
         </div>
 
         <div class="modal-actions">
-          <button class="btn" onclick="salvarEdicao()">Salvar</button>
-          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+          <button class="btn" onclick="salvarEdicao()" data-i18n="salvar">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()" data-i18n="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
 
     <div id="modalLigar" class="modal-overlay">
       <div class="modal-content">
-        <h3 id="modalLigarTitulo">Ligar Codigo</h3>
+        <h3 id="modalLigarTitulo" data-i18n="ligar_codigo">Ligar Codigo</h3>
         
         <div class="form-group">
-          <label id="modalLigarLabel">Codigo</label>
+          <label id="modalLigarLabel" data-i18n="codigo">Codigo</label>
           <input type="text" id="codigoLigar" placeholder="Ex: REL-XXXXX ou PAG-XXXXX">
         </div>
 
         <div class="modal-actions">
-          <button class="btn" onclick="confirmarLigar()">Ligar</button>
-          <button class="btn-secondary" onclick="fecharModalLigar()">Cancelar</button>
+          <button class="btn" onclick="confirmarLigar()" data-i18n="ligar">Ligar</button>
+          <button class="btn-secondary" onclick="fecharModalLigar()" data-i18n="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
 
     <div id="modalCancelar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Cancelar Agendamento</h3>
+        <h3 data-i18n="cancelar_agendamento">Cancelar Agendamento</h3>
         
         <div class="form-group">
-          <label>Razao do Cancelamento</label>
-          <textarea id="razaoCancelamento" rows="4" placeholder="Explique o motivo do cancelamento..." required></textarea>
+          <label data-i18n="razao_cancelamento">Razão do Cancelamento</label>
+          <textarea
+            id="razaoCancelamento"
+            rows="4"
+            data-i18n-placeholder="placeholder_cancelamento"
+            placeholder="Explique o motivo do cancelamento..."
+            required
+          ></textarea>
+
         </div>
 
         <div class="modal-actions">
-          <button class="btn btn-danger" onclick="confirmarCancelamento()">Cancelar Agendamento</button>
-          <button class="btn-secondary" onclick="fecharModalCancelar()">Voltar</button>
+          <button class="btn btn-danger" onclick="confirmarCancelamento()" data-i18n="cancelar_agendamento">Cancelar Agendamento</button>
+          <button class="btn-secondary" onclick="fecharModalCancelar()" data-i18n="voltar">Voltar</button>
         </div>
       </div>
     </div>
 
     <div id="modalDetalhes" class="modal-overlay">
       <div class="modal-content">
-        <h3 id="modalDetalhesTitulo">Detalhes</h3>
+        <h3 id="modalDetalhesTitulo" data-i18n="detalhes">Detalhes</h3>
         <div id="detalhesConteudo"></div>
         <div class="modal-actions">
-          <button class="btn-outline" onclick="gerarPDFDetalhes()">Gerar PDF</button>
-          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+          <button class="btn-outline" onclick="gerarPDFDetalhes()" data-i18n="gerar_pdf">Gerar PDF</button>
+          <button class="btn-secondary" onclick="fecharModalDetalhes()" data-i18n="fechar">Fechar</button>
         </div>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/agendamentos.js"></script>

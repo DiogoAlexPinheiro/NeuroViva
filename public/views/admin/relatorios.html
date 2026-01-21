@@ -5,11 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatorios - Admin</title>
   <link rel="stylesheet" href="../../styles/admin/relatorios.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Admin</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_admin">- Área Admin</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
     </header>
 
     <nav>
@@ -18,163 +29,163 @@
         
         <div class="nav-links-center">
           <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+          <a href="../admin/pacientes.html" data-page="pacientes" data-i18n="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos" data-i18n="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens" data-i18n="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios" data-i18n="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro" data-i18n="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil" data-i18n="perfil">Perfil</a>
         </div>
 
-        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;" data-i18n="sair">Sair</button>
       </div>
     </nav>
   </div>
 
   <main>
-    <h2>Gestao de Relatorios</h2>
+    <h2 data-i18n="gestao_relatorios">Gestao de Relatorios</h2>
 
     <div id="alert" class="alert-hidden"></div>
 
     <div class="card">
-      <h3>Criar Novo Relatorio</h3>
+      <h3 data-i18n="criar_relatorio">Criar Novo Relatorio</h3>
       
       <form id="formRelatorio" enctype="multipart/form-data">
         <div class="form-row">
           <div class="form-group">
-            <label>Titulo do Relatorio</label>
-            <input type="text" id="titulo" placeholder="Ex: Relatorio de Sessao - Avaliacao Inicial" required>
+            <label data-i18n="titulo_relatorio">Titulo do Relatorio</label>
+            <input type="text" id="titulo" data-i18n-placeholder="placeholder_titulo_relatorio" placeholder="Ex: Relatorio de Sessao - Avaliacao Inicial" required>
           </div>
           <div class="form-group">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <input type="date" id="dataRelatorio" required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Paciente</label>
+            <label data-i18n="paciente">Paciente</label>
             <select id="pacienteSelect" required>
-              <option value="">A carregar...</option>
+              <option value="" data-i18n="a_carregar">A carregar...</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Tipo de Relatorio</label>
+            <label data-i18n="tipo_relatorio">Tipo de Relatorio</label>
             <select id="tipoRelatorio" required>
-              <option value="normal">Relatorio de Sessao (Normal)</option>
-              <option value="tribunal">Relatorio Externo - Tribunal</option>
-              <option value="escola">Relatorio Externo - Escola</option>
-              <option value="empresa">Relatorio Externo - Empresa</option>
+              <option value="normal" data-i18n="relatorio_normal">Relatorio de Sessao - Normal</option>
+              <option value="tribunal" data-i18n="relatorio_tribunal">Relatorio Externo - Tribunal</option>
+              <option value="escola" data-i18n="relatorio_escola">Relatorio Externo - Escola</option>
+              <option value="empresa" data-i18n="relatorio_empresa">Relatorio Externo - Empresa</option>
             </select>
           </div>
         </div>
 
         <div class="form-group" id="entidadeGroup" style="display: none;">
-          <label>Entidade Destinataria</label>
-          <input type="text" id="entidade" placeholder="Ex: Tribunal de Familia do Porto">
+          <label data-i18n="entidade">Entidade Destinatária</label>
+          <input type="text" id="entidade" data-i18n-placeholder="placeholder_entidade" placeholder="Ex: Tribunal de Familia do Porto">
         </div>
 
         <div class="form-group" id="entidadeEmailGroup" style="display: none;">
-          <label>Email da Entidade (opcional - para arquivo interno)</label>
-          <input type="email" id="entidadeEmail" placeholder="Ex: tribunal.familia.porto@dgaj.pt">
-          <small style="color: var(--color-text-light);">Este email nao sera visivel publicamente, apenas nos detalhes de edicao</small>
+          <label data-i18n="email_entidade">Email da Entidade (opcional - para arquivo interno)</label>
+          <input type="email" id="entidadeEmail" data-i18n-placeholder="placeholder_email_entidade" placeholder="Ex: tribunal.familia.porto@dgaj.pt">
+          <small style="color: var(--color-text-light);" data-i18n="disclaimer">Este email nao será visivel publicamente, apenas nos detalhes de edição</small>
         </div>
 
         <div class="form-group">
-          <label>Conteudo / Texto Principal</label>
-          <textarea id="conteudo" rows="8" placeholder="Descreva o conteudo do relatorio..." required></textarea>
+          <label data-i18n="conteudo_texto">Conteúdo / Texto Principal</label>
+          <textarea id="conteudo" rows="8" data-i18n-placeholder="placeholder_conteudo_texto" placeholder="Descreva o conteúdo do relatório" required></textarea>
         </div>
 
         <div class="form-group">
-          <label>Notas Adicionais</label>
-          <textarea id="notas" rows="3" placeholder="Observacoes, recomendacoes ou notas complementares..."></textarea>
+          <label data-i18n="notas_adicionais">Notas Adicionais</label>
+          <textarea id="notas" rows="3" data-i18n-placeholder="placeholder_observacoes" placeholder="Observações, recomendações ou notas complementares..."></textarea>
         </div>
 
         <div class="form-group">
-          <label>Anexos (Imagens, PDFs, Documentos)</label>
+          <label data-i18n="anexos">Anexos (Imagens, PDFs, Documentos)</label>
           <input type="file" id="anexos" multiple accept="image/*,.pdf,.doc,.docx,.txt">
-          <small style="color: var(--color-text-light);">Pode selecionar ate 5 ficheiros (max 50MB cada)</small>
+          <small style="color: var(--color-text-light);" data-i18n="selecionar_ficheiros">Pode selecionar ate 5 ficheiros (max 50MB cada)</small>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Assinatura - Nome</label>
-            <input type="text" id="assinaturaNome" placeholder="Ex: Dra. Sofia Silva" required>
+            <label data-i18n="assinatura_nome">Assinatura - Nome</label>
+            <input type="text" id="assinaturaNome" data-i18n-placeholder="placeholder_assinatura_nome" placeholder="Ex: Dra. Sofia Silva" required>
           </div>
           <div class="form-group">
-            <label>Assinatura - Titulo/Cedula</label>
-            <input type="text" id="assinaturaTitulo" placeholder="Ex: Psicologa Clinica - OPP 12345">
+            <label data-i18n="assinatura_cedula">Assinatura - Título/Cédula</label>
+            <input type="text" id="assinaturaTitulo" data-i18n-placeholder="placeholder_assinatura_cedula" placeholder="Ex: Psicologa Clinica - OPP 12345">
           </div>
         </div>
 
-        <button type="button" class="btn" onclick="criarRelatorio()">Criar Relatorio</button>
+        <button type="button" class="btn" onclick="criarRelatorio()" data-i18n="criar_relatorio">Criar Relatorio</button>
       </form>
     </div>
 
     <div class="card">
-      <h3>Relatorios Existentes</h3>
+      <h3 data-i18n="relatorios_existentes">Relatorios Existentes</h3>
       
       <div class="form-group">
-        <label>Filtrar por Paciente</label>
+        <label data-i18n="filtrar_paciente">Filtrar por Paciente</label>
         <select id="filtroRelatorio" onchange="filtrarRelatorios()">
-          <option value="">Todos os pacientes</option>
+          <option value="" data-i18n="todos_pacientes">Todos os pacientes</option>
         </select>
       </div>
 
       <div id="listaRelatorios">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div id="modalEditar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Editar Relatorio</h3>
+        <h3 data-i18n="editar_relatorio">Editar Relatorio</h3>
         
         <div class="form-group">
-          <label>Titulo</label>
+          <label data-i18n="titulo">Titulo</label>
           <input type="text" id="editTitulo">
         </div>
 
         <div class="form-group">
-          <label>Entidade (se aplicavel)</label>
+          <label data-i18n="entidade_aplicavel">Entidade (se aplicável)</label>
           <input type="text" id="editEntidade">
         </div>
 
         <div class="form-group" id="editEntidadeEmailGroup">
-          <label>Email da Entidade</label>
-          <input type="email" id="editEntidadeEmail" placeholder="Email para contacto futuro">
+          <label data-i18n="email_entidade">Email da Entidade</label>
+          <input type="email" id="editEntidadeEmail" data-i18n-placeholder="placeholder_email_contacto" placeholder="Email para contacto futuro">
         </div>
 
         <div class="form-group">
-          <label>Conteudo</label>
+          <label data-i18n="conteudo">Conteúdo</label>
           <textarea id="editConteudo" rows="8"></textarea>
         </div>
 
         <div class="form-group">
-          <label>Notas</label>
+          <label data-i18n="notas">Notas</label>
           <textarea id="editNotas" rows="3"></textarea>
         </div>
 
         <div class="modal-actions">
-          <button class="btn" onclick="salvarEdicao()">Salvar</button>
-          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+          <button class="btn" onclick="salvarEdicao()" data-i18n="salvar">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()" data-i18n="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
 
     <div id="modalDetalhes" class="modal-overlay">
       <div class="modal-content">
-        <h3>Detalhes do Relatorio</h3>
+        <h3 data-i18n="detalhes_relatorio">Detalhes do Relatorio</h3>
         <div id="detalhesConteudo"></div>
         <div class="modal-actions">
-          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+          <button class="btn-secondary" onclick="fecharModalDetalhes()" data-i18n="fechar">Fechar</button>
         </div>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/relatorios.js"></script>

@@ -172,7 +172,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       try {
         console.log('🔍 Iniciando carregamento de pacientes...');
 
-        container.innerHTML = '<p class="pacientes-message">🔄 A carregar pacientes...</p>';
+        container.innerHTML = `<p class="pacientes-message">🔄 ${i18next.t('pacientes_carregar')}</p>`;
 
         const res = await fetch('http://localhost:3000/api/admin/pacientes');
         console.log('📡 Resposta recebida:', res.status);
@@ -185,7 +185,8 @@ const user = JSON.parse(localStorage.getItem('user'));
         console.log('📋 Pacientes recebidos:', pacientes?.length ?? 0);
 
         if (!Array.isArray(pacientes) || pacientes.length === 0) {
-          container.innerHTML = '<p class="pacientes-message">📭 Sem pacientes registados</p>';
+          container.innerHTML = `<p class="pacientes-message">📭 ${i18next.t('pacientes_sem_registos')}</p>`;
+
           return;
         }
 
@@ -193,7 +194,8 @@ const user = JSON.parse(localStorage.getItem('user'));
         const pacientesValidos = pacientes.filter(p => p && p.nomeCompleto);
 
         if (pacientesValidos.length === 0) {
-          container.innerHTML = '<p class="pacientes-message">⚠️ Sem pacientes válidos</p>';
+          container.innerHTML = `<p class="pacientes-message">⚠️ ${i18next.t('pacientes_sem_validos')}</p>`;
+
           return;
         }
 
@@ -215,14 +217,15 @@ const user = JSON.parse(localStorage.getItem('user'));
           <table>
             <thead>
               <tr>
-                <th>Foto</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Contacto</th>
-                <th>Estado</th>
-                <th>Acoes</th>
+                <th>${i18next.t('foto')}</th>
+                <th>${i18next.t('nome')}</th>
+                <th>${i18next.t('email')}</th>
+                <th>${i18next.t('contacto')}</th>
+                <th>${i18next.t('estado')}</th>
+                <th>${i18next.t('acoes')}</th>
               </tr>
             </thead>
+
             <tbody>
               ${pacientesValidos.map(p => `
                 <tr class="${(p.estado || 'ativo') === 'inativo' ? 'paciente-inativo' : ''}">
@@ -240,9 +243,9 @@ const user = JSON.parse(localStorage.getItem('user'));
                   <td>${escapeHtml(p.nomeCompleto)}</td>
                   <td>${escapeHtml(p.email || 'N/A')}</td>
                   <td>${escapeHtml(p.contacto || '-')}</td>
-                  <td><span class="badge ${(p.estado || 'ativo') === 'ativo' ? 'badge-success' : 'badge-danger'}">${escapeHtml(p.estado || 'ativo')}</span></td>
+                  <td><span class="badge ${(p.estado || 'ativo') === 'ativo' ? 'badge-success' : 'badge-danger'}">${i18next.t(`estado_${p.estado || 'ativo'}`)}</span></td>
                   <td>
-                    <a href="../admin/paciente-detalhes.html?nome=${encodeURIComponent(p.nomeCompleto)}" class="btn-small btn-solid">Ver Detalhes</a>
+                    <a href="../admin/paciente-detalhes.html?nome=${encodeURIComponent(p.nomeCompleto)}" class="btn-small btn-solid">${i18next.t('ver_detalhes')}</a>
                   </td>
                 </tr>
               `).join('')}
@@ -269,10 +272,11 @@ const user = JSON.parse(localStorage.getItem('user'));
               </div>
             </div>
             <div class="mobile-card-body">
-              <p><strong>Email:</strong> ${escapeHtml(p.email || 'N/A')}</p>
-              <p><strong>Contacto:</strong> ${escapeHtml(p.contacto || '-')}</p>
+              <p><strong>${i18next.t('email')}:</strong> ${escapeHtml(p.email || i18next.t('na'))}</p>
+              <p><strong>${i18next.t('contacto')}:</strong> ${escapeHtml(p.contacto || '-')}</p>
+
             </div>
-            <a href="../admin/paciente-detalhes.html?nome=${encodeURIComponent(p.nomeCompleto)}" class="btn-small btn-solid btn-fullwidth">Ver Detalhes</a>
+            <a href="../admin/paciente-detalhes.html?nome=${encodeURIComponent(p.nomeCompleto)}" class="btn-small btn-solid btn-fullwidth">${i18next.t('ver_detalhes')}</a>
           </div>
         `).join('');
 
@@ -285,12 +289,16 @@ const user = JSON.parse(localStorage.getItem('user'));
         console.error('❌ Erro ao carregar pacientes:', error);
 
         container.innerHTML = `
-          <div class="pacientes-message-box pacientes-message-box--error">
-            <p class="pacientes-message-title">❌ Erro ao carregar pacientes</p>
-            <p class="pacientes-message-text">${escapeHtml(error.message)}</p>
-            <button class="btn" onclick="carregarPacientes()">🔄 Tentar Novamente</button>
-          </div>
-        `;
+        <div class="pacientes-message-box pacientes-message-box--error">
+          <p class="pacientes-message-title">
+            ❌ ${i18next.t('erro_carregar_pacientes')}
+          </p>
+          <p class="pacientes-message-text">${escapeHtml(error.message)}</p>
+          <button class="btn" onclick="carregarPacientes()">
+            🔄 ${i18next.t('tentar_novamente')}
+          </button>
+        </div>
+      `;
       }
     }
 
@@ -311,9 +319,15 @@ const user = JSON.parse(localStorage.getItem('user'));
 
         container.innerHTML = `
           <div class="pacientes-message-box pacientes-message-box--error">
-            <p class="pacientes-message-title">🔌 Servidor desconectado</p>
-            <p class="pacientes-message-text">Verifique se o servidor Node.js está a correr na porta 3000</p>
-            <button class="btn" onclick="verificarServidor()">🔄 Tentar Novamente</button>
+            <p class="pacientes-message-title">
+              🔌 ${i18next.t('servidor_desconectado')}
+            </p>
+            <p class="pacientes-message-text">
+              ${i18next.t('verificar_servidor')}
+            </p>
+            <button class="btn" onclick="verificarServidor()">
+              🔄 ${i18next.t('tentar_novamente')}
+            </button>
           </div>
         `;
       }

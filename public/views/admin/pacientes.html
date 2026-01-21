@@ -5,11 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pacientes - Admin</title>
   <link rel="stylesheet" href="../../styles/admin/pacientes.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Admin</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_admin">- Área Admin</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
     </header>
 
     <nav>
@@ -18,40 +29,40 @@
         
         <div class="nav-links-center">
           <a href="../admin/dashboard.html" data-page="dashboard">Dashboard</a>
-          <a href="../admin/pacientes.html" data-page="pacientes">Pacientes</a>
-          <a href="../admin/agendamentos.html" data-page="agendamentos">Agendamentos</a>
-          <a href="../admin/mensagens.html" data-page="mensagens">Mensagens</a>
-          <a href="../admin/relatorios.html" data-page="relatorios">Relatórios</a>
-          <a href="../admin/financeiro.html" data-page="financeiro">Financeiro</a>
-          <a href="../admin/perfil.html" data-page="perfil">Perfil</a>
+          <a href="../admin/pacientes.html" data-page="pacientes" data-i18n="pacientes">Pacientes</a>
+          <a href="../admin/agendamentos.html" data-page="agendamentos" data-i18n="agendamentos">Agendamentos</a>
+          <a href="../admin/mensagens.html" data-page="mensagens" data-i18n="mensagens">Mensagens</a>
+          <a href="../admin/relatorios.html" data-page="relatorios" data-i18n="relatorios">Relatórios</a>
+          <a href="../admin/financeiro.html" data-page="financeiro" data-i18n="financeiro">Financeiro</a>
+          <a href="../admin/perfil.html" data-page="perfil" data-i18n="perfil">Perfil</a>
         </div>
 
-        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Sair</button>
+        <button class="btn-outline" onclick="logout()" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;" data-i18n="sair">Sair</button>
       </div>
     </nav>
   </div>
 
   <main>
-    <h2>Gestao de Pacientes</h2>
+    <h2 data-i18n="gestao_pacientes">Gestao de Pacientes</h2>
 
     <div class="card">
-      <h3>Lista de Pacientes</h3>
+      <h3 data-i18n="lista_pacientes">Lista de Pacientes</h3>
       <div class="table-responsive" id="listaPacientes">
-        <p class="pacientes-message">A carregar...</p>
+        <p class="pacientes-message" data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div class="card">
       <div class="card-centered-content">
-        <h3>Adicionar Novo Paciente</h3>
-        <p class="card-description">Criar um novo perfil de paciente</p>
-        <a href="../admin/novopaciente.html" class="btn">Criar Novo Paciente</a>
+        <h3 data-i18n="adicionar_paciente">Adicionar Novo Paciente</h3>
+        <p class="card-description" data-i18n="criar_perfil">Criar um novo perfil de paciente</p>
+        <a href="../admin/novopaciente.html" class="btn" data-i18n="criar_paciente">Criar Novo Paciente</a>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/pacientes.js"></script>

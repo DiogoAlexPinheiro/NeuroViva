@@ -5,11 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Consultorio de Psicologia</title>
   <link rel="stylesheet" href="./styles/login.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../../scripts/i18n.js"></script>
 </head>
 <body>
   <header>
-    <h1><span class="brand">NEUROVIVA</span></h1>
-  </header>
+      <h1><span class="brand">NEUROVIVA</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
+    </header>
 
   <nav>
     <a href="./index.html">Início</a>

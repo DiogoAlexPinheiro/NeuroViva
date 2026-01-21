@@ -5,85 +5,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Consultorio de Psicologia NeuroViva</title>
   <link rel="stylesheet" href="./styles/index.css">
+  <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
+  <script src="../public/scripts/i18n.js"></script>
 </head>
 <body>
   <header>
-    <h1><span class="brand">NEUROVIVA</span></h1>
-  </header>
+      <h1><span class="brand">NEUROVIVA</span></h1>
+
+      <div class="lang-switch">
+        <button onclick="mudarLingua('pt')" title="Português">
+          <img src="../../../assets/images/flag_pt.png" alt="PT">
+        </button>
+        <button onclick="mudarLingua('en')" title="English">
+          <img src="../../../assets/images/flag_uk.png" alt="EN">
+        </button>
+      </div>
+    </header>
 
   <nav>
-    <a href="./index.html" class="active">Início</a>
-    <a href="./login.html">Login</a>
+    <a href="./index.html" class="active" data-i18n="inicio">Início</a>
+    <a href="./login.html" data-i18n="login">Login</a>
   </nav>
 
   <main>
     <div class="hero-background">
       <div class="hero-content">
-        <h2>Bem-vindo ao nosso Consultorio</h2>
-        <p>Oferecemos apoio psicologico profissional e personalizado para o seu bem-estar.</p>
-        <a href="./login.html" class="btn">Agendar Consulta</a>
+        <h2 data-i18n="bemvindo">Bem-vindo ao nosso Consultorio</h2>
+        <p data-i18n="hero_desc">Oferecemos apoio psicologico profissional e personalizado para o seu bem-estar.</p>
+        <a href="./login.html" class="btn" data-i18n="agendar_consulta">Agendar Consulta</a>
       </div>
     </div>
 
     <div class="resumo-cards-3">
       <div class="resumo-card">
-        <h4>Clientes Ativos</h4>
+        <h4 data-i18n="clientes_ativos">Clientes Ativos</h4>
         <div class="valor" id="totalClientes">0</div>
       </div>
       <div class="resumo-card">
-        <h4>Sessões Completas</h4>
+        <h4 data-i18n="sessoes_completas">Sessões Completas</h4>
         <div class="valor" id="sessoesRealizadas">0</div>
       </div>
       <div class="resumo-card">
-        <h4>Anos de Experiência</h4>
+        <h4 data-i18n="anos_experiencia">Anos de Experiência</h4>
         <div class="valor">5+</div>
       </div>
     </div>
 
     <div class="card">
-      <h3>Horário de Atendimento</h3>
+      <h3 data-i18n="horario_atendimento">Horário de Atendimento</h3>
       <div id="horarioInfo" class="horario-grid">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div class="cards-grid-3">
       <div class="info-card">
-        <h4>Apoio Profissional</h4>
-        <p>Psicologos qualificados com vasta experiencia em diversas areas clinicas.</p>
+        <h4 data-i18n="apoio_profissional">Apoio Profissional</h4>
+        <p data-i18n="apoio_profissional_desc">Psicologos qualificados com vasta experiencia em diversas areas clinicas.</p>
       </div>
 
       <div class="info-card">
-        <h4>Ambiente Acolhedor</h4>
-        <p>Espaco seguro, moderno e totalmente confidencial pensado em si.</p>
+        <h4 data-i18n="ambiente_acolhedor">Ambiente Acolhedor</h4>
+        <p data-i18n="ambiente_acolhedor_desc">Espaco seguro, moderno e totalmente confidencial pensado em si.</p>
       </div>
 
       <div class="info-card">
-        <h4>Horario Flexivel</h4>
-        <p>Agendamento facilitado com opcoes de consultas presenciais ou online.</p>
+        <h4 data-i18n="horario_flexivel">Horario Flexivel</h4>
+        <p data-i18n="horario_flexivel_desc">Agendamento facilitado com opcoes de consultas presenciais ou online.</p>
       </div>
     </div>
 
     <div class="card">
-      <h3>Áreas de Intervenção</h3>
+      <h3 data-i18n="areas_intervencao">Áreas de Intervenção</h3>
       <div class="areas-grid">
-        <div class="area-item">Ansiedade e Stress</div>
-        <div class="area-item">Depressão</div>
-        <div class="area-item">Desenvolvimento Pessoal</div>
-        <div class="area-item">Problemas de Sono</div>
-        <div class="area-item">Gestão Emocional</div>
+        <div class="area-item" data-i18n="ansiedade">Ansiedade e Stress</div>
+        <div class="area-item" data-i18n="depressao">Depressão</div>
+        <div class="area-item" data-i18n="desenvolvimento">Desenvolvimento Pessoal</div>
+        <div class="area-item" data-i18n="sono">Problemas de Sono</div>
+        <div class="area-item" data-i18n="gestao_emocional">Gestão Emocional</div>
       </div>
     </div>
 
     <div class="cta-section">
-      <h3>Pronto para dar o primeiro passo?</h3>
-      <p>Marque a sua consulta hoje e comece a sua jornada de bem-estar.</p>
-      <a href="./login.html" class="btn  ">Marcar Consulta</a>
+      <h3 data-i18n="cta_titulo">Pronto para dar o primeiro passo?</h3>
+      <p data-i18n="cta_texto">Marque a sua consulta hoje e comece a sua jornada de bem-estar.</p>
+      <a href="./login.html" class="btn" data-i18n="marcar_consulta">Marcar Consulta</a>
     </div>
   </main>
 
     <footer>
-      <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+      <p data-i18n="footer_cliente">&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
     </footer>
 
   <script src="./scripts/index.js"></script>

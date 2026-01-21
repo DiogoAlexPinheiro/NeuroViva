@@ -64,14 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 id="customModalTitle">Confirmação</h3>
+            <h3 id="customModalTitle" data-i18n="confirmacao">Confirmação</h3>
           </div>
           <div class="custom-modal-body">
             <p id="customModalMessage"></p>
           </div>
           <div class="custom-modal-footer">
-            <button id="customModalCancel" class="btn-secondary">Cancelar</button>
-            <button id="customModalConfirm" class="btn">Confirmar</button>
+            <button id="customModalCancel" class="btn-secondary" data-i18n="cancelar">Cancelar</button>
+            <button id="customModalConfirm" class="btn" data-i18n="confirmar">Confirmar</button>
           </div>
         </div>
       </div>
@@ -89,11 +89,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p id="loadingMessage">A processar...</p>
+        <p id="loadingMessage" data-i18n="a_processar">A processar...</p>
       </div>
     `;
     
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+    if (window.i18nReady) {
+      i18nReady.then(() => traduzirPagina(document.body));
+    }
   }
 });
 
@@ -221,8 +224,11 @@ const user = JSON.parse(localStorage.getItem('user'));
         const pacientes = await res.json();
         const options = pacientes.filter(p => p.estado === 'ativo')
           .map(p => '<option value="' + p.nomeCompleto + '">' + p.nomeCompleto + '</option>').join('');
-        document.getElementById('pacienteSelect').innerHTML = '<option value="">Selecione um paciente</option>' + options;
-        document.getElementById('filtroPaciente').innerHTML = '<option value="">Todos os pacientes</option>' + options;
+        const t = i18next.t.bind(i18next);
+        document.getElementById('pacienteSelect').innerHTML =
+          `<option value="">${t('selecionar_paciente')}</option>` + options;
+        document.getElementById('filtroPaciente').innerHTML =
+          `<option value="">${t('todos_pacientes')}</option>` + options;
       } catch (error) { console.error(error); }
     }
 
@@ -231,7 +237,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       const select = document.getElementById('horaSelect');
       
       if (!data) {
-        select.innerHTML = '<option value="">Selecione uma data primeiro</option>';
+        select.innerHTML = `<option value="">${i18next.t('selecionar_data')}</option>`;
         return;
       }
 
@@ -240,13 +246,14 @@ const user = JSON.parse(localStorage.getItem('user'));
         const horarios = await res.json();
         
         if (horarios.length === 0) {
-          select.innerHTML = '<option value="">Sem horarios disponiveis</option>';
+          select.innerHTML = `<option value="">${i18next.t('sem_horarios')}</option>`;
         } else {
-          select.innerHTML = '<option value="">Selecione um horario</option>' + 
-            horarios.map(h => '<option value="' + h + '">' + h + '</option>').join('');
+          select.innerHTML = `<option value="">${i18next.t('selecionar_horario')}</option>` +
+        horarios.map(h => `<option value="${h}">${h}</option>`).join('');
+
         }
       } catch (error) {
-        select.innerHTML = '<option value="">Erro ao carregar</option>';
+        select.innerHTML = `<option value="">${i18next.t('erro_carregar')}</option>`;
       }
     }
 
@@ -269,12 +276,12 @@ const user = JSON.parse(localStorage.getItem('user'));
       const hora = document.getElementById('horaSelect').value;
 
       if (!paciente || !data || !hora) {
-        await customAlert('Preencha todos os campos');
+        await customAlert(i18next.t('preencher_campos'));
         return;
       }
 
       try {
-        showLoading('A criar agendamento...');
+        showLoading(i18next.t('a_criar_agendamento'));
         const res = await fetch('http://localhost:3000/api/agendamentos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -284,7 +291,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Agendamento criado!');
+          await customAlert(i18next.t('agendamento_criado'));
           document.getElementById('pacienteSelect').value = '';
           carregarHorariosDisponiveis();
           carregarAgendamentos();
@@ -293,7 +300,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao criar agendamento');
+        await customAlert(i18next.t('erro_criar_agendamento'));
       }
     }
 
@@ -317,60 +324,122 @@ const user = JSON.parse(localStorage.getItem('user'));
     function exibirAgendamentos(agendamentos) {
   const container = document.getElementById('listaAgendamentos');
   if (agendamentos.length === 0) {
-    container.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Sem agendamentos</p>';
+    container.innerHTML = `
+      <p style="text-align: center; color: var(--color-text-light);">
+        ${t('sem_agendamentos')}
+      </p>
+    `;
     return;
   }
 
+  const t = i18next.t.bind(i18next);
   container.innerHTML = agendamentos.map(a => `
     <div class="item-card item-card-wide estado-${a.estado}">
       <div class="item-info">
         <div class="titulo">${a.paciente}</div>
+
         <div class="detalhes">
-          <span><strong>Data:</strong> ${a.data}</span>
-          <span><strong>Hora:</strong> ${a.hora}</span>
-          <span><strong>Criado por:</strong> ${a.criadoPor}</span>
+          <span><strong>${t('data')}:</strong> ${a.data}</span>
+          <span><strong>${t('hora')}:</strong> ${a.hora}</span>
+          <span><strong>${t('criado_por')}:</strong> ${a.criadoPor}</span>
         </div>
+
         <div class="item-badges-row">
-          
-          ${a.codigoRelatorio ? 
-            `<span class="codigo-badge clickable" onclick="verDetalhesRelatorio('${a.codigoRelatorio}')" title="Ver relatório">
-              ${a.codigoRelatorio}
-            </span>` : 
-            `<span class="codigo-badge empty" onclick="abrirModalLigar('${a._id}', 'relatorio')" title="Ligar relatório">
-              + Relatório
-            </span>`}
-          ${a.codigoPagamento ? 
-            `<span class="codigo-badge clickable" onclick="verDetalhesPagamento('${a.codigoPagamento}')" title="Ver pagamento">
-              ${a.codigoPagamento}
-            </span>` : 
-            `<span class="codigo-badge empty" onclick="abrirModalLigar('${a._id}', 'pagamento')" title="Ligar pagamento">
-              + Pagamento
-            </span>`}
-            <span class="badge ${a.estado === 'completo' ? 'badge-success' : a.estado === 'confirmado' ? 'badge-info' : a.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${a.estado}</span>
+
+          ${a.codigoRelatorio
+            ? `
+              <span class="codigo-badge clickable"
+                onclick="verDetalhesRelatorio('${a.codigoRelatorio}')"
+                title="${t('ver_relatorio')}">
+                ${a.codigoRelatorio}
+              </span>
+            `
+            : `
+              <span class="codigo-badge empty"
+                onclick="abrirModalLigar('${a._id}', 'relatorio')"
+                title="${t('ligar_relatorio')}">
+                + ${t('relatorio')}
+              </span>
+            `
+          }
+
+          ${a.codigoPagamento
+            ? `
+              <span class="codigo-badge clickable"
+                onclick="verDetalhesPagamento('${a.codigoPagamento}')"
+                title="${t('ver_pagamento')}">
+                ${a.codigoPagamento}
+              </span>
+            `
+            : `
+              <span class="codigo-badge empty"
+                onclick="abrirModalLigar('${a._id}', 'pagamento')"
+                title="${t('ligar_pagamento')}">
+                + ${t('pagamento')}
+              </span>
+            `
+          }
+
+          <span class="badge ${
+            a.estado === 'completo'
+              ? 'badge-success'
+              : a.estado === 'confirmado'
+              ? 'badge-info'
+              : a.estado === 'pendente'
+              ? 'badge-warning'
+              : 'badge-danger'
+          }">
+            ${t(a.estado)}
+          </span>
+
         </div>
       </div>
-      
+
       ${a.estado !== 'cancelado' ? `
-      <div class="item-acoes">
-        <div class="acoes-esquerda">
-          <button class="btn-small btn-secondary" onclick="abrirModalLigar('${a._id}', 'relatorio')">+ Relatório</button>
-          <button class="btn-small btn-secondary" onclick="abrirModalLigar('${a._id}', 'pagamento')">+ Pagamento</button>
+        <div class="item-acoes">
+
+          <div class="acoes-esquerda">
+            <button class="btn-small btn-secondary"
+              onclick="abrirModalLigar('${a._id}', 'relatorio')">
+              + ${t('relatorio')}
+            </button>
+            <button class="btn-small btn-secondary"
+              onclick="abrirModalLigar('${a._id}', 'pagamento')">
+              + ${t('pagamento')}
+            </button>
+          </div>
+
+          <div class="acoes-centro">
+            ${a.estado === 'pendente'
+              ? `
+                <button class="btn-small btn-outline"
+                  onclick="confirmarAgendamento('${a._id}')">
+                  ${t('confirmar')}
+                </button>
+              `
+              : '<span></span>'
+            }
+          </div>
+
+          <div class="acoes-direita">
+            <button class="btn-small"
+              onclick="editarAgendamento('${a._id}', '${a.data}', '${a.hora}', '${a.estado}')">
+              ${t('editar')}
+            </button>
+            <button class="btn-small btn-danger"
+              onclick="abrirModalCancelar('${a._id}')">
+              ${t('cancelar')}
+            </button>
+          </div>
+
         </div>
-        
-        <div class="acoes-centro">
-          ${a.estado === 'pendente' ? 
-            `<button class="btn-small btn-outline" onclick="confirmarAgendamento('${a._id}')">Confirmar</button>` : 
-            '<span></span>'}
-        </div>
-        
-        <div class="acoes-direita">
-          <button class="btn-small" onclick="editarAgendamento('${a._id}', '${a.data}', '${a.hora}', '${a.estado}')">Editar</button>
-          <button class="btn-small btn-danger" onclick="abrirModalCancelar('${a._id}')">Cancelar</button>
-        </div>
-      </div>
       ` : ''}
     </div>
   `).join('');
+
+  if (window.i18nReady) {
+    i18nReady.then(() => traduzirPagina(container));
+  }
 }
 
     async function verDetalhesRelatorio(codigo) {
@@ -381,7 +450,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (!res.ok) {
-          await customAlert('Relatorio nao encontrado');
+          await customAlert(i18next.t('relatorio_nao_encontrado'));
           return;
         }
 
@@ -392,22 +461,43 @@ const user = JSON.parse(localStorage.getItem('user'));
         };
 
         document.getElementById('modalDetalhesTitulo').textContent = 'Detalhes do Relatorio';
+        const t = i18next.t.bind(i18next);
         document.getElementById('detalhesConteudo').innerHTML = `
           <div class="modal-detalhes-grid">
-            <div class="detalhe-item"><label>Codigo</label><span>${rel.codigo}</span></div>
-            <div class="detalhe-item"><label>Tipo</label><span>${rel.tipo || data.tipo}</span></div>
-            <div class="detalhe-item"><label>Paciente</label><span>${rel.paciente}</span></div>
-            <div class="detalhe-item"><label>Data</label><span>${rel.data}</span></div>
-            ${rel.psicologo ? '<div class="detalhe-item"><label>Psicologo</label><span>' + rel.psicologo + '</span></div>' : ''}
-            ${rel.entidade ? '<div class="detalhe-item"><label>Entidade</label><span>' + rel.entidade + '</span></div>' : ''}
-            <div class="detalhe-item full"><label>Conteudo</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.conteudo || ''}</p></div>
-            ${rel.notas ? '<div class="detalhe-item full"><label>Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">' + rel.notas + '</p></div>' : ''}
+            <div class="detalhe-item"><label>${t('codigo')}</label><span>${rel.codigo}</span></div>
+            <div class="detalhe-item"><label>${t('tipo')}</label><span>${rel.tipo || data.tipo}</span></div>
+            <div class="detalhe-item"><label>${t('paciente')}</label><span>${rel.paciente}</span></div>
+            <div class="detalhe-item"><label>${t('data')}</label><span>${rel.data}</span></div>
+
+            ${rel.psicologo ? `
+              <div class="detalhe-item"><label>${t('psicologo')}</label><span>${rel.psicologo}</span></div>
+            ` : ''}
+
+            ${rel.entidade ? `
+              <div class="detalhe-item"><label>${t('entidade')}</label><span>${rel.entidade}</span></div>
+            ` : ''}
+
+            <div class="detalhe-item full">
+              <label>${t('conteudo')}</label>
+              <p style="white-space: pre-wrap; margin-top: 0.5rem;">
+                ${rel.conteudo || ''}
+              </p>
+            </div>
+
+            ${rel.notas ? `
+              <div class="detalhe-item full">
+                <label>${t('notas')}</label>
+                <p style="white-space: pre-wrap; margin-top: 0.5rem;">
+                  ${rel.notas}
+                </p>
+              </div>
+            ` : ''}
           </div>
         `;
         document.getElementById('modalDetalhes').style.display = 'flex';
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao carregar relatorio');
+        customAlert(i18next.t('erro_carregar_relatorio'));
       }
     }
 
@@ -424,26 +514,46 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (!res.ok) {
-          await customAlert('Pagamento nao encontrado');
+          customAlert(i18next.t('pagamento_nao_encontrado'))
           return;
         }
 
-        document.getElementById('modalDetalhesTitulo').textContent = 'Detalhes do Pagamento';
+        const titulo = document.getElementById('modalDetalhesTitulo');
+        titulo.setAttribute('data-i18n', 'detalhes_pagamento');
+        traduzirPagina(titulo);
+        const t = i18next.t.bind(i18next);
         document.getElementById('detalhesConteudo').innerHTML = `
           <div class="modal-detalhes-grid">
-            <div class="detalhe-item"><label>Codigo</label><span>${pag.codigo}</span></div>
-            <div class="detalhe-item"><label>Paciente</label><span>${pag.paciente}</span></div>
-            <div class="detalhe-item"><label>Valor</label><span>EUR ${pag.valor.toFixed(2)}</span></div>
-            <div class="detalhe-item"><label>Estado</label><span class="badge ${pag.estado === 'pago' ? 'badge-success' : pag.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${pag.estado}</span></div>
-            <div class="detalhe-item"><label>Metodo</label><span>${pag.metodo}</span></div>
-            <div class="detalhe-item"><label>Data</label><span>${pag.data}</span></div>
-            ${pag.descricao ? '<div class="detalhe-item full"><label>Descricao</label><span>' + pag.descricao + '</span></div>' : ''}
+            <div class="detalhe-item"><label>${t('codigo')}</label><span>${pag.codigo}</span></div>
+            <div class="detalhe-item"><label>${t('paciente')}</label><span>${pag.paciente}</span></div>
+            <div class="detalhe-item"><label>${t('valor')}</label><span>EUR ${pag.valor.toFixed(2)}</span></div>
+            <div class="detalhe-item">
+              <label>${t('estado')}</label>
+              <span class="badge ${
+                pag.estado === 'pago'
+                  ? 'badge-success'
+                  : pag.estado === 'pendente'
+                  ? 'badge-warning'
+                  : 'badge-danger'
+              }">
+                ${t(pag.estado)}
+              </span>
+            </div>
+            <div class="detalhe-item"><label>${t('metodo')}</label><span>${pag.metodo}</span></div>
+            <div class="detalhe-item"><label>${t('data')}</label><span>${pag.data}</span></div>
+
+            ${pag.descricao ? `
+              <div class="detalhe-item full">
+                <label>${t('descricao')}</label>
+                <span>${pag.descricao}</span>
+              </div>
+            ` : ''}
           </div>
         `;
         document.getElementById('modalDetalhes').style.display = 'flex';
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao carregar pagamento');
+        await customAlert(i18next.t('erro_criar_agendamento'));
       }
     }
 
@@ -454,10 +564,27 @@ const user = JSON.parse(localStorage.getItem('user'));
     function abrirModalLigar(id, tipo) {
       agendamentoLigando = id;
       tipoLigacao = tipo;
-      document.getElementById('modalLigarTitulo').textContent = tipo === 'relatorio' ? 'Ligar Relatorio' : 'Ligar Pagamento';
-      document.getElementById('modalLigarLabel').textContent = tipo === 'relatorio' ? 'Codigo do Relatorio' : 'Codigo do Pagamento';
+      const t = i18next.t.bind(i18next);
+
+      agendamentoLigando = id;
+      tipoLigacao = tipo;
+
+      document.getElementById('modalLigarTitulo').textContent =
+        tipo === 'relatorio'
+          ? t('ligar_relatorio')
+          : t('ligar_pagamento');
+
+      document.getElementById('modalLigarLabel').textContent =
+        tipo === 'relatorio'
+          ? t('codigo_relatorio')
+          : t('codigo_pagamento');
+
       document.getElementById('codigoLigar').value = '';
-      document.getElementById('codigoLigar').placeholder = tipo === 'relatorio' ? 'Ex: REL-XXXXX' : 'Ex: PAG-XXXXX';
+      document.getElementById('codigoLigar').placeholder =
+        tipo === 'relatorio'
+          ? t('placeholder_relatorio')
+          : t('placeholder_pagamento');
+
       document.getElementById('modalLigar').style.display = 'flex';
     }
 
@@ -470,7 +597,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     async function confirmarLigar() {
       const codigo = document.getElementById('codigoLigar').value.trim();
       if (!codigo) {
-        await customAlert('Introduza um codigo');
+        customAlert(i18next.t('introduce_code'))
         return;
       }
 
@@ -488,7 +615,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Ligado com sucesso!');
+          customAlert(i18next.t('ligado_sucesso'))
           fecharModalLigar();
           carregarAgendamentos();
         } else {
@@ -496,7 +623,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao ligar');
+        customAlert(i18next.t('erro_ligar'))
       }
     }
 
@@ -526,7 +653,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Agendamento atualizado!');
+          customAlert(i18next.t('agendamento_atualizado'))
           fecharModal();
           carregarAgendamentos();
         } else {
@@ -534,7 +661,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao atualizar');
+        customAlert(i18next.t('erro_atualizar'))
       }
     }
 
@@ -559,7 +686,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao confirmar');
+        customAlert(i18next.t('erro_confirmar'))
       }
     }
 
@@ -602,7 +729,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao cancelar');
+        customAlert(i18next.t('erro_cancelar'))
       }
     }
 
@@ -619,7 +746,7 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 async function gerarPDFDetalhes() {
   if (!detalhesAtuaisPDF) {
-    await customAlert('Não há dados para gerar o PDF.');
+    customAlert(i18next.t('no_data_pdf'))
     return;
   }
 
@@ -634,7 +761,7 @@ async function gerarPDFDetalhes() {
 
     if (!res.ok) {
       hideLoading();
-      await customAlert('Erro ao gerar PDF');
+      customAlert(i18next.t('erro_pdf'))
       return;
     }
 
@@ -662,6 +789,6 @@ async function gerarPDFDetalhes() {
 
   } catch (e) {
     hideLoading();
-    await customAlert('Erro ao gerar PDF');
+    customAlert(i18next.t('erro_pdf'))
   }
 }

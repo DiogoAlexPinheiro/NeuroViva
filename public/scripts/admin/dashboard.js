@@ -74,40 +74,45 @@ const user = JSON.parse(localStorage.getItem('user'));
         // Horario
         const horarioContainer = document.getElementById('horarioInfo');
         const diasSemana = {
-          segunda: 'Segunda-feira',
-          terca: 'Terca-feira',
-          quarta: 'Quarta-feira',
-          quinta: 'Quinta-feira',
-          sexta: 'Sexta-feira',
-          sabado: 'Sabado',
-          domingo: 'Domingo'
+          segunda: 'dia_segunda',
+          terca: 'dia_terca',
+          quarta: 'dia_quarta',
+          quinta: 'dia_quinta',
+          sexta: 'dia_sexta',
+          sabado: 'dia_sabado',
+          domingo: 'dia_domingo'
         };
+
         
         let horarioHtml = '<div class="horario-grid">';
+
         for (const [dia, horario] of Object.entries(stats.horario)) {
           horarioHtml += `
             <div class="horario-item">
-              <strong>${diasSemana[dia]}:</strong> 
-              ${horario.length > 0 ? `${horario[0]} - ${horario[1]}` : 'Fechado'}
+              <strong>${i18next.t(diasSemana[dia])}:</strong>
+              ${horario.length > 0
+                ? `${horario[0]} - ${horario[1]}`
+                : i18next.t('fechado')}
             </div>
           `;
         }
+
         horarioHtml += '</div>';
         horarioContainer.innerHTML = horarioHtml;
         
         // Proximos agendamentos
         const proximosContainer = document.getElementById('proximosAgendamentos');
         if (stats.proximosAgendamentos.length === 0) {
-          proximosContainer.innerHTML = '<p>Sem agendamentos proximos</p>';
+          proximosContainer.innerHTML = `<p>${i18next.t('sem_agendamentos_proximos')}</p>`;
         } else {
           proximosContainer.innerHTML = `
             <table>
               <thead>
                 <tr>
-                  <th>Paciente</th>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Estado</th>
+                  <th>${i18next.t('paciente')}</th>
+                  <th>${i18next.t('data')}</th>
+                  <th>${i18next.t('hora')}</th>
+                  <th>${i18next.t('estado')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,7 +121,7 @@ const user = JSON.parse(localStorage.getItem('user'));
                     <td>${a.paciente}</td>
                     <td>${a.data}</td>
                     <td>${a.hora}</td>
-                    <td><span class="badge ${a.estado === 'confirmado' ? 'badge-success' : 'badge-warning'}">${a.estado}</span></td>
+                    <td><span class="badge ${a.estado === 'confirmado' ? 'badge-success' : 'badge-warning'}">${i18next.t(`estado_${a.estado}`)}</span></td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -127,17 +132,17 @@ const user = JSON.parse(localStorage.getItem('user'));
         // Agendamentos a atualizar
         const atualizarContainer = document.getElementById('agendamentosAtualizar');
         if (stats.agendamentosParaAtualizar.length === 0) {
-          atualizarContainer.innerHTML = '<p class="text-success">Todos os agendamentos estao atualizados</p>';
+          atualizarContainer.innerHTML = `<p class="text-success">${i18next.t('agendamentos_ok')}</p>`;
         } else {
           atualizarContainer.innerHTML = `
             <table>
-              <thead>   
+              <thead>
                 <tr>
-                  <th>Paciente</th>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Estado Atual</th>
-                  <th>Acao</th>
+                  <th>${i18next.t('paciente')}</th>
+                  <th>${i18next.t('data')}</th>
+                  <th>${i18next.t('hora')}</th>
+                  <th>${i18next.t('estado_atual')}</th>
+                  <th>${i18next.t('acao')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,8 +151,8 @@ const user = JSON.parse(localStorage.getItem('user'));
                     <td>${a.paciente}</td>
                     <td>${a.data}</td>
                     <td>${a.hora}</td>
-                    <td><span class="badge badge-warning">${a.estado}</span></td>
-                    <td><a href="../admin/agendamentos.html" class="btn-small btn-solid">Atualizar</a></td>
+                    <td><span class="badge badge-warning">${i18next.t(`estado_${a.estado}`)}</span></td>
+                    <td><a href="../admin/agendamentos.html" class="btn-small btn-solid">${i18next.t('atualizar')}</a></td>
                   </tr>
                 `).join('')}
               </tbody>

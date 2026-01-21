@@ -139,7 +139,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       if (!container) return;
 
       if (!Array.isArray(lista) || lista.length === 0) {
-        container.innerHTML = '<p class="empty-list-state">Sem clientes ativos</p>';
+        container.innerHTML = `<p>${i18next.t('sem_clientes_ativos')}</p>`;
         return;
       }
 
@@ -225,8 +225,8 @@ const user = JSON.parse(localStorage.getItem('user'));
           <div class="chat-header">
             <div class="chat-header-left">
               <div class="chat-header-info">
-                <h3>Mensagem geral</h3>
-                <p>Envia a mesma mensagem para todos os clientes ativos</p>
+                <h3 data-i18n="mensagem_geral">Mensagem geral</h3>
+                <p data-i18n="mensagem_geral_desc">Envia a mesma mensagem para todos os clientes ativos</p>
               </div>
             </div>
             <div class="chat-status" id="chatStatus"></div>
@@ -237,14 +237,14 @@ const user = JSON.parse(localStorage.getItem('user'));
               <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
-              <h3>Pronto para enviar</h3>
-              <p>Destino: ${escapeHtml(clientes.length)} clientes ativos</p>
+              <h3 data-i18n="pronto_enviar">Pronto para enviar</h3>
+              <p>${i18next.t('destino_clientes', { count: clientes.length })}</p>
             </div>
           </div>
 
           <div class="chat-input-area">
             <div class="chat-input-wrapper">
-              <textarea id="messageInput" rows="1" placeholder="Escreva uma mensagem geral" onkeydown="handleEnter(event)"></textarea>
+              <textarea id="messageInput" rows="1" data-i18n-placeholder="placeholder_msg_geral" placeholder="Escreva uma mensagem geral" onkeydown="handleEnter(event)"></textarea>
 
               <div class="chat-actions">
                 <input type="file" id="imageInput" class="file-input-hidden" accept="image/*" onchange="previewImage(event)">
@@ -252,13 +252,13 @@ const user = JSON.parse(localStorage.getItem('user'));
                   <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M16.5 6.5l-7.8 7.8a3 3 0 104.2 4.2l8.5-8.5a5 5 0 10-7.1-7.1l-9.2 9.2a7 7 0 009.9 9.9l7.8-7.8"/>
                   </svg>
-                  Anexar
+                  ${i18next.t('anexar')}
                 </button>
                 <button class="btn-small btn-solid" type="button" onclick="enviarMensagemGeral()">
                   <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
                   </svg>
-                  Enviar
+                  ${i18next.t('enviar')}
                 </button>
               </div>
             </div>
@@ -272,6 +272,7 @@ const user = JSON.parse(localStorage.getItem('user'));
           </div>
         `;
 
+        traduzirPagina(chatArea);
         return;
       }
 
@@ -375,8 +376,8 @@ const user = JSON.parse(localStorage.getItem('user'));
             <div class="message-footer">
               <div class="message-time">${formatarData(m.criadoEm)}</div>
               <div class="message-actions-inline">
-                <button class="msg-action-btn" type="button" onclick="cancelarEdicao()">Cancelar</button>
-                <button class="msg-action-btn" type="button" onclick="guardarEdicao('${escapeHtml(m._id)}')">Guardar</button>
+                <button class="msg-action-btn" type="button" onclick="cancelarEdicao()">${i18next.t('cancelar')}</button>
+                <button class="msg-action-btn" type="button" onclick="guardarEdicao('${escapeHtml(m._id)}')">${i18next.t('guardar')}</button>
               </div>
             </div>
           </div>
@@ -386,8 +387,8 @@ const user = JSON.parse(localStorage.getItem('user'));
 
     const actionsInline = podeAcoes ? `
       <div class="message-actions-inline">
-        <button class="msg-action-btn" type="button" onclick="iniciarEdicao('${escapeHtml(m._id)}')">Editar</button>
-        <button class="msg-action-btn danger" type="button" onclick="apagarMensagem('${escapeHtml(m._id)}')">Apagar</button>
+        <button class="msg-action-btn" type="button" onclick="iniciarEdicao('${escapeHtml(m._id)}')">${i18next.t('editar')}</button>
+        <button class="msg-action-btn danger" type="button" onclick="apagarMensagem('${escapeHtml(m._id)}')">${i18next.t('apagar')}</button>
       </div>
     ` : '';
 
@@ -461,7 +462,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       if (!clienteAtual) return;
       if (!texto && !imagemSelecionada) return;
 
-      setStatus('A enviar');
+      setStatus(i18next.t('a_enviar'));
 
       try {
         const formData = new FormData();
@@ -493,7 +494,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         setStatus('');
       } catch (error) {
         console.error('Erro ao enviar:', error);
-        setStatus('Erro ao enviar');
+        setStatus(i18next.t('erro_enviar'));
         setTimeout(() => setStatus(''), 3000);
       }
     }
@@ -505,7 +506,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       if (!texto && !imagemSelecionada) return;
       if (!Array.isArray(clientes) || clientes.length === 0) return;
 
-      setStatus('A enviar para todos');
+      setStatus(i18next.t('enviar_todos'));
 
       try {
         const formData = new FormData();
@@ -529,15 +530,14 @@ const user = JSON.parse(localStorage.getItem('user'));
         // Atualizar lista/previews
         await carregarClientes();
 
-        setStatus('Enviado');
+        setStatus(i18next.t('enviado'));
         setTimeout(() => setStatus(''), 2500);
       } catch (error) {
         console.error('Erro ao enviar mensagem geral:', error);
-        setStatus('Erro ao enviar');
+        setStatus(i18next.t('erro_enviar'));
         setTimeout(() => setStatus(''), 3000);
       }
     }
-
 
     function filtrarClientes() {
       const search = (document.getElementById('searchClientes')?.value || '').toLowerCase().trim();
@@ -553,7 +553,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     function iniciarEdicao(id) {
       editingMessageId = id;
       renderizarChat();
-      setStatus('Modo edicao');
+      setStatus(i18next.t('modo_edicao'));
     }
 
     function cancelarEdicao() {
@@ -567,7 +567,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       const novoTexto = textarea ? textarea.value.trim() : '';
       if (!novoTexto) return;
 
-      setStatus('A guardar');
+      setStatus(i18next.t('guardar'));
 
       try {
         // Obter assunto atual para não o apagar (o backend atualiza assunto e texto)
@@ -602,17 +602,17 @@ const user = JSON.parse(localStorage.getItem('user'));
         setStatus('');
       } catch (error) {
         console.error('Erro ao guardar edicao:', error);
-        setStatus('Erro ao guardar');
+        setStatus(i18next.t('erro_guardar'));
         setTimeout(() => setStatus(''), 3000);
       }
     }
 
 
     async function apagarMensagem(id) {
-      const ok = confirm('Apagar esta mensagem?');
+      const ok = confirm(i18next.t('confirmar_apagar_mensagem'));
       if (!ok) return;
 
-      setStatus('A apagar');
+      setStatus(i18next.t('a_apagar'));
 
       try {
         // NOTA: este endpoint pode precisar de ajuste conforme o teu backend.
@@ -633,7 +633,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         setStatus('');
       } catch (error) {
         console.error('Erro ao apagar mensagem:', error);
-        setStatus('Erro ao apagar');
+        setStatus(i18next.t('erro_apagar'));
         setTimeout(() => setStatus(''), 3000);
       }
     }
