@@ -8,7 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
-
+import nodemailer from 'nodemailer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +41,54 @@ requiredDirs.forEach(dir => {
 });
 
 app.use('/assets', express.static(ASSETS_DIR));
+
+const mailTransporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  secure: false,
+  auth: {
+    user: 'werner.jenkins@ethereal.email',
+    pass: 'j5Fq8XRttjTX3wBVa1'
+  }
+});
+
+async function enviarRelatorioExternoEmail({
+  to,
+  entidade,
+  paciente,
+  titulo,
+  codigo,
+  conteudo
+}) {
+  const info = await mailTransporter.sendMail({
+    from: '"Consultório NeuroViva" <werner.jenkins@ethereal.email>',
+    to,
+    subject: `Relatório Clínico – ${paciente}`,
+    text: `
+Foi criado um relatório clínico.
+
+Paciente: ${paciente}
+Entidade: ${entidade}
+Código: ${codigo}
+
+Conteúdo:
+${conteudo}
+    `,
+    html: `
+      <h2>Relatório Clínico</h2>
+      <p><strong>Paciente:</strong> ${paciente}</p>
+      <p><strong>Entidade:</strong> ${entidade}</p>
+      <p><strong>Código:</strong> ${codigo}</p>
+      <hr>
+      <pre style="font-family:inherit;">${conteudo}</pre>
+    `
+  });
+
+  console.log('📧 Email enviado!');
+  console.log('🔗 Preview:', nodemailer.getTestMessageUrl(info));
+
+  return info;
+}
 
 // ============================================
 // CONEXAO MONGODB ATLAS
@@ -1153,71 +1201,100 @@ app.post('/api/admin/mensagens/broadcast', uploadMsg.single('imagem'), async (re
 // ============================================
 
 // ALTERAÇÃO 7: POST com campo entidadeEmail
-app.post('/api/admin/relatorios', (req, res, next) => {
-  req.codigoGerado = gerarCodigoUnico('relatorio');
-  req.fileIndex = 0;
-  next();
-}, uploadDoc.array('anexos', 5), async (req, res) => {
-  try {
-    const { 
-      titulo, 
-      data, 
-      paciente, 
-      tipo, 
-      entidade,
-      entidadeEmail,
-      conteudo, 
-      notas,
-      assinaturaNome,
-      assinaturaTitulo
-    } = req.body;
-    
-    const codigo = req.codigoGerado;
-    
-    const pacienteData = await dbPacientes.collection('pacientes').findOne({ nomeCompleto: paciente });
-    const admin = await dbUsers.collection('admin').findOne({});
-    
-    const anexos = req.files ? req.files.map(f => ({
-      nome: f.originalname,
-      caminho: `/assets/docs/${f.filename}`,
-      tipo: f.mimetype,
-      tamanho: f.size,
-      uploadEm: new Date()
-    })) : [];
+app.post('/api/admin/relatorios',
+  (req, res, next) => {
+    req.codigoGerado = gerarCodigoUnico('relatorio');
+    req.fileIndex = 0;
+    next();
+  },
+  uploadDoc.array('anexos', 5),
+  async (req, res) => {
+    try {
+      const { 
+        titulo, 
+        data, 
+        paciente, 
+        tipo, 
+        entidade,
+        entidadeEmail,
+        conteudo, 
+        notas,
+        assinaturaNome,
+        assinaturaTitulo
+      } = req.body;
 
-    const relatorio = {
-      codigo,
-      titulo: titulo || (tipo === 'normal' ? 'Relatorio de Sessao' : 'Relatorio Externo'),
-      data: data || new Date().toISOString().split('T')[0],
-      tipo,
-      paciente,
-      pacienteId: pacienteData?.numeroIdentificacao || '',
-      pacienteContacto: pacienteData?.contacto || '',
-      psicologo: admin?.nome || 'Psicologo',
-      psicologoEmail: admin?.email || '',
-      entidade: entidade || '',
-      entidadeEmail: entidadeEmail || '',
-      conteudo,
-      notas: notas || '',
-      anexos,
-      assinatura: {
-        nome: assinaturaNome || admin?.nome || '',
-        titulo: assinaturaTitulo || ''
-      },
-      estado: 'emitido',
-      criadoEm: new Date()
-    };
-    
-    const collection = tipo === 'normal' ? 'sessoes' : 'relatorios_externos';
-    const db = tipo === 'normal' ? dbConsultas : dbRelatorios;
-    
-    const result = await db.collection(collection).insertOne(relatorio);
-    res.json({ message: 'Relatorio criado!', codigo, id: result.insertedId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao criar relatorio' });
+      const codigo = req.codigoGerado;
+
+      const pacienteData = await dbPacientes
+        .collection('pacientes')
+        .findOne({ nomeCompleto: paciente });
+
+      const admin = await dbUsers
+        .collection('admin')
+        .findOne({});
+
+      const anexos = req.files ? req.files.map(f => ({
+        nome: f.originalname,
+        caminho: `/assets/docs/${f.filename}`,
+        tipo: f.mimetype,
+        tamanho: f.size,
+        uploadEm: new Date()
+      })) : [];
+
+      const relatorio = {
+        codigo,
+        titulo: titulo || (tipo === 'normal' ? 'Relatorio de Sessao' : 'Relatorio Externo'),
+        data: data || new Date().toISOString().split('T')[0],
+        tipo,
+        paciente,
+        pacienteId: pacienteData?.numeroIdentificacao || '',
+        pacienteContacto: pacienteData?.contacto || '',
+        psicologo: admin?.nome || 'Psicologo',
+        psicologoEmail: admin?.email || '',
+        entidade: entidade || '',
+        entidadeEmail: entidadeEmail || '',
+        conteudo,
+        notas: notas || '',
+        anexos,
+        assinatura: {
+          nome: assinaturaNome || admin?.nome || '',
+          titulo: assinaturaTitulo || ''
+        },
+        estado: 'emitido',
+        criadoEm: new Date()
+      };
+
+      const collection = tipo === 'normal' ? 'sessoes' : 'relatorios_externos';
+      const db = tipo === 'normal' ? dbConsultas : dbRelatorios;
+
+      const result = await db.collection(collection).insertOne(relatorio);
+
+      // 📧 Enviar email APÓS guardar (não bloqueante)
+      if (tipo !== 'normal' && entidadeEmail) {
+        enviarRelatorioExternoEmail({
+          to: entidadeEmail,
+          entidade,
+          paciente,
+          titulo: relatorio.titulo,
+          codigo,
+          conteudo
+        }).catch(err => {
+          console.error('Erro ao enviar email do relatório:', err);
+        });
+      }
+
+      res.json({
+        message: 'Relatorio criado!',
+        codigo,
+        id: result.insertedId
+      });
+
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao criar relatorio' });
+    }
   }
-});
+);
 
 app.get('/api/admin/relatorios', async (req, res) => {
   try {
