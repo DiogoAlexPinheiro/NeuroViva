@@ -52,42 +52,35 @@ const mailTransporter = nodemailer.createTransport({
   }
 });
 
-async function enviarRelatorioExternoEmail({
-  to,
-  entidade,
-  paciente,
-  titulo,
-  codigo,
-  conteudo
-}) {
+async function enviarRelatorioExternoEmail({to, entidade, paciente, titulo, codigo, conteudo}) {
   const info = await mailTransporter.sendMail({
     from: '"Consultório NeuroViva" <werner.jenkins@ethereal.email>',
-    to,
-    subject: `Relatório Clínico – ${paciente}`,
-    text: `
-Foi criado um relatório clínico.
+      to,
+      subject: `Relatório Clínico – ${paciente}`,
+      text: `
+        Foi criado um relatório clínico.
 
-Paciente: ${paciente}
-Entidade: ${entidade}
-Código: ${codigo}
+        Paciente: ${paciente}
+        Entidade: ${entidade}
+        Código: ${codigo}
 
-Conteúdo:
-${conteudo}
-    `,
-    html: `
-      <h2>Relatório Clínico</h2>
-      <p><strong>Paciente:</strong> ${paciente}</p>
-      <p><strong>Entidade:</strong> ${entidade}</p>
-      <p><strong>Código:</strong> ${codigo}</p>
-      <hr>
-      <pre style="font-family:inherit;">${conteudo}</pre>
-    `
-  });
+        Conteúdo:
+        ${conteudo}
+            `,
+            html: `
+              <h2>Relatório Clínico</h2>
+              <p><strong>Paciente:</strong> ${paciente}</p>
+              <p><strong>Entidade:</strong> ${entidade}</p>
+              <p><strong>Código:</strong> ${codigo}</p>
+              <hr>
+              <pre style="font-family:inherit;">${conteudo}</pre>
+            `
+    });
 
-  console.log('📧 Email enviado!');
-  console.log('🔗 Preview:', nodemailer.getTestMessageUrl(info));
+    console.log('📧 Email enviado!');
+    console.log('🔗 Preview:', nodemailer.getTestMessageUrl(info));
 
-  return info;
+    return info;
 }
 
 // ============================================
