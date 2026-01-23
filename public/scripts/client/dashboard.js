@@ -42,8 +42,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = `Olá, ${user.nome}`;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -52,13 +57,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../index.html';
+  window.location.href = '../index.html';
 }
 
 const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'client') {
-      window.location.href = '../../login.html';
+      window.location.href = '../login.html';
     }
 
 async function carregarEstatisticas() {
@@ -119,7 +124,7 @@ async function carregarProximosAgendamentos() {
         .sort((a, b) => new Date(a.data) - new Date(b.data));
         
         if (proximos.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Sem agendamentos próximos</p>';
+            container.innerHTML = '<p style="text-align: center; color: var(--color-text-light);" data-i18n="sem_agendamentos_proximos">Sem agendamentos próximos</p>';
             return;
         }
 
@@ -127,9 +132,9 @@ async function carregarProximosAgendamentos() {
           <table>
             <thead>
               <tr>
-                <th>Data</th>
-                <th>Hora</th>
-                <th>Estado</th>
+                <th data-i18n="data">Data</th>
+                <th data-i18n="hora">Hora</th>
+                <th data-i18n="estado">Estado</th>
               </tr>
             </thead>
             <tbody>
@@ -138,7 +143,7 @@ async function carregarProximosAgendamentos() {
                 const urgente = diasRestantes <= 1;
                 return `
                   <tr ${urgente ? 'style="background: rgba(255, 152, 0, 0.1);"' : ''}>
-                    <td>${a.data}${urgente ? ' <strong style="color: #FF9800;">(Amanhã)</strong>' : ''}</td>
+                    <td>${a.data}${urgente ? ' <strong style="color: #FF9800;" data-i18n="amanha">(Amanhã)</strong>' : ''}</td>
                     <td>${a.hora}</td>
                     <td><span class="badge ${a.estado === 'confirmado' ? 'badge-success' : 'badge-warning'}">${a.estado}</span></td>
                   </tr>
@@ -150,7 +155,7 @@ async function carregarProximosAgendamentos() {
     } catch (error) {
         console.error('Erro ao carregar agendamentos:', error);
         document.getElementById('proximosAgendamentos').innerHTML = `
-          <p style="text-align: center; color: #f44336;">Erro ao carregar agendamentos</p>
+          <p style="text-align: center; color: #f44336;" data-i18n="erro_carregar_agendamentos">Erro ao carregar agendamentos</p>
         `;
     }
 }

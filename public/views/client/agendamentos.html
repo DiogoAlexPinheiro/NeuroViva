@@ -11,7 +11,7 @@
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_cliente">- Área Cliente</span></h1>
 
       <div class="lang-switch">
         <button onclick="mudarLingua('pt')" title="Português">
@@ -41,63 +41,63 @@
   </div>
 
   <main>
-    <h2>Meus Agendamentos</h2>
+    <h2 data-i18n="meus_agendamentos">Meus Agendamentos</h2>
 
     <div id="alert" class="alert-hidden"></div>
 
     <!-- NOVO: Cartão de Horário de Atendimento -->
     <div class="card">
-      <h3>Horário de Atendimento</h3>
+      <h3 data-i18n="horario_atendimento">Horário de Atendimento</h3>
       <p id="nomePsicologo" style="margin-bottom: 1rem; font-weight: 600; color: var(--color-primary);"></p>
       <div id="horarioInfo">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
       <div id="diasLivresInfo" style="margin-top: 1rem;"></div>
     </div>
 
     <div class="card">
-      <h3>Novo Agendamento</h3>
+      <h3 data-i18n="novo_agendamento">Novo Agendamento</h3>
       
       <div class="form-group">
-        <label>Data</label>
+        <label data-i18n="data">Data</label>
         <input type="date" id="novaData" min="">
       </div>
 
       <div class="form-group">
-        <label>Horário Disponível</label>
+        <label data-i18n="horario_disponivel">Horário Disponível</label>
         <select id="novaHora">
-          <option value="">Selecione uma data primeiro</option>
+          <option value="" data-i18n="select_date">Selecione uma data primeiro</option>
         </select>
       </div>
 
-      <button class="btn" onclick="criarAgendamento()">Agendar</button>
+      <button class="btn" onclick="criarAgendamento()" data-i18n="agendar">Agendar</button>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Agendamentos Existentes</h3>
+      <h3 data-i18n="agendamentos_existentes">Agendamentos Existentes</h3>
       <div id="listaAgendamentos">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <!-- Modal Editar -->
     <div id="modalEditar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Editar Agendamento</h3>
+        <h3 data-i18n="editar_agendamento">Editar Agendamento</h3>
         
         <div class="form-group">
-          <label>Nova Data</label>
+          <label data-i18n="nova_data">Nova Data</label>
           <input type="date" id="editData">
         </div>
 
         <div class="form-group">
-          <label>Novo Horário</label>
+          <label data-i18n="novo_horario">Novo Horário</label>
           <select id="editHora"></select>
         </div>
 
         <div class="modal-actions">
-          <button class="btn" onclick="salvarEdicao()">Salvar</button>
-          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+          <button class="btn" onclick="salvarEdicao()" data-i18n="salvar">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()" data-i18n="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
@@ -105,17 +105,17 @@
     <!-- Modal Cancelar -->
     <div id="modalCancelar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Cancelar Agendamento</h3>
-        <p>Por favor, indique a razão do cancelamento:</p>
+        <h3 data-i18n="cancelar_agendamento">Cancelar Agendamento</h3>
+        <p data-i18n="por_favor_indique">Por favor, indique a razão do cancelamento:</p>
         
         <div class="form-group">
-          <label>Razão do Cancelamento</label>
-          <textarea id="razaoCancelamento" rows="4" placeholder="Ex: Surgiu um imprevisto no trabalho..."></textarea>
+          <label data-i18n="razao_cancelamento">Razão do Cancelamento</label>
+          <textarea id="razaoCancelamento" rows="4" data-i18n-placeholder="surgiu_imprevisto" placeholder="Ex: Surgiu um imprevisto no trabalho..."></textarea>
         </div>
 
         <div class="modal-actions">
-          <button class="btn btn-danger" onclick="confirmarCancelamento()">Confirmar Cancelamento</button>
-          <button class="btn-secondary" onclick="fecharModalCancelar()">Voltar</button>
+          <button class="btn btn-danger" onclick="confirmarCancelamento()" data-i18n="confirmar_cancelamento">Confirmar Cancelamento</button>
+          <button class="btn-secondary" onclick="fecharModalCancelar()" data-i18n="voltar">Voltar</button>
         </div>
       </div>
     </div>
@@ -123,18 +123,18 @@
     <!-- Modal Detalhes -->
     <div id="modalDetalhes" class="modal-overlay">
       <div class="modal-content" style="max-width: 800px;">
-        <h3>Detalhes do Agendamento</h3n>
+        <h3 data-i18n="detalhes_agendamento">Detalhes do Agendamento</h3n>
         <div id="detalhesConteudo"></div>
         <div class="modal-actions">
-          <button class="btn-outline" onclick="gerarPDFDetalhes()">Gerar PDF</button>
-          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+          <button class="btn-outline" onclick="gerarPDFDetalhes()" data-i18n="gerar_pdf">Gerar PDF</button>
+          <button class="btn-secondary" onclick="fecharModalDetalhes()" data-i18n="fechar">Fechar</button>
         </div>
       </div>
     </div>
   </main>
 
   <footer>
-      <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+      <p data-i18n="footer_cliente">&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
   </footer>
 
   <script src="../../scripts/client/agendamentos.js"></script>

@@ -134,6 +134,26 @@ function hideLoading() {
   }
 }
 
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadComponent('header-container', '../admin/adds/header.html');
+  await loadComponent('footer-container', '../admin/adds/footer.html');
+  
+  setTimeout(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      const userNameEl = document.getElementById('userName');
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
+    }
+
+    carregarNotificacoes();
+    setInterval(carregarNotificacoes, 30000);
+  }, 100);
+});
+
 // Tornar funções globais
 window.customConfirm = customConfirm;
 window.customAlert = customAlert;
@@ -338,5 +358,5 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }

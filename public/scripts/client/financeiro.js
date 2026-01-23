@@ -41,8 +41,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = user.nome;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -51,7 +56,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../index.html';
+  window.location.href = '../index.html';
 }
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -68,7 +73,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         const container = document.getElementById('listaPagamentos');
 
         if (pagamentos.length === 0) {
-          container.innerHTML = '<p>Sem pagamentos registados</p>';
+          container.innerHTML = '<p data-i18n="sem_pagamentos">Sem pagamentos registados</p>';
           return;
         }
 
@@ -76,12 +81,12 @@ const user = JSON.parse(localStorage.getItem('user'));
   <table>
     <thead>
       <tr>
-        <th>Codigo</th>
-        <th>Data</th>
-        <th>Valor</th>
-        <th>Estado</th>
-        <th>Metodo</th>
-        <th>Comprovativo</th>
+        <th data-i18n="codigo">Codigo</th>
+        <th data-i18n="data">Data</th>
+        <th data-i18n="valor">Valor</th>
+        <th data-i18n="estado">Estado</th>
+        <th data-i18n="metodo">Método</th>
+        <th data-i18n="comprovativo">Comprovativo</th>
       </tr>
     </thead>
     <tbody>
@@ -90,15 +95,11 @@ const user = JSON.parse(localStorage.getItem('user'));
           <td><code style="font-size: 0.85rem;">${p.codigo}</code></td>
           <td>${p.data}</td>
           <td>EUR ${p.valor.toFixed(2)}</td>
-          <td><span class="badge ${
-            p.estado === 'pago' ? 'badge-success' : 
-            p.estado === 'pendente' ? 'badge-warning' : 
-            'badge-danger'
-          }">${p.estado}</span></td>
+          <td><span class="badge ${p.estado === 'pago' ? 'badge-success' : p.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}"> ${i18next.t('estado_' + p.estado)}</span></td>
           <td>${p.metodo}</td>
           <td>
             ${p.comprovativo ? 
-              `<a href="${p.comprovativo.caminho}" target="_blank" class="btn-small btn-solid">
+              `<a href="${p.comprovativo.caminho}" target="_blank" class="btn-small btn-solid" data-i18n="ver_documento">
                 Ver Documento
               </a>` 
               : '-'
@@ -120,7 +121,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         document.getElementById('totalGeral').textContent = `EUR ${totalGeral.toFixed(2)}`;
       } catch (error) {
         console.error(error);
-        document.getElementById('listaPagamentos').innerHTML = '<p>Erro ao carregar pagamentos</p>';
+        document.getElementById('listaPagamentos').innerHTML = '<p data-i18n="erro_carregar_pagamentos">Erro ao carregar pagamentos</p>';
       }
     }
 

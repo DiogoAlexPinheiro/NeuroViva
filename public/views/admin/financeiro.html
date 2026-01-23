@@ -43,170 +43,170 @@
   </div>
 
   <main>
-    <h2>Gestao Financeira</h2>
+    <h2 data-i18n="gestao_financeira">Gestao Financeira</h2>
 
     <div id="alert" class="alert-hidden"></div>
 
     <div class="resumo-cards-3">
       <div class="resumo-card pago">
-        <h4>Total Pago</h4>
+        <h4 data-i18n="total_pago">Total Pago</h4>
         <div class="valor" id="totalPago">EUR 0.00</div>
       </div>
       <div class="resumo-card pendente">
-        <h4>Total Pendente</h4>
+        <h4 data-i18n="total_pendente">Total Pendente</h4>
         <div class="valor" id="totalPendente">EUR 0.00</div>
       </div>
       <div class="resumo-card total">
-        <h4>Total Geral</h4>
+        <h4 data-i18n="total_geral">Total Geral</h4>
         <div class="valor" id="totalGeral">EUR 0.00</div>
       </div>
     </div>
 
     <div class="card">
-      <h3>Registar Pagamento</h3>
+      <h3 data-i18n="registar_pagamento">Registar Pagamento</h3>
       
       <form id="formPagamento" enctype="multipart/form-data">
         <div class="form-row-3">
           <div class="form-group">
-            <label>Paciente</label>
+            <label data-i18n="paciente">Paciente</label>
             <select id="pacienteSelect" required>
-              <option value="">A carregar...</option>
+              <option value="" data-i18n="a_carregar">A carregar...</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Valor (EUR)</label>
+            <label data-i18n="valor_eur">Valor (EUR)</label>
             <input type="number" id="valor" step="0.01" placeholder="50.00" required>
           </div>
           <div class="form-group">
-            <label>Data do Pagamento</label>
+            <label data-i18n="data_pagamento">Data do Pagamento</label>
             <input type="date" id="dataPagamento" required>
           </div>
         </div>
 
         <div class="form-row-3">
           <div class="form-group">
-            <label>Estado</label>
+            <label data-i18n="estado">Estado</label>
             <select id="estado" required>
-              <option value="pago">Pago</option>
-              <option value="pendente">Pendente</option>
-              <option value="cancelado">Cancelado</option>
+              <option value="pago" data-i18n="pago">Pago</option>
+              <option value="pendente" data-i18n="pendente">Pendente</option>
+              <option value="cancelado" data-i18n="cancelado">Cancelado</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Metodo de Pagamento</label>
+            <label data-i18n="metodo_pagamento">Metodo de Pagamento</label>
             <select id="metodo" required>
-              <option value="multibanco">Multibanco</option>
+              <option value="multibanco" data-i18n="multibanco">Multibanco</option>
               <option value="mbway">MB Way</option>
-              <option value="dinheiro">Dinheiro</option>
-              <option value="transferencia">Transferencia</option>
+              <option value="dinheiro" data-i18n="dinheiro">Dinheiro</option>
+              <option value="transferencia" data-i18n="transferencia">Transferencia</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Descricao / Referencia</label>
+            <label data-i18n="descricao_referencia">Descricao / Referencia</label>
             <input type="text" id="descricao" placeholder="Ex: Sessao de terapia...">
           </div>
         </div>
 
         <div class="form-row align-bottom">
           <div class="form-group">
-            <label>Comprovativo (Recibo/Fatura)</label>
+            <label data-i18n="comprovativo_recibo_fatura">Comprovativo (Recibo/Fatura)</label>
             <input type="file" id="comprovativo" accept="image/*,.pdf">
-            <small style="color: var(--color-text-light);">Opcional - Anexar recibo ou fatura</small>
+            <small style="color: var(--color-text-light);" data-i18n="opcional_anexar">Opcional - Anexar recibo ou fatura</small>
           </div>
           <div class="form-group">
             <label>&nbsp;</label>
-            <button type="button" class="btn" onclick="registarPagamento()">Registar Pagamento</button>
+            <button type="button" class="btn" onclick="registarPagamento()" data-i18n="registar_pagamento">Registar Pagamento</button>
           </div>
         </div>
       </form>
     </div>
 
     <div class="card">
-      <h3>Historico de Pagamentos</h3>
+      <h3 data-i18n="historico_pagamentos">Historico de Pagamentos</h3>
       
       <div class="filtros-wrapper">
         <div class="form-group">
-          <label>Filtrar por Paciente</label>
+          <label data-i18n="filtrar_paciente">Filtrar por Paciente</label>
           <select id="filtroPaciente" onchange="filtrarPagamentos()">
             <option value="">Todos os pacientes</option>
           </select>
         </div>
         <div class="form-group">
-          <label>Filtrar por Estado</label>
+          <label data-i18n="filtrar_estado">Filtrar por Estado</label>
           <select id="filtroEstado" onchange="filtrarPagamentos()">
-            <option value="">Todos os estados</option>
-            <option value="pago">Pago</option>
-            <option value="pendente">Pendente</option>
-            <option value="cancelado">Cancelado</option>
+            <option value="" data-i18n="todos_estados">Todos os estados</option>
+            <option value="pago" data-i18n="pago">Pago</option>
+            <option value="pendente" data-i18n="pendente">Pendente</option>
+            <option value="cancelado" data-i18n="cancelado">Cancelado</option>
           </select>
         </div>
       </div>
 
       <div id="listaPagamentos" class="items-lista">
-        <p>A carregar...</p>
+        <p data-i18n="a_carregar">A carregar...</p>
       </div>
     </div>
 
     <div id="modalEditar" class="modal-overlay">
       <div class="modal-content">
-        <h3>Editar Pagamento</h3>
+        <h3 data-i18n="editar_pagamento">Editar Pagamento</h3>
         
         <div class="form-row">
           <div class="form-group">
-            <label>Valor (EUR)</label>
+            <label data-i18n="valor_eur">Valor (EUR)</label>
             <input type="number" id="editValor" step="0.01">
           </div>
           <div class="form-group">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <input type="date" id="editData">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label>Estado</label>
+            <label data-i18n="estado">Estado</label>
             <select id="editEstado">
-              <option value="pago">Pago</option>
-              <option value="pendente">Pendente</option>
-              <option value="cancelado">Cancelado</option>
+              <option value="pago" data-i18n="pago">Pago</option>
+              <option value="pendente" data-i18n="pendente">Pendente</option>
+              <option value="cancelado" data-i18n="cancelado">Cancelado</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Metodo</label>
+            <label data-i18n="metodo">Metodo</label>
             <select id="editMetodo">
-              <option value="multibanco">Multibanco</option>
+              <option value="multibanco" data-i18n="multibanco">Multibanco</option>
               <option value="mbway">MB Way</option>
-              <option value="dinheiro">Dinheiro</option>
-              <option value="transferencia">Transferencia</option>
+              <option value="dinheiro" data-i18n="dinheiro">Dinheiro</option>
+              <option value="transferencia" data-i18n="transferencia">Transferencia</option>
             </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Descricao</label>
+          <label data-i18n="descricao">Descricao</label>
           <input type="text" id="editDescricao">
         </div>
 
         <div class="modal-actions">
-          <button class="btn" onclick="salvarEdicao()">Salvar</button>
-          <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+          <button class="btn" onclick="salvarEdicao()" data-i18n="salvar">Salvar</button>
+          <button class="btn-secondary" onclick="fecharModal()" data-i18n="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
 
     <div id="modalDetalhes" class="modal-overlay">
       <div class="modal-content">
-        <h3>Detalhes do Pagamento</h3>
+        <h3 data-i18n="detalhes_pagamento">Detalhes do Pagamento</h3>
         <div id="detalhesConteudo"></div>
         <div class="modal-actions">
-          <button class="btn-secondary" onclick="fecharModalDetalhes()">Fechar</button>
+          <button class="btn-secondary" onclick="fecharModalDetalhes()" data-i18n="fechar">Fechar</button>
         </div>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/financeiro.js"></script>

@@ -264,7 +264,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Relatorio atualizado!');
+          await customAlert(i18next.t('relatorio_atualizado'));
           fecharModal();
           carregarRelatorios();
         } else {
@@ -272,7 +272,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao atualizar');
+        await customAlert(i18next.t('erro_atualizar'));
       }
     }
 
@@ -526,7 +526,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = user.nome;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
     
     carregarNotificacoes();
@@ -536,5 +540,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }

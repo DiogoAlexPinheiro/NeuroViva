@@ -11,7 +11,7 @@
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Cliente</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_cliente">- Área Cliente</span></h1>
 
       <div class="lang-switch">
         <button onclick="mudarLingua('pt')" title="Português">
@@ -41,36 +41,36 @@
   </div>
 
   <main>
-    <h2>Meu Perfil</h2>
+    <h2 data-i18n="meu_perfil">Meu Perfil</h2>
 
     <div id="alert"></div>
 
     <div class="card">
-      <h3>Foto de Perfil</h3>
+      <h3 data-i18n="foto_perfil">Foto de Perfil</h3>
       
       <div class="profile-section">
         <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
         <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" style="display: none;">
-        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Alterar Foto</button>
-        <small style="color: var(--color-text-light); margin-top: 0.5rem;">A foto antiga será apagada ao carregar uma nova</small>
+        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()" data-i18n="alterar_foto">Alterar Foto</button>
+        <small style="color: var(--color-text-light); margin-top: 0.5rem;" data-i18n="foto_antiga">A foto antiga será apagada ao carregar uma nova</small>
       </div>
     </div>
 
     <div class="card">
-      <h3>Dados da Conta</h3>
+      <h3 data-i18n="dados_conta">Dados da Conta</h3>
       
       <div class="form-group">
-        <label>Nome Completo</label>
+        <label data-i18n="nome_completo">Nome Completo</label>
         <input type="text" id="nome">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Primeiro Nome</label>
+          <label data-i18n="primeiro_nome">Primeiro Nome</label>
           <input type="text" id="primeiroNome">
         </div>
         <div class="form-group">
-          <label>Último Nome</label>
+          <label data-i18n="apelido">Apelido</label>
           <input type="text" id="ultimoNome">
         </div>
       </div>
@@ -81,104 +81,104 @@
       </div>
 
       <div class="form-group">
-        <label>Nova Password (deixe vazio para manter)</label>
+        <label data-i18n="nova_password">Nova Password (deixe vazio para manter)</label>
         <input type="password" id="password" placeholder="••••••••">
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Dados de Contacto</h3>
+      <h3 data-i18n="dados_contacto">Dados de Contacto</h3>
       
       <div class="form-group">
-        <label>Contacto Telefónico</label>
+        <label data-i18n="contacto_telefonico">Contacto Telefónico</label>
         <input type="text" id="contacto" placeholder="912 345 678">
       </div>
 
       <div class="form-group">
-        <label>Morada</label>
+        <label data-i18n="morada">Morada</label>
         <input type="text" id="morada" placeholder="Rua, número, localidade">
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Informações Pessoais</h3>
+      <h3 data-i18n="informacoes_pessoais">Informações Pessoais</h3>
       
       <div class="form-row">
         <div class="form-group">
-          <label>Idade</label>
+          <label data-i18n="idade">Idade</label>
           <input type="number" id="idade" min="0">
         </div>
 
         <div class="form-group">
-          <label>Género</label>
+          <label data-i18n="genero">Género</label>
           <select id="genero">
-            <option value="">Selecione</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Feminino">Feminino</option>
-            <option value="Outro">Outro</option>
-            <option value="Prefiro nao dizer">Prefiro não dizer</option>
+            <option value="" data-i18n="selecione">Selecione</option>
+            <option value="Masculino" data-i18n="masculino">Masculino</option>
+            <option value="Feminino" data-i18n="feminino">Feminino</option>
+            <option value="Outro" data-i18n="outro">Outro</option>
+            <option value="Prefiro nao dizer" data-i18n="prefiro_nao_dizer">Prefiro não dizer</option>
           </select>
         </div>
       </div>
 
       <div class="form-group">
-        <label>Profissão</label>
+        <label data-i18n="profissao">Profissão</label>
         <input type="text" id="profissao">
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h3>Contexto Familiar</h3>
-      <p class="card-description">Esta informação ajuda a psicóloga a compreender melhor o seu contexto</p>
+      <h3 data-i18n="contexto_familiar">Contexto Familiar</h3>
+      <p class="card-description" data-i18n="esta_informacao">Esta informação ajuda a psicóloga a compreender melhor o seu contexto</p>
       
       <div class="form-row">
         <div class="form-group">
-          <label>Estado Civil</label>
+          <label data-i18n="estado_civil">Estado Civil</label>
           <select id="estadoCivil">
-            <option value="">Selecione</option>
+            <option value="" data-i18n="selecione">Selecione</option>
             <option value="solteiro">Solteiro(a)</option>
             <option value="casado">Casado(a)</option>
             <option value="divorciado">Divorciado(a)</option>
             <option value="viuvo">Viúvo(a)</option>
-            <option value="uniao">União de facto</option>
+            <option value="uniao_facto">União de facto</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Número de Filhos</label>
+          <label data-i18n="numero_filhos">Número de Filhos</label>
           <input type="number" id="filhos" min="0" value="0">
         </div>
       </div>
 
       <div class="form-group">
-        <label>Membros do Agregado Familiar</label>
+        <label data-i18n="membros_agregado">Membros do Agregado Familiar</label>
         <input type="text" id="membros" placeholder="Ex: Pai - João, Mãe - Maria, Irmã - Ana">
-        <small style="color: var(--color-text-light);">Separe os membros por vírgula</small>
+        <small style="color: var(--color-text-light);" data-i18n="separe_membros">Separe os membros por vírgula</small>
       </div>
     </div>
 
     <!-- Historico Clinico (apenas leitura) -->
 <div class="card" style="margin-top: 2rem; background: #f8f9fa;">
   <h3>Historico Clinico</h3>
-  <p class="card-description">Informacoes clinicas registadas pela psicologa (apenas leitura)</p>
+  <p class="card-description" data-i18n="informacoes_clinicas">Informações clínicas registadas pela psicóloga (apenas leitura)</p>
   
   <div id="historicoClinicoInfo">
-    <p>A carregar...</p>
+    <p data-i18n="a_carregar">A carregar...</p>
   </div>
 </div>
 
     <!-- Informações Apenas de Leitura -->
     <div class="card" style="margin-top: 2rem; background: #f8f9fa;">
-      <h3>Informações Administrativas</h3>
-      <p class="card-description">Estas informações são geridas pela psicóloga e não podem ser alteradas aqui</p>
+      <h3 data-i18n="informacoes_administrativas">Informações Administrativas</h3>
+      <p class="card-description" data-i18n="estas_informacoes">Estas informações são geridas pela psicóloga e não podem ser alteradas aqui</p>
       
       <div class="form-group">
-        <label>Número de Identificação (CC/BI)</label>
+        <label data-i18n="numero_identificacao">Número de Identificação (CC/BI)</label>
         <input type="text" id="numeroIdentificacao" disabled style="background: #e9ecef; cursor: not-allowed;">
       </div>
 
       <div class="form-group">
-        <label>Contacto de Emergência</label>
+        <label data-i18n="contacto_emergencia">Contacto de Emergência</label>
         <div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">
           <p id="contatoEmergenciaInfo">-</p>
         </div>
@@ -186,12 +186,12 @@
     </div>
 
     <div style="margin-top: 2rem;">
-      <button class="btn" onclick="atualizarPerfil()">Salvar Alterações</button>
+      <button class="btn" onclick="atualizarPerfil()" data-i18n="salvar_alteracoes">Salvar Alterações</button>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+    <p data-i18n="footer_cliente">&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
   </footer>
 
   <script src="../../scripts/client/perfil.js"></script>

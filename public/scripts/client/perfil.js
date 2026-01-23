@@ -43,8 +43,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = `Olá, ${user.nome}`;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -53,7 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }
 
 // Carregar HTML dos modais quando o DOM estiver pronto
@@ -64,14 +69,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 id="customModalTitle">Confirmação</h3>
+            <h3 id="customModalTitle" data-i18n="confirmacao">Confirmação</h3>
           </div>
           <div class="custom-modal-body">
             <p id="customModalMessage"></p>
           </div>
           <div class="custom-modal-footer">
-            <button id="customModalCancel" class="btn-secondary">Cancelar</button>
-            <button id="customModalConfirm" class="btn">Confirmar</button>
+            <button id="customModalCancel" class="btn-secondary" data-i18n="cancelar">Cancelar</button>
+            <button id="customModalConfirm" class="btn" data-i18n="confirmar">Confirmar</button>
           </div>
         </div>
       </div>
@@ -89,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p id="loadingMessage">A processar...</p>
+        <p id="loadingMessage" data-i18n="a_processar">A processar...</p>
       </div>
     `;
     
@@ -265,24 +270,24 @@ if (data.paciente.historicClinico) {
   let histHtml = '';
   
   if (hist.diagnosticos) {
-    histHtml += `<div class="form-group"><label>Diagnosticos e Condicoes</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.diagnosticos}</div></div>`;
+    histHtml += `<div class="form-group"><label data-i18n="diagnosticos">Diagnósticos e Condições</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.diagnosticos}</div></div>`;
   }
   if (hist.medicacao) {
-    histHtml += `<div class="form-group"><label>Medicacao Atual</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.medicacao}</div></div>`;
+    histHtml += `<div class="form-group"><label data-i18n="medicacao">Medicação Atual</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.medicacao}</div></div>`;
   }
   if (hist.motivoConsulta) {
-    histHtml += `<div class="form-group"><label>Motivo da Consulta Inicial</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.motivoConsulta}</div></div>`;
+    histHtml += `<div class="form-group"><label data-i18n="motivo_consulta">Motivo da Consulta Inicial</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border);">${hist.motivoConsulta}</div></div>`;
   }
   if (hist.evolucaoClinica) {
-    histHtml += `<div class="form-group"><label>Evolucao e Notas Clinicas</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border); white-space: pre-wrap;">${hist.evolucaoClinica}</div></div>`;
+    histHtml += `<div class="form-group"><label data-i18n="evolucao_notas">Evolução e Notas Clinicas</label><div style="padding: 1rem; background: #fff; border-radius: 8px; border: 1px solid var(--color-border); white-space: pre-wrap;">${hist.evolucaoClinica}</div></div>`;
   }
   if (hist.alertas) {
-    histHtml += `<div class="form-group"><label>Alertas e Precaucoes</label><div style="padding: 1rem; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800; color: #e65100;">${hist.alertas}</div></div>`;
+    histHtml += `<div class="form-group"><label data-i18n="alertas_precaucoes">Alertas e precauções</label><div style="padding: 1rem; background: #fff3e0; border-radius: 8px; border: 1px solid #ff9800; color: #e65100;">${hist.alertas}</div></div>`;
   }
   
-  document.getElementById('historicoClinicoInfo').innerHTML = histHtml || '<p>Sem informacoes clinicas registadas</p>';
+  document.getElementById('historicoClinicoInfo').innerHTML = histHtml || '<p data-i18n="sem_informacoes">Sem informacoes clinicas registadas</p>';
 } else {
-  document.getElementById('historicoClinicoInfo').innerHTML = '<p>Sem informacoes clinicas registadas</p>';
+  document.getElementById('historicoClinicoInfo').innerHTML = '<p data-i18n="sem_informacoes">Sem informacoes clinicas registadas</p>';
 }
 
       } catch (error) {

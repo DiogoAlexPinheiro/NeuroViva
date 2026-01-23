@@ -43,8 +43,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = `Olá, ${user.nome}`;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -53,7 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -99,7 +104,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       
       container.innerHTML = `
         <div class="card">
-          <h3>Histórico de Mensagens</h3>
+          <h3 data-i18n="historico_mensagens">Histórico de Mensagens</h3>
           <div>${gerarHtmlLista(mensagensPagina)}</div>
           ${totalPaginas > 1 ? gerarPaginacao(totalPaginas) : ''}
         </div>
@@ -109,11 +114,11 @@ const user = JSON.parse(localStorage.getItem('user'));
     function gerarPaginacao(totalPaginas) {
       let html = '<div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #eee;">';
       
-      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>← Anterior</button>`;
+      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''} data-i18n="anterior">← Anterior</button>`;
       
-      html += `<span style="font-weight:600; color:var(--color-primary);">Página ${paginaAtual} de ${totalPaginas}</span>`;
+      html += `<span style="font-weight:600; color:var(--color-primary);"> ${i18next.t('pagina_info', { atual: paginaAtual, total: totalPaginas })} </span>`;
       
-      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : ''}>Seguinte →</button>`;
+      html += `<button class="btn-outline" onclick="mudarPagina(${paginaAtual + 1})" ${paginaAtual === totalPaginas ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' } data-i18n="seguinte">Seguinte →</button>`;
       
       html += '</div>';
       return html;
@@ -126,7 +131,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     }
 
     function gerarHtmlLista(lista) {
-      if (!lista || lista.length === 0) return '<p>Sem mensagens.</p>';
+      if (!lista || lista.length === 0) return '<p data-i18n="sem_mensagens">Sem mensagens.</p>';
       
       return lista.map(m => {
         const recebida = m.destinatario === user.nome;
@@ -142,13 +147,13 @@ const user = JSON.parse(localStorage.getItem('user'));
               <span style="font-size:0.75rem; font-weight:700; color:${corLabel};">${label}</span>
             </div>
             <small>${new Date(m.criadoEm).toLocaleString('pt-PT')}</small>
-            ${m.isCancelamento ? '<p style="color: #c62828; font-weight: 600;">⚠️ Notificação de Cancelamento</p>' : ''}
+            ${m.isCancelamento ? '<p style="color: #c62828; font-weight: 600;" data-i18n="notificacao_cancelamento">⚠️ Notificação de Cancelamento</p>' : ''}
             <p style="white-space: pre-wrap;">${m.texto}</p>
             ${m.imagem ? `<img src="${m.imagem}" alt="Imagem da mensagem" style="max-width: 100%; border-radius: 12px; margin-top: 1rem; cursor: pointer;" onclick="window.open('${m.imagem}', '_blank')">` : ''}
             ${!recebida && !m.isCancelamento ? `
               <div style="margin-top:15px; display:flex; gap:10px;">
-                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); abrirEditar('${m._id}', '${m.assunto.replace(/'/g, "\\'")}', \`${m.texto.replace(/`/g, '\\`')}\`)">Editar</button>
-                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); apagarMensagem('${m._id}')">Apagar</button>
+                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); abrirEditar('${m._id}', '${m.assunto.replace(/'/g, "\\'")}', \`${m.texto.replace(/`/g, '\\`')}\`)" data-i18n="editar">Editar</button>
+                <button class="btn-outline" style="padding:0.3rem 0.8rem; font-size:0.8rem;" onclick="event.stopPropagation(); apagarMensagem('${m._id}')" data-i18n="apagar">Apagar</button>
               </div>
             ` : ''}
           </div>
@@ -258,7 +263,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     }
 
     async function apagarMensagem(id) {
-      if(!confirm('Deseja apagar esta mensagem?')) return;
+      if(!confirm(i18next.t('deseja_apagar_mensagem'))) return;
       
       try {
         const res = await fetch(`http://localhost:3000/api/mensagens/${id}`, { 

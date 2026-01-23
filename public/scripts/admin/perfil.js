@@ -160,7 +160,7 @@ const user = JSON.parse(localStorage.getItem('user'));
       const container = document.getElementById('listaDiasLivres');
       
       if (diasLivres.length === 0) {
-        container.innerHTML = '<p>Sem dias livres definidos</p>';
+        container.innerHTML = '<p data-i18n="sem_dias_livres">Sem dias livres definidos</p>';
         return;
       }
 
@@ -169,7 +169,7 @@ const user = JSON.parse(localStorage.getItem('user'));
           ${diasLivres.map(d => `
             <div class="dia-livre-item">
               <span>${d}</span>
-              <button class="btn-small btn-danger" onclick="removerDiaLivre('${d}')">Remover</button>
+              <button class="btn-small btn-danger" onclick="removerDiaLivre('${d}')" data-i18n="remover">Remover</button>
             </div>
           `).join('')}
         </div>
@@ -229,7 +229,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = user.nome;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
     
     carregarNotificacoes();
@@ -239,5 +243,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }

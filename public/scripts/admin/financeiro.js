@@ -14,8 +14,8 @@ const user = JSON.parse(localStorage.getItem('user'));
         const pacientes = await res.json();
         const options = pacientes.filter(p => p.estado === 'ativo')
           .map(p => `<option value="${p.nomeCompleto}">${p.nomeCompleto}</option>`).join('');
-        document.getElementById('pacienteSelect').innerHTML = '<option value="">Selecione um paciente</option>' + options;
-        document.getElementById('filtroPaciente').innerHTML = '<option value="">Todos os pacientes</option>' + options;
+        document.getElementById('pacienteSelect').innerHTML = '<option value="" data-i18n="selecionar_paciente">Selecione um paciente</option>' + options;
+        document.getElementById('filtroPaciente').innerHTML = '<option value="" data-i18n="todos_pacientes">Todos os pacientes</option>' + options;
       } catch (error) { console.error(error); }
     }
 
@@ -29,12 +29,12 @@ const user = JSON.parse(localStorage.getItem('user'));
       const comprovantivoInput = document.getElementById('comprovativo');
 
       if (!paciente || !valor || !data) {
-        await customAlert('Preencha todos os campos obrigatorios');
+        await customAlert(i18next.t('preencher_campos'));
         return;
       }
 
       try {
-        showLoading('A registar pagamento...');
+        showLoading(i18next.t('a_registar_pagamento'));
         const formData = new FormData();
         formData.append('paciente', paciente);
         formData.append('valor', valor);
@@ -54,7 +54,8 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Pagamento registado!\n\nCodigo: ' + result.codigo);
+          await customAlert(i18next.t('pagamento_registado', { codigo: result.codigo }));
+
           document.getElementById('pacienteSelect').value = '';
           document.getElementById('valor').value = '';
           document.getElementById('descricao').value = '';
@@ -66,7 +67,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao registar pagamento');
+        await customAlert(i18next.t('erro_registar_pagamento'));
       }
     }
 
@@ -98,7 +99,7 @@ const user = JSON.parse(localStorage.getItem('user'));
     function exibirPagamentos(pagamentos) {
       const container = document.getElementById('listaPagamentos');
       if (pagamentos.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Sem pagamentos registados</p>';
+        container.innerHTML = '<p style="text-align: center; color: var(--color-text-light);" data-i18n="sem_pagamentos">Sem pagamentos registados</p>';
         return;
       }
 
@@ -107,15 +108,15 @@ const user = JSON.parse(localStorage.getItem('user'));
           <div class="item-codigo">
             <span class="codigo-badge codigo-badge-pdf" onclick="verDetalhes('${p._id}')" title="Ver detalhes">
               ${p.codigo}
-              <button class="btn-outline btn-pdf" onclick="gerarPDFPagamento('${p._id}', event)">Gerar PDF</button>
+              <button class="btn-outline btn-pdf" onclick="gerarPDFPagamento('${p._id}', event)" data-i18n="gerar_pdf">Gerar PDF</button>
             </span>
           </div>
           
           <div class="item-info">
             <div class="titulo">${p.paciente}</div>
             <div class="detalhes">
-              <span>Data: ${p.data}</span>
-              <span>Metodo: ${p.metodo}</span>
+              <span>${i18next.t('data')}: ${p.data}</span>
+              <span>${i18next.t('metodo')}: ${i18next.t('metodo_' + p.metodo)}</span>
               ${p.descricao ? '<span>Ref: ' + p.descricao + '</span>' : ''}
             </div>
           </div>
@@ -123,14 +124,15 @@ const user = JSON.parse(localStorage.getItem('user'));
           <div class="item-valor">
             <div class="valor">EUR ${p.valor.toFixed(2)}</div>
             <div class="estado">
-              <span class="badge ${p.estado === 'pago' ? 'badge-success' : p.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${p.estado}</span>
+              <span class="badge ${p.estado === 'pago' ? 'badge-success' : p.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}"> ${i18next.t('estado_' + p.estado)}</span>
+
             </div>
           </div>
           
           <div class="item-acoes">
             ${p.comprovativo ? '<a href="' + p.comprovativo.caminho + '" target="_blank" class="btn-small btn-outline">Ver Doc</a>' : ''}
-            <button class="btn-small" onclick="editarPagamento('${p._id}', ${p.valor}, '${p.estado}', '${p.metodo}', '${p.data}', '${p.descricao || ''}')">Editar</button>
-            <button class="btn-small btn-danger" onclick="apagarPagamento('${p._id}')">Apagar</button>
+            <button class="btn-small" onclick="editarPagamento('${p._id}', ${p.valor}, '${p.estado}', '${p.metodo}', '${p.data}', '${p.descricao || ''}')" data-i18n="editar">Editar</button>
+            <button class="btn-small btn-danger" onclick="apagarPagamento('${p._id}')" data-i18n="apagar">Apagar</button>
           </div>
         </div>
       `).join('');
@@ -156,27 +158,27 @@ const user = JSON.parse(localStorage.getItem('user'));
       document.getElementById('detalhesConteudo').innerHTML = `
         <div class="modal-detalhes-grid">
           <div class="detalhe-item">
-            <label>Codigo</label>
+            <label data-i18n="codigo">Codigo</label>
             <span>${pag.codigo}</span>
           </div>
           <div class="detalhe-item">
-            <label>Paciente</label>
+            <label data-i18n="paciente">Paciente</label>
             <span>${pag.paciente}</span>
           </div>
           <div class="detalhe-item">
-            <label>Valor</label>
+            <label data-i18n="valor">Valor</label>
             <span>EUR ${pag.valor.toFixed(2)}</span>
           </div>
           <div class="detalhe-item">
-            <label>Estado</label>
+            <label data-i18n="estado">Estado</label>
             <span class="badge ${pag.estado === 'pago' ? 'badge-success' : pag.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${pag.estado}</span>
           </div>
           <div class="detalhe-item">
-            <label>Metodo</label>
+            <label data-i18n="metodo">Metodo</label>
             <span>${pag.metodo}</span>
           </div>
           <div class="detalhe-item">
-            <label>Data</label>
+            <label data-i18n="data">Data</label>
             <span>${pag.data}</span>
           </div>
           ${pag.descricao ? '<div class="detalhe-item full"><label>Descricao</label><span>' + pag.descricao + '</span></div>' : ''}
@@ -218,7 +220,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Pagamento atualizado!');
+          await customAlert(i18next.t('pagamento_atualizado'));
           fecharModal();
           carregarPagamentos();
         } else {
@@ -226,12 +228,12 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao atualizar');
+        await customAlert(i18next.t('pagamento_atualizado'));
       }
     }
 
     async function apagarPagamento(id) {
-      const confirmacao = await customConfirm('Tem certeza que deseja apagar este pagamento?');
+      const confirmacao = await customConfirm(i18next.t('confirmar_apagar_pagamento'));
       if (!confirmacao) return;
 
       try {
@@ -276,14 +278,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 id="customModalTitle">Confirmação</h3>
+            <h3 id="customModalTitle" data-i18n="confirmacao">Confirmação</h3>
           </div>
           <div class="custom-modal-body">
             <p id="customModalMessage"></p>
           </div>
           <div class="custom-modal-footer">
-            <button id="customModalCancel" class="btn-secondary">Cancelar</button>
-            <button id="customModalConfirm" class="btn">Confirmar</button>
+            <button id="customModalCancel" class="btn-secondary" data-i18n="cancelar"Cancelar</button>
+            <button id="customModalConfirm" class="btn" data-i18n="confirmar">Confirmar</button>
           </div>
         </div>
       </div>
@@ -301,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p id="loadingMessage">A processar...</p>
+        <p id="loadingMessage" data-i18n="a_processar">A processar...</p>
       </div>
     `;
     
@@ -453,8 +455,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = user.nome;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -463,12 +470,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function gerarPDFDetalhes() {
   if (!detalhesAtuaisPDF) {
-    await customAlert('Não há dados para gerar o PDF.');
+    await customAlert(i18next.t('no_data_pdf'));
     return;
   }
 
   try {
-    showLoading('A gerar PDF...');
+    showLoading(i18next.t('a_gerar_pdf'));
 
     const res = await fetch('http://localhost:3000/api/pdf/detalhes', {
       method: 'POST',
@@ -507,7 +514,7 @@ function gerarPDFPagamento(id, event) {
 
   const pag = todosPagamentos.find(p => p._id === id);
   if (!pag) {
-    customAlert('Pagamento não encontrado');
+    customAlert(i18next.t('pagamento_nao_encontrado'));
     return;
   }
 
@@ -522,5 +529,5 @@ function gerarPDFPagamento(id, event) {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../login.html';
+  window.location.href = '../login.html';
 }

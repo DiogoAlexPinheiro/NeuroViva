@@ -11,7 +11,7 @@
 <body>
   <div class="top-bar">
     <header>
-      <h1><span class="brand">NEUROVIVA</span> <span class="area">- Área Admin</span></h1>
+      <h1><span class="brand">NEUROVIVA</span> <span class="area" data-i18n="area_admin">- Área Admin</span></h1>
 
       <div class="lang-switch">
         <button onclick="mudarLingua('pt')" title="Português">
@@ -43,46 +43,46 @@
   </div>
 
   <main>
-    <h2>Meu Perfil</h2>
+    <h2 data-i18n="meu_perfil">Meu Perfil</h2>
 
     <div id="alert" class="alert-hidden"></div>
 
     <div class="card card-profile">
-      <h3>Foto de Perfil</h3>
+      <h3 data-i18n="foto_perfil">Foto de Perfil</h3>
       
       <div class="profile-section">
         <img id="previewImage" src="/assets/images/profiles/default.jpg" alt="Foto de perfil" class="profile-image-large">
         <input type="file" id="profileImageInput" accept="image/png,image/jpeg,image/jpg" class="btn-small btn-outline" style="display: none;">
-        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()">Escolher Foto</button>
+        <button class="btn-small btn-outline" onclick="document.getElementById('profileImageInput').click()" data-i18n="escolher_foto">Escolher Foto</button>
       </div>
     </div>
 
     <div class="card card-profile">
-      <h3>Informacoes Pessoais</h3>
+      <h3 data-i18n="informacoes_pessoais">Informacoes Pessoais</h3>
       
       <div class="form-group">
-        <label>Nome Completo</label>
+        <label data-i18n="nome_completo">Nome Completo</label>
         <input type="text" id="nome">
       </div>
 
       <div class="form-group">
-        <label>Primeiro Nome</label>
+        <label data-i18n="primeiro_nome">Primeiro Nome</label>
         <input type="text" id="primeiroNome">
       </div>
 
       <div class="form-group">
-        <label>Ultimo Nome</label>
+        <label data-i18n="apelido">Apelido</label>
         <input type="text" id="ultimoNome">
       </div>
 
       <div class="form-group">
-        <label>Genero</label>
+        <label data-i18n="genero">Género</label>
         <select id="genero">
-          <option value="">Selecione</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Outro">Outro</option>
-          <option value="Prefiro nao dizer">Prefiro nao dizer</option>
+          <option value="" data-i18n="selecione">Selecione</option>
+          <option value="Masculino" data-i18n="masculino">Masculino</option>
+          <option value="Feminino" data-i18n="feminino">Feminino</option>
+          <option value="Outro" data-i18n="outro">Outro</option>
+          <option value="Prefiro não dizer" data-i18n="prefiro_nao_dizer">Prefiro não dizer</option>
         </select>
       </div>
 
@@ -92,24 +92,24 @@
       </div>
 
       <div class="form-group">
-        <label>Nova Password (deixe vazio para manter)</label>
+        <label data-i18n="nova_password">Nova Password (deixe vazio para manter)</label>
         <input type="password" id="password">
       </div> 
     </div>
 
     <div class="card card-profile">
-      <h3>Horario de Atendimento</h3>
-      <p class="card-description">Defina os seus horarios de trabalho para cada dia da semana</p>
+      <h3 data-i18n="horario_atendimento">Horário de Atendimento</h3>
+      <p class="card-description" data-i18n="defina_horarios">Defina os seus horários de trabalho para cada dia da semana</p>
       
       <div class="horario-editor">
         <div class="horario-day">
           <label>
             <input type="checkbox" id="segunda-ativo" onchange="toggleDia('segunda')">
-            Segunda-feira
+            <span data-i18n="dia_segunda">Segunda-feira</span>
           </label>
           <div class="horario-inputs" id="segunda-inputs">
             <input type="time" id="segunda-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="segunda-fim" value="17:00">
           </div>
         </div>
@@ -117,11 +117,11 @@
         <div class="horario-day">
           <label>
             <input type="checkbox" id="terca-ativo" onchange="toggleDia('terca')">
-            Terca-feira
+            <span data-i18n="dia_terca">Terça-feira</span>
           </label>
           <div class="horario-inputs" id="terca-inputs">
             <input type="time" id="terca-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="to">até</span>
             <input type="time" id="terca-fim" value="17:00">
           </div>
         </div>
@@ -129,11 +129,11 @@
         <div class="horario-day">
           <label>
             <input type="checkbox" id="quarta-ativo" onchange="toggleDia('quarta')">
-            Quarta-feira
+            <span data-i18n="dia_quarta">Quarta-feira</span>
           </label>
           <div class="horario-inputs" id="quarta-inputs">
             <input type="time" id="quarta-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="quarta-fim" value="17:00">
           </div>
         </div>
@@ -141,11 +141,11 @@
         <div class="horario-day">
           <label>
             <input type="checkbox" id="quinta-ativo" onchange="toggleDia('quinta')">
-            Quinta-feira
+            <span data-i18n="dia_quinta">Quinta-feira</span>
           </label>
           <div class="horario-inputs" id="quinta-inputs">
             <input type="time" id="quinta-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="quinta-fim" value="17:00">
           </div>
         </div>
@@ -153,11 +153,11 @@
         <div class="horario-day">
           <label>
             <input type="checkbox" id="sexta-ativo" onchange="toggleDia('sexta')">
-            Sexta-feira
+            <span data-i18n="dia_sexta">Sexta-feira</span>
           </label>
           <div class="horario-inputs" id="sexta-inputs">
             <input type="time" id="sexta-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="sexta-fim" value="17:00">
           </div>
         </div>
@@ -165,23 +165,23 @@
         <div class="horario-day">
           <label>
             <input type="checkbox" id="sabado-ativo" onchange="toggleDia('sabado')">
-            Sabado
+            <span data-i18n="dia_sabado">Sábado</span>
           </label>
           <div class="horario-inputs" id="sabado-inputs">
             <input type="time" id="sabado-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="sabado-fim" value="13:00">
           </div>
         </div>
 
         <div class="horario-day">
           <label>
-            <input type="checkbox" id="domingo-ativo" onchange="toggleDia('domingo')">
-            Domingo
+            <input type="checkbox" id="domingo-ativo" onchange="toggleDia('domingo')" >
+            <span data-i18n="dia_domingo">Domingo</span>
           </label>
           <div class="horario-inputs" id="domingo-inputs">
             <input type="time" id="domingo-inicio" value="09:00">
-            <span>ate</span>
+            <span data-i18n="ate">até</span>
             <input type="time" id="domingo-fim" value="13:00">
           </div>
         </div>
@@ -189,23 +189,23 @@
     </div>
 
     <div class="card card-profile">
-      <h3>Dias Livres</h3>
-      <p class="card-description">Datas especificas em que nao estara disponivel</p>
+      <h3 data-i18n="dias_livres">Dias Livres</h3>
+      <p class="card-description" data-i18n="datas_especificas">Datas especificas em que não estará disponivel</p>
       
       <div class="form-group">
-        <label>Adicionar Dia Livre</label>
+        <label data-i18n="adicionar_dia_livre">Adicionar Dia Livre</label>
         <input type="date" id="novoDiaLivre">
-        <button class="btn" onclick="adicionarDiaLivre()">Adicionar</button>
+        <button class="btn" onclick="adicionarDiaLivre()" data-i18n="adicionar">Adicionar</button>
       </div>
 
       <div id="listaDiasLivres"></div>
     </div>
 
-    <button class="btn btn-centered" onclick="salvarPerfil()">Salvar Alteracoes</button>
+    <button class="btn btn-centered" onclick="salvarPerfil()" data-i18n="salvar_alteracoes">Salvar Alterações</button>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
+    <p data-i18n="footer_admin">&copy; 2025 Consultório NeuroViva - Painel Administrativo</p>
   </footer>
 
   <script src="../../scripts/admin/perfil.js"></script>

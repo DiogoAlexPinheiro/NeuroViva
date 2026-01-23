@@ -43,9 +43,9 @@ async function login() {
           
           setTimeout(() => {
             if (data.user.role === 'admin') {
-              window.location.href = './views/admin/dashboard.html';
+              window.location.href = '../views/admin/dashboard.html';
             } else {
-              window.location.href = './views/client/dashboard.html';
+              window.location.href = '../views/client/dashboard.html';
             }
           }, 800);
         } else {

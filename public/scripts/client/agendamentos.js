@@ -31,8 +31,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       const userNameEl = document.getElementById('userName');
-      if (userNameEl) userNameEl.textContent = `Olá, ${user.nome}`;
+      if (userNameEl) {
+        userNameEl.textContent = i18next.t('ola_utilizador', {
+          nome: user.nome
+        });
+      }
     }
+
     
     carregarNotificacoes();
     setInterval(carregarNotificacoes, 30000);
@@ -41,7 +46,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function logout() {
   localStorage.removeItem('user');
-  window.location.href = '../../index.html';
+  window.location.href = '../index.html';
 }
 
 // Carregar HTML dos modais quando o DOM estiver pronto
@@ -52,14 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
       <div id="customModalOverlay" class="custom-modal-overlay">
         <div class="custom-modal-content">
           <div class="custom-modal-header">
-            <h3 id="customModalTitle">Confirmação</h3>
+            <h3 id="customModalTitle" data-i18n="confirmacao">Confirmação</h3>
           </div>
           <div class="custom-modal-body">
             <p id="customModalMessage"></p>
           </div>
           <div class="custom-modal-footer">
-            <button id="customModalCancel" class="btn-secondary">Cancelar</button>
-            <button id="customModalConfirm" class="btn">Confirmar</button>
+            <button id="customModalCancel" class="btn-secondary" data-i18n="cancelar">Cancelar</button>
+            <button id="customModalConfirm" class="btn" data-i18n="confirmar">Confirmar</button>
           </div>
         </div>
       </div>
@@ -77,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <p id="loadingMessage">A processar...</p>
+        <p id="loadingMessage" data-i18n="a_processar">A processar...</p>
       </div>
     `;
     
@@ -188,7 +193,7 @@ window.hideLoading = hideLoading;
 const user = JSON.parse(localStorage.getItem('user'));
     
     if (!user || user.role !== 'client') {
-      window.location.href = '../../login.html';
+      window.location.href = '../login.html';
     }
 
     let agendamentos = [];
@@ -238,7 +243,7 @@ const user = JSON.parse(localStorage.getItem('user'));
           if (diasLivresFuturos.length > 0) {
             document.getElementById('diasLivresInfo').innerHTML = `
               <div class="alert" style="background: #fff3e0; border-left-color: #ff9800; color: #e65100;">
-                <strong>⚠️ Dias indisponíveis:</strong> ${diasLivresFuturos.join(', ')}
+                <strong data-i18n="dias_indisponiveis">⚠️ Dias indisponíveis:</strong> ${diasLivresFuturos.join(', ')}
               </div>
             `;
           }
@@ -264,7 +269,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         const select = document.getElementById(selectId);
         select.innerHTML = horarios.length > 0 
           ? horarios.map(h => `<option value="${h}">${h}</option>`).join('')
-          : '<option value="">Sem horários disponíveis</option>';
+          : '<option value="" data-i18n="sem_horarios">Sem horários disponíveis</option>';
       } catch (error) {
         console.error(error);
       }
@@ -275,12 +280,12 @@ const user = JSON.parse(localStorage.getItem('user'));
       const hora = document.getElementById('novaHora').value;
 
       if (!data || !hora) {
-        await customAlert('Selecione data e horário');
+        await customAlert(i18next.t('selecione_data'));
         return;
       }
 
       try {
-        showLoading('A criar agendamento...');
+        showLoading(i18next.t('a_criar_agendamento'));
         
         const res = await fetch('http://localhost:3000/api/agendamentos', {
           method: 'POST',
@@ -292,7 +297,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Agendamento criado! Aguarde confirmação da psicóloga.');
+          await customAlert(i18next.t('agendamento_criado_aguarde'));
           carregarAgendamentos();
           document.getElementById('novaData').value = hoje;
           carregarHorariosDisponiveis(hoje, 'novaHora');
@@ -301,7 +306,7 @@ const user = JSON.parse(localStorage.getItem('user'));
         }
       } catch (error) {
         hideLoading();
-        await customAlert('Erro ao criar agendamento');
+        await customAlert(i18next.t('erro_criar_agendamento'));
       }
     }
 
@@ -313,16 +318,16 @@ const user = JSON.parse(localStorage.getItem('user'));
     const container = document.getElementById('listaAgendamentos');
 
     if (agendamentos.length === 0) {
-      container.innerHTML = '<p>Sem agendamentos</p>';
+      container.innerHTML = '<p data-i18n="sem_agendamentos">Sem agendamentos</p>';
       return;
     }
 
     container.innerHTML = '<div class="items-lista">' + agendamentos.map((a, index) => `
       <div class="item-card estado-${a.estado}">
         <div class="item-info">
-          <div class="titulo">Consulta - ${a.data}</div>
+          <div class="titulo">${i18next.t('consulta')} - ${a.data} </div>
           <div class="detalhes">
-            <span><strong>Hora:</strong> ${a.hora}</span>
+            <span data-i18n="hora_"><strong>Hora:</strong> ${a.hora}</span>
             <span><strong>Psicologa:</strong> ${a.psicologo || 'N/A'}</span>
           </div>
           <div class="item-badges-row">
@@ -330,44 +335,46 @@ const user = JSON.parse(localStorage.getItem('user'));
               `<span class="codigo-badge" onclick="verDetalhesRelatorio('${a.codigoRelatorio}')" title="Ver relatorio">
                 ${a.codigoRelatorio}
               </span>` : 
-              `<span class="codigo-badge empty">Sem Relatorio</span>`}
+              `<span class="codigo-badge empty" data-i18n="sem_relatorios">Sem Relatorio</span>`}
             ${a.codigoPagamento ? 
               `<span class="codigo-badge" onclick="verDetalhesPagamento('${a.codigoPagamento}')" title="Ver pagamento">
                 ${a.codigoPagamento}
               </span>` : 
-              `<span class="codigo-badge empty">Sem Pagamento</span>`}
+              `<span class="codigo-badge empty" data-i18n="sem_pagamentos">Sem Pagamento</span>`}
             <span class="badge ${
               a.estado === 'confirmado' ? 'badge-success' : 
               a.estado === 'pendente' ? 'badge-warning' :
               a.estado === 'completo' ? 'badge-success' :
               'badge-danger'
-            }">${a.estado}</span>
+            }">
+              ${i18next.t(`estado_${a.estado}`)}
+            </span>
           </div>
         </div>
         
         ${a.estado !== 'cancelado' && a.estado !== 'completo' ? `
         <div class="item-acoes">
-          <button class="btn-small btn-solid" onclick="editarAgendamento(${index})">Editar</button>
-          <button class="btn-small btn-danger" onclick="abrirModalCancelar(${index})">Cancelar</button>
+          <button class="btn-small btn-solid" onclick="editarAgendamento(${index})" data-i18n="editar">Editar</button>
+          <button class="btn-small btn-danger" onclick="abrirModalCancelar(${index})" data-i18n="cancelar">Cancelar</button>
         </div>
         ` : ''}
       </div>
     `).join('') + '</div>';
   } catch (error) {
     console.error('Erro ao carregar agendamentos:', error);
-    document.getElementById('listaAgendamentos').innerHTML = '<p>Erro ao carregar</p>';
+    document.getElementById('listaAgendamentos').innerHTML = '<p data-i18n="erro_carregar">Erro ao carregar</p>';
   }
 }
 
 async function verDetalhesRelatorio(codigo) {
   try {
-    showLoading('A carregar...');
+    showLoading(i18next.t('a_carregar'));
     const res = await fetch(`http://localhost:3000/api/relatorios/codigo/${codigo}`);
     const data = await res.json();
     hideLoading();
 
     if (!res.ok) {
-      await customAlert('Relatorio nao encontrado');
+      await customAlert(i18next.t('relatorio_nao_encontrado'));
       return;
     }
 
@@ -378,17 +385,17 @@ async function verDetalhesRelatorio(codigo) {
     };
     document.getElementById('detalhesConteudo').innerHTML = `
       <div class="modal-detalhes-grid">
-        <div class="detalhe-item"><label>Codigo</label><span>${rel.codigo}</span></div>
-        <div class="detalhe-item"><label>Data</label><span>${rel.data}</span></div>
-        <div class="detalhe-item"><label>Tipo</label><span>${rel.tipo || data.tipo}</span></div>
-        <div class="detalhe-item"><label>Psicologa</label><span>${rel.psicologo || 'N/A'}</span></div>
-        ${rel.titulo ? `<div class="detalhe-item full"><label>Titulo</label><span>${rel.titulo}</span></div>` : ''}
-        ${rel.entidade ? `<div class="detalhe-item full"><label>Entidade</label><span>${rel.entidade}</span></div>` : ''}
-        <div class="detalhe-item full"><label>Conteudo</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.conteudo || ''}</p></div>
-        ${rel.notas ? `<div class="detalhe-item full"><label>Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.notas}</p></div>` : ''}
+        <div class="detalhe-item"><label data-i18n="codigo">Codigo</label><span>${rel.codigo}</span></div>
+        <div class="detalhe-item"><label data-i18n="data">Data</label><span>${rel.data}</span></div>
+        <div class="detalhe-item"><label data-i18n="tipo">Tipo</label><span>${rel.tipo || data.tipo}</span></div>
+        <div class="detalhe-item"><label data-i18n="psicologa">Psicóloga</label><span>${rel.psicologo || 'N/A'}</span></div>
+        ${rel.titulo ? `<div class="detalhe-item full"><label data-i18n="titulo">Título</label><span>${rel.titulo}</span></div>` : ''}
+        ${rel.entidade ? `<div class="detalhe-item full"><label data-i18n="entidade">Entidade</label><span>${rel.entidade}</span></div>` : ''}
+        <div class="detalhe-item full"><label data-i18n="conteudo">Conteúdo</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.conteudo || ''}</p></div>
+        ${rel.notas ? `<div class="detalhe-item full"><label data-i18n="notas">Notas</label><p style="white-space: pre-wrap; margin-top: 0.5rem;">${rel.notas}</p></div>` : ''}
         ${rel.anexos && rel.anexos.length > 0 ? `
           <div class="detalhe-item full">
-            <label>Anexos</label>
+            <label data-i18n="anexos">Anexos</label>
             ${rel.anexos.map(a => `<p><a href="${a.caminho}" target="_blank" class="btn-small btn-outline">${a.nome}</a></p>`).join('')}
           </div>
         ` : ''}
@@ -403,7 +410,7 @@ async function verDetalhesRelatorio(codigo) {
     document.getElementById('modalDetalhes').style.display = 'flex';
   } catch (error) {
     hideLoading();
-    await customAlert('Erro ao carregar relatorio');
+    await customAlert(i18next.t('erro_carregar_relatorio'));
   }
 }
 
@@ -419,25 +426,25 @@ async function verDetalhesPagamento(codigo) {
     hideLoading();
 
     if (!res.ok) {
-      await customAlert('Pagamento nao encontrado');
+      await customAlert(i18next.t('pagamento_nao_encontrado'));
       return;
     }
 
     document.getElementById('detalhesConteudo').innerHTML = `
       <div class="modal-detalhes-grid">
-        <div class="detalhe-item"><label>Codigo</label><span>${pag.codigo}</span></div>
-        <div class="detalhe-item"><label>Data</label><span>${pag.data}</span></div>
-        <div class="detalhe-item"><label>Valor</label><span style="font-size: 1.3rem; color: var(--color-primary);">EUR ${pag.valor.toFixed(2)}</span></div>
-        <div class="detalhe-item"><label>Estado</label><span class="badge ${pag.estado === 'pago' ? 'badge-success' : pag.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${pag.estado}</span></div>
-        <div class="detalhe-item"><label>Metodo</label><span>${pag.metodo}</span></div>
-        ${pag.descricao ? `<div class="detalhe-item full"><label>Descricao</label><span>${pag.descricao}</span></div>` : ''}
-        ${pag.comprovativo ? `<div class="detalhe-item full"><label>Comprovativo</label><a href="${pag.comprovativo.caminho}" target="_blank" class="btn-small btn-solid">Ver Documento</a></div>` : ''}
+        <div class="detalhe-item"><label data-i18n="codigo">Codigo</label><span>${pag.codigo}</span></div>
+        <div class="detalhe-item"><label data-i18n="data">Data</label><span>${pag.data}</span></div>
+        <div class="detalhe-item"><label data-i18n="valor">Valor</label><span style="font-size: 1.3rem; color: var(--color-primary);">EUR ${pag.valor.toFixed(2)}</span></div>
+        <div class="detalhe-item"><label data-i18n="estado">Estado</label><span class="badge ${pag.estado === 'pago' ? 'badge-success' : pag.estado === 'pendente' ? 'badge-warning' : 'badge-danger'}">${pag.estado}</span></div>
+        <div class="detalhe-item"><label data-i18n="metodo">Método</label><span>${pag.metodo}</span></div>
+        ${pag.descricao ? `<div class="detalhe-item full"><label data-i18n="descricao">Descrição</label><span>${pag.descricao}</span></div>` : ''}
+        ${pag.comprovativo ? `<div class="detalhe-item full"><label data-i18n="comprovativo">Comprovativo</label><a href="${pag.comprovativo.caminho}" target="_blank" class="btn-small btn-solid">Ver Documento</a></div>` : ''}
       </div>
     `;
     document.getElementById('modalDetalhes').style.display = 'flex';
   } catch (error) {
     hideLoading();
-    await customAlert('Erro ao carregar pagamento');
+    await customAlert(i18next.t('erro_carregar_pagamento'));
   }
 }
 
@@ -464,7 +471,7 @@ async function salvarEdicao() {
     const hora = document.getElementById('editHora').value;
 
     try {
-        showLoading('A guardar alterações...');
+        showLoading(i18next.t('a_guardar_alteracoes'));
         
         const res = await fetch(`http://localhost:3000/api/agendamentos/${agendamentoEditando}`, {
           method: 'PUT',
@@ -476,7 +483,7 @@ async function salvarEdicao() {
         hideLoading();
 
         if (res.ok) {
-          await customAlert('Agendamento atualizado! Aguarde nova confirmação.');
+          await customAlert(i18next.t('agendamento_atualizado'));
           fecharModal();
           carregarAgendamentos();
         } else {
@@ -484,7 +491,7 @@ async function salvarEdicao() {
         }
     } catch (error) {
         hideLoading();
-        await customAlert('Erro ao atualizar');
+        await customAlert(i18next.t('erro_atualizar'));
     }
 }
 
@@ -504,7 +511,7 @@ async function confirmarCancelamento() {
     const razao = document.getElementById('razaoCancelamento').value.trim();
 
     if (!razao) {
-        await customAlert('Por favor, indique a razão do cancelamento');
+        await customAlert(i18next.t('por_favor_indique'));
         return;
     }
 
@@ -521,7 +528,7 @@ async function confirmarCancelamento() {
         hideLoading();
 
         if (res.ok) {
-            await customAlert('Agendamento cancelado! A psicóloga foi notificada.');
+            await customAlert(i18next.t('agendamento_cancelado'));
             fecharModalCancelar();
             carregarAgendamentos();
         } else {
@@ -530,7 +537,7 @@ async function confirmarCancelamento() {
 
     } catch (error) {
         hideLoading();
-        await customAlert('Erro ao cancelar');
+        await customAlert(i18next.t('erro_cancelar'));
     }
 }
 
@@ -546,12 +553,12 @@ carregarHorariosDisponiveis(hoje, 'novaHora');
 
 async function gerarPDFDetalhes() {
   if (!detalhesAtuaisPDF) {
-    await customAlert('Não há dados para gerar o PDF.');
+    await customAlert(i18next.t('no_data_pdf'));
     return;
   }
 
   try {
-    showLoading('A gerar PDF...');
+    showLoading(i18next.t('gerar_pdf'));
 
     const res = await fetch('http://localhost:3000/api/pdf/detalhes', {
       method: 'POST',
@@ -561,7 +568,7 @@ async function gerarPDFDetalhes() {
 
     if (!res.ok) {
       hideLoading();
-      await customAlert('Erro ao gerar PDF');
+      await customAlert(i18next.t('erro_gerar_pdf'));
       return;
     }
 
@@ -589,6 +596,6 @@ async function gerarPDFDetalhes() {
 
   } catch (e) {
     hideLoading();
-    await customAlert('Erro ao gerar PDF');
+    await customAlert(i18next.t('erro_gerar_pdf'));
   }
 }
