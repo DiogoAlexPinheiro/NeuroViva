@@ -4,6 +4,7 @@ const resources = {
       ola_utilizador: "Olá, {{nome}}",
       area_admin: "- Área Admin",
       area_cliente: "- Área Cliente",
+      utilizador: "Utilizador",
 
       pacientes: "Pacientes",
       agendamentos: "Agendamentos",
@@ -182,6 +183,7 @@ const resources = {
       enviar: "Enviar",
       anexar: "Anexar",
       remover: "Remover",
+      entrar: "Entrar,",
 
       sair: "Sair",
       anterior: "← Anterior",
@@ -449,8 +451,18 @@ const resources = {
       informacoes_administrativas: "Informações administrativas",
       estas_informacoes: "Estas informações são geridas pela psicóloga e não podem ser alteradas aqui",
       numero_identificacao: "Número de Identificação (CC/BI)",
-      contacto_emergencia: "Contacto de emergência"
-            
+      contacto_emergencia: "Contacto de emergência",
+
+      acesso_conta: "Acesso a conta",
+      placeholder_digite_username: "Digite o seu username",
+      palavra_passe: "Palavra-passe",
+      placeholder_sua_senha: "Sua senha",
+      mostrar_pw: "Mostrar palavra-passe",
+      nao_tem_conta: "Não tem conta?",
+      criar_conta: "Criar conta agora",
+      nova_conta: "Nova conta",
+      finalizar_registro: "Finalizar registro",
+      ja_tenho_conta: "Já tenho conta. Volta"
     }
   },
   en: {
@@ -458,6 +470,7 @@ const resources = {
       ola_utilizador: "Hello, {{nome}}",
       area_admin: "- Admin Area",
       area_cliente: "- Client Area",
+      utilizador: "User",
 
       pacientes: "Patients",
       agendamentos: "Appointments",
@@ -622,8 +635,8 @@ const resources = {
       ligar_pagamento: "Link Payment",
       codigo_relatorio: "Report Code",
       codigo_pagamento: "Payment Code",
-      placeholder_relatorio: "Ex: REL-XXXXX",
-      placeholder_pagamento: "Ex: PAG-XXXXX",
+      placeholder_relatorio: "Eg.: REL-XXXXX",
+      placeholder_pagamento: "Eg.: PAG-XXXXX",
 
       pago: "Paid",
       pendente: "Pending",
@@ -647,6 +660,7 @@ const resources = {
       editar: "Edit",
       apagar: "Delete",
       remover: "Remove",
+      entrar: "Login",
 
       confirmado: "Confirmed",
       completo: "Completed",
@@ -898,7 +912,17 @@ const resources = {
       informacoes_administrativas: "Administrative informations",
       estas_informacoes: " These informations are managed by the psychologist and can't be altered here",
       numero_identificacao: "ID card number",
-      contacto_emergencia: "Emergency contact"
+      contacto_emergencia: "Emergency contact",
+      acesso_conta: "Account access",
+      placeholder_digite_username: "Type your username",
+      palavra_passe: "Password",
+      placeholder_sua_senha: "Your password",
+      mostrar_pw: "Show password",
+      nao_tem_conta: "Don't have an account?",
+      criar_conta: "Create one now",
+      nova_conta: "New account",
+      finalizar_registro: "Finish registration",
+      ja_tenho_conta: "Already have an account. Go back"
     }
   }
 };

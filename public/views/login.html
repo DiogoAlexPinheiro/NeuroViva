@@ -6,7 +6,7 @@
   <title>Login - Consultorio de Psicologia</title>
   <link rel="stylesheet" href="../styles/login.css">
   <script src="https://unpkg.com/i18next@23.10.1/dist/umd/i18next.min.js"></script>
-  <script src="../../scripts/i18n.js"></script>
+  <script src="../scripts/i18n.js"></script>
 </head>
 <body>
   <header>
@@ -23,54 +23,62 @@
     </header>
 
   <nav>
-    <a href="./index.html">Início</a>
+    <a href="./index.html" data-i18n="inicio">Início</a>
     <a href="./login.html" class="active">Login</a>
   </nav>
 
   <main>
     <div class="form-container" id="loginForm">
-      <h2>Acesso a Conta</h2>
+      <h2 data-i18n="acesso_conta">Acesso a Conta</h2>
       
       <div id="alert" class="alert-hidden"></div>
 
       <div class="form-group">
-        <label>Utilizador</label>
-        <input type="text" id="username" placeholder="Digite o seu username" required>
+        <label data-i18n="utilizador">Utilizador</label>
+        <input type="text" id="username" placeholder="Digite o seu username" data-i18n-placeholder="placeholder_digite_username" required>
       </div>
 
       <div class="form-group">
-        <label>Palavra-passe</label>
-        <input type="password" id="password" placeholder="Sua senha" required>
+        <label data-i18n="palavra_passe">Palavra-passe</label>
+        <input type="password" id="password" placeholder="Sua senha" data-i18n-placeholder="placeholder_sua_senha" required>
         
         <label class="checkbox-label">
           <input type="checkbox" onclick="togglePassword()"> 
-          Mostrar palavra-passe
+          <span data-i18n="mostrar_pw">Mostrar palavra-passe</span>
         </label>
       </div>
 
-      <button class="btn btn-full-width" onclick="login()">Entrar</button>
+      <button class="btn btn-full-width" onclick="login()" data-i18n="entrar">Entrar</button>
 
       <p class="text-center spacing-top">
-        Não tem conta? <a href="#" onclick="mostrarRegistro()" class="link-primary">Criar conta agora</a>
+        <span data-i18n="nao_tem_conta">Não tem conta?</span>
+        <a
+          href="#"
+          onclick="mostrarRegistro()"
+          class="link-primary"
+          data-i18n="criar_conta"
+        >
+          Criar conta agora
+        </a>
       </p>
     </div>
 
     <div class="form-container" id="registroForm" style="display: none;">
-      <h2>Nova Conta</h2>
+      <h2 data-i18n="nova_conta">Nova Conta</h2>
       <div id="alertRegistro" class="alert-hidden"></div>
 
       <div class="form-group">
-        <label>Nome Completo</label>
+        <label data-i18n="nome_completo">Nome Completo</label>
         <input type="text" id="regNome" placeholder="Nome completo">
       </div>
       
       <div class="form-group">
-        <label>Primeiro Nome</label>
+        <label data-i18n="primeiro_nome">Primeiro Nome</label>
         <input type="text" id="regPrimeiroNome" placeholder="Primeiro nome">
       </div>
       
       <div class="form-group">
-        <label>Ultimo Nome</label>
+        <label data-i18n="apelido">Apelido</label>
         <input type="text" id="regUltimoNome" placeholder="Ultimo nome">
       </div>
       
@@ -90,26 +98,26 @@
       </div>
       
       <div class="form-group">
-        <label>Género</label>
+        <label data-i18n="genero">Género</label>
         <select id="regGenero">
-          <option value="">Selecione</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Outro">Outro</option>
-          <option value="Prefiro não dizer">Prefiro não dizer</option>
+          <option value="" data-i18n="selecione">Selecione</option>
+          <option value="Masculino" data-i18n="masculino">Masculino</option>
+          <option value="Feminino" data-i18n="feminino">Feminino</option>
+          <option value="Outro" data-i18n="outro">Outro</option>
+          <option value="Prefiro não dizer" data-i18n="prefiro_nao_dizer">Prefiro não dizer</option>
         </select>
       </div>
 
-      <button class="btn btn-full-width" onclick="registrar()">Finalizar Registro</button>
+      <button class="btn btn-full-width" onclick="registrar()" data-i18n="finalizar_registro">Finalizar Registro</button>
       
       <p class="text-center spacing-top-small">
-        <a href="#" onclick="mostrarLogin()" class="link-secondary">Já tenho conta. Voltar</a>
+        <a href="#" onclick="mostrarLogin()" class="link-secondary" data-i18n="ja_tenho_conta">Já tenho conta. Voltar</a>
       </p>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
+    <p data-i18n="footer_cliente">&copy; 2025 Consultorio NeuroViva. Todos os direitos reservados.</p>
   </footer>
   <script src="../scripts/login.js"></script>
 </body>
