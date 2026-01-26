@@ -966,6 +966,18 @@ footer p {
   gap: 1rem;
 }
 
+.nav-btn.pressed {
+  background-color: rgba(76, 175, 80, 0.12);
+  color: var(--color-primary);
+  font-weight: 700;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.nav-btn.pressed:hover {
+  background-color: rgba(76, 175, 80, 0.08);
+  color: var(--color-primary);
+}
+
 /* Loading Overlay */
 .loading-overlay {
   position: fixed;
@@ -1021,4 +1033,6 @@ footer p {
   .custom-modal-footer button {
     width: 100%;
   }
+
+  
 }
